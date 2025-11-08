@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "motion/react";
 
 type SpotlightProps = {
@@ -25,6 +25,59 @@ export const Spotlight = ({
   duration = 7,
   xOffset = 100,
 }: SpotlightProps = {}) => {
+  const animationConfig = useMemo(() => ({
+    x: [0, xOffset, 0],
+  }), [xOffset]);
+
+  const transitionConfig = useMemo(() => ({
+    duration,
+    repeat: Infinity,
+    repeatType: "reverse" as const,
+    ease: "easeInOut" as const,
+  }), [duration]);
+
+  const leftGradientStyles = useMemo(() => [
+    {
+      transform: `translateY(${translateY}px) rotate(-45deg)`,
+      background: gradientFirst,
+      width: `${width}px`,
+      height: `${height}px`,
+    },
+    {
+      transform: "rotate(-45deg) translate(5%, -50%)",
+      background: gradientSecond,
+      width: `${smallWidth}px`,
+      height: `${height}px`,
+    },
+    {
+      transform: "rotate(-45deg) translate(-180%, -70%)",
+      background: gradientThird,
+      width: `${smallWidth}px`,
+      height: `${height}px`,
+    },
+  ], [translateY, gradientFirst, gradientSecond, gradientThird, width, height, smallWidth]);
+
+  const rightGradientStyles = useMemo(() => [
+    {
+      transform: `translateY(${translateY}px) rotate(45deg)`,
+      background: gradientFirst,
+      width: `${width}px`,
+      height: `${height}px`,
+    },
+    {
+      transform: "rotate(45deg) translate(-5%, -50%)",
+      background: gradientSecond,
+      width: `${smallWidth}px`,
+      height: `${height}px`,
+    },
+    {
+      transform: "rotate(45deg) translate(180%, -70%)",
+      background: gradientThird,
+      width: `${smallWidth}px`,
+      height: `${height}px`,
+    },
+  ], [translateY, gradientFirst, gradientSecond, gradientThird, width, height, smallWidth]);
+
   return (
     <motion.div
       initial={{
@@ -39,44 +92,22 @@ export const Spotlight = ({
       className="pointer-events-none absolute inset-0 h-full w-full"
     >
       <motion.div
-        animate={{
-          x: [0, xOffset, 0],
-        }}
-        transition={{
-          duration,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut",
-        }}
+        animate={animationConfig}
+        transition={transitionConfig}
         className="absolute top-0 left-0 w-screen h-screen z-40 pointer-events-none"
       >
         <div
-          style={{
-            transform: `translateY(${translateY}px) rotate(-45deg)`,
-            background: gradientFirst,
-            width: `${width}px`,
-            height: `${height}px`,
-          }}
+          style={leftGradientStyles[0]}
           className={`absolute top-0 left-0`}
         />
 
         <div
-          style={{
-            transform: "rotate(-45deg) translate(5%, -50%)",
-            background: gradientSecond,
-            width: `${smallWidth}px`,
-            height: `${height}px`,
-          }}
+          style={leftGradientStyles[1]}
           className={`absolute top-0 left-0 origin-top-left`}
         />
 
         <div
-          style={{
-            transform: "rotate(-45deg) translate(-180%, -70%)",
-            background: gradientThird,
-            width: `${smallWidth}px`,
-            height: `${height}px`,
-          }}
+          style={leftGradientStyles[2]}
           className={`absolute top-0 left-0 origin-top-left`}
         />
       </motion.div>
@@ -85,41 +116,21 @@ export const Spotlight = ({
         animate={{
           x: [0, -xOffset, 0],
         }}
-        transition={{
-          duration,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut",
-        }}
+        transition={transitionConfig}
         className="absolute top-0 right-0 w-screen h-screen z-40 pointer-events-none"
       >
         <div
-          style={{
-            transform: `translateY(${translateY}px) rotate(45deg)`,
-            background: gradientFirst,
-            width: `${width}px`,
-            height: `${height}px`,
-          }}
+          style={rightGradientStyles[0]}
           className={`absolute top-0 right-0`}
         />
 
         <div
-          style={{
-            transform: "rotate(45deg) translate(-5%, -50%)",
-            background: gradientSecond,
-            width: `${smallWidth}px`,
-            height: `${height}px`,
-          }}
+          style={rightGradientStyles[1]}
           className={`absolute top-0 right-0 origin-top-right`}
         />
 
         <div
-          style={{
-            transform: "rotate(45deg) translate(180%, -70%)",
-            background: gradientThird,
-            width: `${smallWidth}px`,
-            height: `${height}px`,
-          }}
+          style={rightGradientStyles[2]}
           className={`absolute top-0 right-0 origin-top-right`}
         />
       </motion.div>

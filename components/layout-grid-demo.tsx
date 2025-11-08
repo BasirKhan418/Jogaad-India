@@ -1,14 +1,6 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { LayoutGrid } from "./ui/layout-grid";
-
-export function LayoutGridDemo() {
-  return (
-    <div className="h-full w-full">
-      <LayoutGrid cards={cards} />
-    </div>
-  );
-}
 
 const SkeletonOne = () => {
   return (
@@ -68,33 +60,37 @@ const SkeletonFour = () => {
   );
 };
 
-const cards = [
-  {
-    id: 1,
-    content: <SkeletonOne />,
-    className: "col-span-2 md:col-span-2",
-    thumbnail:
-      "/2.png",
-  },
-  {
-    id: 2,
-    content: <SkeletonTwo />,
-    className: "col-span-1",
-    thumbnail:
-      "/1.png",
-  },
-  {
-    id: 3,
-    content: <SkeletonThree />,
-    className: "col-span-1",
-    thumbnail:
-      "/3.png",
-  },
-  {
-    id: 4,
-    content: <SkeletonFour />,
-    className: "col-span-2 md:col-span-2",
-    thumbnail:
-      "/4.png",
-  },
-];
+export function LayoutGridDemo() {
+  const cards = useMemo(() => [
+    {
+      id: 1,
+      content: <SkeletonOne />,
+      className: "col-span-2 md:col-span-2",
+      thumbnail: "/2.png",
+    },
+    {
+      id: 2,
+      content: <SkeletonTwo />,
+      className: "col-span-1",
+      thumbnail: "/1.png",
+    },
+    {
+      id: 3,
+      content: <SkeletonThree />,
+      className: "col-span-1",
+      thumbnail: "/3.png",
+    },
+    {
+      id: 4,
+      content: <SkeletonFour />,
+      className: "col-span-2 md:col-span-2",
+      thumbnail: "/4.png",
+    },
+  ], []);
+
+  return (
+    <div className="h-full w-full">
+      <LayoutGrid cards={cards} />
+    </div>
+  );
+}
