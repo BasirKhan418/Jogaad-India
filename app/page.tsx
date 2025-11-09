@@ -14,7 +14,6 @@ const page = () => {
   return (
     <div className="min-h-screen bg-white">
       <section className="relative min-h-screen flex items-center overflow-hidden pt-20 sm:pt-24 md:pt-28 lg:pt-0">
-        {/* Background with gradient overlay */}
         <div 
           className="absolute inset-0 z-0"
           style={{
@@ -25,10 +24,8 @@ const page = () => {
           }}
         />
 
-        {/* Multi-layer backdrop with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/30 to-white/20 backdrop-blur-sm z-10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/30 to-white/20 backdrop-blur-xs z-10" />
         
-        {/* Subtle grid pattern overlay */}
         <div className="absolute inset-0 z-10 opacity-[0.03]" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgb(10, 61, 98) 1px, transparent 0)`,
           backgroundSize: '40px 40px'
