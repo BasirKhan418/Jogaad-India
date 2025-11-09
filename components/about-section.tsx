@@ -181,7 +181,7 @@ export function AboutSection() {
           >
             <div className="relative w-full h-full max-w-lg mx-auto lg:mx-0">
               {/* Main Interactive Image Card - Full Width & Responsive */}
-              <div className="relative w-full h-[380px] sm:h-[450px] md:h-[500px] lg:h-[550px] rounded-2xl overflow-hidden shadow-2xl group">
+              <div className="relative w-full h-[380px] sm:h-[450px] md:h-[500px] lg:ml-32 lg:h-[550px] rounded-2xl overflow-hidden shadow-2xl group">
                 {/* Background Image */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110"
@@ -219,7 +219,7 @@ export function AboutSection() {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true }}
-                className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 md:bottom-8 md:left-8 z-10"
+                className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 md:bottom-8 md:left-8 lg:-mb-20 lg:ml-112 z-10"
               >
                 <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-2xl border border-[#F9A825]/20 w-[240px] sm:w-[260px] md:w-[280px] hover:scale-105 transition-transform duration-300">
                   <div className="flex items-center gap-3 sm:gap-4">
