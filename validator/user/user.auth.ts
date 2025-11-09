@@ -22,5 +22,4 @@ export const userUpdateSchema = z.object({
   address: z.string().optional(),
   phone: z.string().optional(),
   img: z.string().url("Invalid image URL").optional(),
-  id: z.string().length(24, "Invalid user ID"),
 });

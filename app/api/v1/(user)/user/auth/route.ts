@@ -12,7 +12,7 @@ export async function POST(request:NextRequest) {
         const {email: userEmail} = validatedata.data;
         const response = await generateOTP(userEmail);
         if(response.success){
-            return NextResponse.json({message:response.message,otp:response.otp,success:true}, {status:200});
+            return NextResponse.json({message:response.message,success:true}, {status:200});
         }
         return NextResponse.json({message:response.message,success:false}, {status:400});
     }

@@ -51,13 +51,14 @@ export const generateOTP = async (email: string) => {
             return {message:"User not found! Please register first.",success:false};
         }
         const redisClient = setConnectionRedis();
-        await redisClient.connect();
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        console.log(`Generated OTP for ${email}: ${otp}`);
         await redisClient.set(`otp-user:${email}`, otp, "EX", 300);
         //send email functionality can be added here later
-        return {message:"OTP generated successfully",otp,success:true};
+        return {message:"OTP generated successfully",success:true};
     }
     catch(error){
+        console.log(error);
         return {message:"Error generating OTP",error,success:false};
     }
 }
