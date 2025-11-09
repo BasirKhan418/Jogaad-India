@@ -19,6 +19,7 @@ export const DirectionAwareHover = ({
   className?: string;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [isActive, setIsActive] = useState(false);
 
   const [direction, setDirection] = useState<
     "top" | "bottom" | "left" | "right" | string
@@ -49,6 +50,11 @@ export const DirectionAwareHover = ({
     }
   };
 
+  const handleTouch = () => {
+    setIsActive(!isActive);
+    setDirection("bottom");
+  };
+
   const getDirection = (
     ev: React.MouseEvent<HTMLDivElement, MouseEvent>,
     obj: HTMLElement
@@ -63,9 +69,10 @@ export const DirectionAwareHover = ({
   return (
     <motion.div
       onMouseEnter={handleMouseEnter}
+      onClick={handleTouch}
       ref={ref}
       className={cn(
-        "md:h-96 w-60 h-60 md:w-96 bg-transparent rounded-lg overflow-hidden group/card relative",
+        "md:h-96 w-60 h-60 md:w-96 bg-transparent rounded-lg overflow-hidden group/card relative cursor-pointer",
         className
       )}
     >
@@ -74,9 +81,14 @@ export const DirectionAwareHover = ({
           className="relative h-full w-full"
           initial="initial"
           whileHover={direction}
+          animate={isActive ? direction : "initial"}
           exit="exit"
         >
-          <motion.div className="group-hover/card:block hidden absolute inset-0 w-full h-full bg-black/40 z-10 transition duration-500" />
+          <motion.div className={cn(
+            "absolute inset-0 w-full h-full bg-black/40 z-10 transition duration-500",
+            "group-hover/card:block hidden",
+            isActive && "!block"
+          )} />
           <motion.div
             variants={variants}
             className="h-full w-full relative bg-gray-50 dark:bg-black"
@@ -102,6 +114,7 @@ export const DirectionAwareHover = ({
               duration: 0.5,
               ease: "easeOut",
             }}
+            animate={isActive ? direction : "initial"}
             className={cn(
               "text-white absolute bottom-4 left-4 z-40",
               childrenClassName

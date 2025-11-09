@@ -5,6 +5,7 @@ import { FiArrowRight } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { Button } from "@/components/ui/moving-border";
+import { Cover } from "@/components/ui/cover";
 import { RiTeamFill, RiUserStarFill } from "react-icons/ri";
 import { IoMdTimer } from "react-icons/io";
 import { MdVerified, MdLocationOn } from "react-icons/md";
@@ -102,12 +103,12 @@ export function AboutSection() {
 
             {/* Heading */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0A3D62] leading-tight">
-              "Jogaad India – Your One-Stop Service Solution!"
+              "Jogaad India – Your <Cover>One-Stop Solution!</Cover>"
             </h2>
 
             {/* Description */}
             <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-              Our Professional Website Setup service offers a comprehensive, fixed-price package designed.
+              Our Professional Website Setup service offers a <Cover>comprehensive</Cover>, fixed-price package designed.
             </p>
 
             {/* Highlights Grid */}
