@@ -5,6 +5,10 @@ import { LayoutTextFlip } from '@/components/ui/layout-text-flip'
 import { Cover } from '@/components/ui/cover'
 import { Spotlight } from '@/components/ui/spotlight'
 import { Button } from '@/components/ui/moving-border'
+import { RiTeamFill } from 'react-icons/ri'
+import { IoMdTimer } from 'react-icons/io'
+import { MdVerified } from 'react-icons/md'
+import { FiArrowRight } from 'react-icons/fi'
 
 const page = () => {
   return (
@@ -78,25 +82,19 @@ const page = () => {
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 pt-2">
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F9A825] to-[#FF9800] flex items-center justify-center shadow-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="white" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                      </svg>
+                      <RiTeamFill className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-semibold text-[#0A3D62]">1000+ Experts</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#3BB4CF] to-[#2B9EB3] flex items-center justify-center shadow-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="white" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                      </svg>
+                      <IoMdTimer className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-semibold text-[#2B9EB3]">45 Min Response</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1B7A8F] to-[#0A3D62] flex items-center justify-center shadow-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="white" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                      </svg>
+                      <MdVerified className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-semibold text-[#0A3D62]">100% Reliable</span>
                   </div>
@@ -129,9 +127,7 @@ const page = () => {
                 >
                   <span className="flex items-center gap-2">
                     Get Started
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
+                    <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </span>
                 </Button>
               </div>
