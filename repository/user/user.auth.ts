@@ -43,7 +43,7 @@ export const updateUserByEmail = async (email: string, updateData: any) => {
 }   
 
 //user auth functions
-export const generateOTP = async (email: string, otp: string) => {
+export const generateOTP = async (email: string) => {
     try{
         await ConnectDb();
         const user = await User.findOne({email});
@@ -71,7 +71,7 @@ export const verifyOTP = async (email: string, otp: string) => {
             const user = await User.findOneAndUpdate({email},{isVerified:true},{new:true});
             await redisClient.del(`otp-user:${email}`);
             const token = jwt.sign({email,type:"user",name:user?.name},process.env.JWT_SECRET||"",{expiresIn:"7d"});
-            return {message:"OTP verified successfully",success:true};
+            return {message:"OTP verified successfully",success:true,token};
         }
         return {message:"Invalid OTP",success:false};
     }
