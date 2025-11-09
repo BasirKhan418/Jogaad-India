@@ -107,9 +107,9 @@ export function AboutSection() {
             </h2>
 
             {/* Description */}
-            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+            <div className="text-base sm:text-lg text-gray-700 leading-relaxed">
               Our Professional Website Setup service offers a <Cover>comprehensive</Cover>, fixed-price package designed.
-            </p>
+            </div>
 
             {/* Highlights Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">

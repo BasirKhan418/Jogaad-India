@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/moving-border'
 import { ServicesSection } from '@/components/services-section'
 import { CoreAreaSection } from '@/components/core-area-section'
 import { AboutSection } from '@/components/about-section'
+import { ConvenientServiceSection } from '@/components/convenient-service-section'
 import { RiTeamFill } from 'react-icons/ri'
 import { IoMdTimer } from 'react-icons/io'
 import { MdVerified } from 'react-icons/md'
@@ -145,6 +146,8 @@ const page = () => {
       <CoreAreaSection />
       
       <AboutSection />
+      
+      <ConvenientServiceSection />
     </div>
   )
 }
