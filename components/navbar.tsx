@@ -55,7 +55,7 @@ export function NavbarDemo() {
           <NavItems items={NAV_ITEMS} />
           <div className="flex items-center gap-4">
             <NavbarButton variant="secondary">Login</NavbarButton>
-            <NavbarButton variant="primary" className="!px-4 !py-2 !text-sm shadow-none hover:shadow-none">Book a call</NavbarButton>
+            <NavbarButton variant="primary" className="!px-4 !py-2 !text-sm shadow-none hover:shadow-none">Book Now</NavbarButton>
           </div>
         </NavBody>
 
@@ -96,7 +96,7 @@ export function NavbarDemo() {
                 variant="primary"
                 className="w-full !px-4 !py-2 !text-sm shadow-none hover:shadow-none"
               >
-                Book a call
+                Book Now
               </NavbarButton>
             </div>
           </MobileNavMenu>
