@@ -3,7 +3,6 @@
 import React from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { DirectionAwareHover } from "@/components/ui/direction-aware-hover";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { Button } from "@/components/ui/moving-border";
 import { RiTeamFill, RiUserStarFill } from "react-icons/ri";
@@ -83,14 +82,14 @@ export function AboutSection() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Content */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="space-y-6 sm:space-y-8 w-full lg:col-span-2"
+            className="space-y-6 sm:space-y-8 w-full"
           >
             {/* Section Label */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#F9A825]/20 backdrop-blur-sm">
@@ -112,7 +111,7 @@ export function AboutSection() {
             </p>
 
             {/* Highlights Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {highlights.map((highlight, index) => {
                 const Icon = highlight.icon;
                 return (
@@ -122,23 +121,23 @@ export function AboutSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="group relative h-[120px]"
+                    className="group relative"
                   >
-                    <div className="relative p-3 h-full rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-start">
+                    <div className="relative p-4 h-full rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                       {/* Gradient Border Effect */}
                       <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${highlight.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
                       
-                      <div className="relative flex items-start gap-2 h-full">
-                        <div className="flex-shrink-0 mt-0.5">
-                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${highlight.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                            <Icon className="w-4 h-4 text-white" />
+                      <div className="relative flex items-start gap-3">
+                        <div className="flex-shrink-0">
+                          <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${highlight.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                            <Icon className="w-5 h-5 text-white" />
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0 flex flex-col">
-                          <h4 className="text-xs font-bold text-[#0A3D62] mb-1 group-hover:text-[#2B9EB3] transition-colors duration-300 leading-tight line-clamp-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-bold text-[#0A3D62] mb-1.5 group-hover:text-[#2B9EB3] transition-colors duration-300 leading-tight">
                             {highlight.title}
                           </h4>
-                          <p className="text-[10px] text-gray-600 leading-tight flex-1 line-clamp-3">
+                          <p className="text-xs text-gray-600 leading-relaxed">
                             {highlight.description}
                           </p>
                         </div>
@@ -172,82 +171,103 @@ export function AboutSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right Image with Interactive Hover */}
+          {/* Right Image with Interactive Hover - Redesigned for Better Responsiveness */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="relative lg:sticky lg:top-24 w-full lg:col-span-3 flex justify-end"
+            className="relative w-full"
           >
-            <div className="relative w-full max-w-[400px] ml-auto">
-              {/* Main Interactive Image Card */}
-              <DirectionAwareHover
-                imageUrl="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2400&auto=format&fit=crop"
-                className="w-[1000px] h-[480px] sm:h-[540px] lg:h-[600px] rounded-2xl overflow-hidden"
-              >
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-white">Jogaad India</h3>
-                  <p className="text-white/90 text-sm">
-                    Your trusted service partner across Odisha
-                  </p>
+            <div className="relative w-full h-full max-w-lg mx-auto lg:mx-0">
+              {/* Main Interactive Image Card - Full Width & Responsive */}
+              <div className="relative w-full h-[380px] sm:h-[450px] md:h-[500px] lg:h-[550px] rounded-2xl overflow-hidden shadow-2xl group">
+                {/* Background Image */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2400&auto=format&fit=crop)'
+                  }}
+                />
+                
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                
+                {/* Content Overlay */}
+                <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    viewport={{ once: true }}
+                    className="space-y-2 transform group-hover:translate-y-[-8px] transition-transform duration-500"
+                  >
+                    <h3 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">Jogaad India</h3>
+                    <p className="text-white/90 text-sm sm:text-base drop-shadow-md max-w-md">
+                      Your trusted service partner across Odisha
+                    </p>
+                  </motion.div>
                 </div>
-              </DirectionAwareHover>
+                
+                {/* Animated Border */}
+                <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[#F9A825]/50 transition-all duration-500" />
+              </div>
 
-              {/* Floating Stats Card */}
+              {/* Floating Stats Card - Positioned Over Image */}
               <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true }}
-                className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8"
+                className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 md:bottom-8 md:left-8 z-10"
               >
-                <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-[#F9A825]/20 w-[260px] sm:w-[280px]">
-                  <div className="flex items-center gap-4">
+                <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-2xl border border-[#F9A825]/20 w-[240px] sm:w-[260px] md:w-[280px] hover:scale-105 transition-transform duration-300">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     {/* Icon */}
                     <div className="flex-shrink-0">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F9A825] to-[#FF9800] flex items-center justify-center shadow-lg">
-                        <HiOfficeBuilding className="w-7 h-7 text-white" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-[#F9A825] to-[#FF9800] flex items-center justify-center shadow-lg">
+                        <HiOfficeBuilding className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                       </div>
                     </div>
                     
                     {/* Text */}
                     <div>
-                      <h3 className="text-xl font-bold text-[#0A3D62] mb-0.5">Jogaad India</h3>
-                      <p className="text-sm text-gray-600 font-medium">1000+ Professionals</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-[#0A3D62] mb-0.5">Jogaad India</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 font-medium">1000+ Professionals</p>
                     </div>
                   </div>
                   
                   {/* Stats Row */}
-                  <div className="mt-4 pt-4 border-t border-gray-200/50 grid grid-cols-2 gap-3">
+                  <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200/50 grid grid-cols-2 gap-3">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-[#2B9EB3]">45 Min</div>
+                      <div className="text-base sm:text-lg font-bold text-[#2B9EB3]">45 Min</div>
                       <div className="text-xs text-gray-600">Response</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-[#F9A825]">100%</div>
+                      <div className="text-base sm:text-lg font-bold text-[#F9A825]">100%</div>
                       <div className="text-xs text-gray-600">Reliable</div>
                     </div>
                   </div>
                 </div>
               </motion.div>
-            </div>
 
-            {/* Decorative Elements matching website theme */}
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-[#F9A825]/20 to-[#FF9800]/20 rounded-full blur-2xl" />
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-[#2B9EB3]/20 to-[#1B7A8F]/20 rounded-full blur-2xl" />
-            
-            {/* Sparkles Effect */}
-            <div className="absolute inset-0 w-full h-full pointer-events-none">
-              <SparklesCore
-                id="about-sparkles"
-                background="transparent"
-                minSize={0.4}
-                maxSize={1}
-                particleDensity={30}
-                className="w-full h-full"
-                particleColor="#F9A825"
-              />
+              {/* Enhanced Decorative Elements */}
+              <div className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-[#F9A825]/30 to-[#FF9800]/30 rounded-full blur-2xl animate-pulse" />
+              <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-[#2B9EB3]/30 to-[#1B7A8F]/30 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+              <div className="absolute top-1/4 -left-8 w-40 h-40 bg-gradient-to-br from-[#0A3D62]/20 to-[#2B9EB3]/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+              
+              {/* Sparkles Effect */}
+              <div className="absolute inset-0 w-full h-full pointer-events-none rounded-2xl overflow-hidden">
+                <SparklesCore
+                  id="about-sparkles"
+                  background="transparent"
+                  minSize={0.4}
+                  maxSize={1}
+                  particleDensity={30}
+                  className="w-full h-full"
+                  particleColor="#F9A825"
+                />
+              </div>
             </div>
           </motion.div>
         </div>
