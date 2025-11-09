@@ -64,7 +64,6 @@ export const Navbar = ({ children, className }: NavbarProps) => {
 
   return (
     <>
-      {/* Elegant top scroll progress */}
       <motion.div
         className="fixed left-0 right-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-[#F9A825] via-[#2B9EB3] to-[#0A3D62]"
         style={{ scaleX: scrollYProgress }}
@@ -90,11 +89,11 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(16px)" : "blur(8px)",
+        backdropFilter: visible ? "blur(8px)" : "blur(8px)",
         boxShadow: visible
-          ? "0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 0 rgba(255,255,255,0.08) inset"
+          ? "0 4px 20px rgba(15, 23, 42, 0.04), rounded-full  0 rgba(255,255,255,0.08) inset"
           : "none",
-        width: visible ? "64%" : "100%",
+        width: visible ? "60%" : "100%",
         y: visible ? 12 : 8,
       }}
       transition={{
@@ -107,13 +106,12 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         "pointer-events-auto",
         visible
           ? "rounded-full bg-white/30 dark:bg-neutral-950/30 ring-1 ring-[#F9A825]/20 backdrop-saturate-150 shadow-lg shadow-[#2B9EB3]/5"
-          : "rounded-none bg-white/35 dark:bg-neutral-950/40",
+          : "rounded-full  dark:bg-neutral-950/40 backdrop-blur-md",
         className,
       )}
       role="navigation"
       aria-label="Primary"
     >
-      {/* gradient border glow */}
       {visible && (
         <div className="pointer-events-none absolute -inset-[1px] rounded-[1.05rem] [mask:linear-gradient(#000,#000)_content-box,linear-gradient(#000,#000)] [mask-composite:exclude] p-[1px] before:absolute before:inset-0 before:rounded-[1.05rem] before:bg-[linear-gradient(135deg,rgba(249,168,37,0.4),rgba(43,158,179,0.3),rgba(10,61,98,0.2))]" />
       )}

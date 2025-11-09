@@ -5,6 +5,9 @@ import { LayoutTextFlip } from '@/components/ui/layout-text-flip'
 import { Cover } from '@/components/ui/cover'
 import { Spotlight } from '@/components/ui/spotlight'
 import { Button } from '@/components/ui/moving-border'
+import { ServicesSection } from '@/components/services-section'
+import { CoreAreaSection } from '@/components/core-area-section'
+import { AboutSection } from '@/components/about-section'
 import { RiTeamFill } from 'react-icons/ri'
 import { IoMdTimer } from 'react-icons/io'
 import { MdVerified } from 'react-icons/md'
@@ -137,16 +140,11 @@ const page = () => {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-            Our Services
-          </h2>
-          <p className="text-lg text-gray-600 text-center">
-            Content with white background goes here...
-          </p>
-        </div>
-      </section>
+      <ServicesSection />
+      
+      <CoreAreaSection />
+      
+      <AboutSection />
     </div>
   )
 }
