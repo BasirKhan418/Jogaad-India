@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo } from "react";
-import { LayoutGrid } from "./ui/layout-grid";
+import { LayoutGrid } from "../ui/layout-grid";
 
 const SkeletonOne = () => {
   return (

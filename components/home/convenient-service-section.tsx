@@ -4,7 +4,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CometCard } from "@/components/ui/comet-card";
 
-// Custom SVG Icons
 const ChooseServiceIcon = ({ className = "w-12 h-12" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="12" y="8" width="40" height="48" rx="4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>

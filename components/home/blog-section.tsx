@@ -2,7 +2,7 @@
 import React from 'react';
 import { FiArrowRight, FiClock } from 'react-icons/fi';
 import Link from 'next/link';
-import { CometCard } from './ui/comet-card';
+import { CometCard } from '../ui/comet-card';
 
 interface BlogPost {
   id: number;

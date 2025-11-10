@@ -43,13 +43,10 @@ export default function ProfilePage() {
   }, [router]);
 
   const handleLogout = async () => {
-    // Clear the cookie by calling an API or redirect
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    // Force a hard reload to clear authentication state
     window.location.href = "/signin";
   };
 
-  // Get initials for avatar
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -62,7 +59,6 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        {/* Background Image */}
         <div 
           className="absolute inset-0 z-0"
           style={{

@@ -17,23 +17,23 @@ import { FiUser, FiLogOut, FiHome } from "react-icons/fi";
 const NAV_ITEMS = [
   {
     name: "Home",
-    link: "#home",
+    link: "/",
   },
   {
     name: "About Us",
-    link: "#about",
+    link: "/about",
   },
   {
     name: "Services",
-    link: "#services",
+    link: "/services",
   },
   {
     name: "Blog",
-    link: "#blog",
+    link: "/blog",
   },
   {
     name: "Contact",
-    link: "#contact",
+    link: "/contact",
   },
 ];
 
@@ -53,7 +53,6 @@ export function NavbarDemo() {
     setIsMobileMenuOpen(false);
   }, []);
 
-  // Check authentication status
   const checkAuth = useCallback(async () => {
     try {
       const response = await fetch("/api/v1/user/verify", {
@@ -61,7 +60,7 @@ export function NavbarDemo() {
         credentials: 'include'
       });
       const data = await response.json();
-      console.log('Auth check:', data); // Debug log
+      console.log('Auth check:', data); 
       if (data.success && data.data) {
         setIsAuthenticated(true);
         setUser(data.data);
@@ -78,17 +77,14 @@ export function NavbarDemo() {
     }
   }, []);
 
-  // Initial auth check and periodic re-check
   useEffect(() => {
     checkAuth();
     
-    // Re-check auth every 30 seconds (reasonable interval)
     const interval = setInterval(checkAuth, 30000);
     
     return () => clearInterval(interval);
   }, [checkAuth]);
 
-  // Re-check auth when window gains focus
   useEffect(() => {
     const handleFocus = () => {
       checkAuth();
@@ -126,7 +122,6 @@ export function NavbarDemo() {
     setIsAuthenticated(false);
     setUser(null);
     setShowDropdown(false);
-    // Force a hard reload to clear authentication state
     window.location.href = "/";
   };
 
@@ -142,7 +137,6 @@ export function NavbarDemo() {
   return (
     <div className="relative w-full">
       <Navbar>
-        {/* Desktop Navigation */}
         <NavBody>
           <NavbarLogo />
           <NavItems items={NAV_ITEMS} />
@@ -189,7 +183,6 @@ export function NavbarDemo() {
           </div>
         </NavBody>
 
-        {/* Mobile Navigation */}
         <MobileNav>
           <MobileNavHeader>
             <NavbarLogo />
