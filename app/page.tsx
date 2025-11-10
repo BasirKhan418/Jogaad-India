@@ -9,6 +9,9 @@ import { ServicesSection } from '@/components/services-section'
 import { CoreAreaSection } from '@/components/core-area-section'
 import { AboutSection } from '@/components/about-section'
 import { ConvenientServiceSection } from '@/components/convenient-service-section'
+import { BlogSection } from '@/components/blog-section'
+import { TestimonialSection } from '@/components/testimonial-section'
+import { AppDownloadSection } from '@/components/app-download-section'
 import { RiTeamFill } from 'react-icons/ri'
 import { IoMdTimer } from 'react-icons/io'
 import { MdVerified } from 'react-icons/md'
@@ -148,6 +151,12 @@ const page = () => {
       <AboutSection />
       
       <ConvenientServiceSection />
+      
+      <BlogSection />
+      
+      <TestimonialSection />
+      
+      <AppDownloadSection />
     </div>
   )
 }

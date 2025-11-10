@@ -6,7 +6,7 @@ import {
   AnimatePresence,
   useScroll,
   useMotionValueEvent,
-} from "motion/react";
+} from "framer-motion";
 
 import React, { useRef, useState } from "react";
 
@@ -89,9 +89,9 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(8px)" : "blur(8px)",
+        backdropFilter: visible ? "blur(8px)" : "blur(0px)",
         boxShadow: visible
-          ? "0 4px 20px rgba(15, 23, 42, 0.04), rounded-full  0 rgba(255,255,255,0.08) inset"
+          ? "0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 0 rgba(255,255,255,0.08) inset"
           : "none",
         width: visible ? "60%" : "100%",
         y: visible ? 12 : 8,
@@ -242,7 +242,7 @@ export const MobileNavToggle = ({
 export const NavbarLogo = () => {
   return (
     <a
-      href="#"
+      href="/"
       className="relative z-20 mr-2 lg:mr-4 flex items-center space-x-3 px-2 py-1 text-base font-medium"
     >
       <img

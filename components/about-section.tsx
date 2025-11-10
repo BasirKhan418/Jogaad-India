@@ -98,7 +98,7 @@ export function AboutSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2B9EB3] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2B9EB3]"></span>
               </span>
-              <span className="text-sm font-bold text-[#0A3D62] tracking-wider">» ABOUT</span>
+              <span className="text-sm font-bold text-[#0A3D62] tracking-wider"> ABOUT</span>
             </div>
 
             {/* Heading */}
