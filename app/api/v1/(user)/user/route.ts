@@ -12,7 +12,7 @@ export async function POST(request:NextRequest) {
         
         const response = await createUser(validatedata.data);
         if(response.success){
-            await sendWelcomeEmail({name: validatedata.data.name, email: validatedata.data.email, isAdmin: false});
+            sendWelcomeEmail({name: validatedata.data.name, email: validatedata.data.email, isAdmin: false});
         }   
         return NextResponse.json(response);
     }

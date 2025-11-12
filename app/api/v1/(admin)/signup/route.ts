@@ -19,7 +19,7 @@ export const POST = async (request: NextRequest) => {
             }
             const response = await createAdmin(validateData.data);
             if(response.success){
-                await sendWelcomeEmail({name: validateData.data.name, email: validateData.data.email, isAdmin: true});
+                sendWelcomeEmail({name: validateData.data.name, email: validateData.data.email, isAdmin: true});
             }
             return NextResponse.json(response);
         }
