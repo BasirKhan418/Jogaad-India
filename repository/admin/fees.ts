@@ -1,7 +1,8 @@
 import ConnectDb from "@/middleware/connectDb";
 import Fees from "@/models/Fees";
+import { FeesInput } from "@/validator/admin/fees";
 //create or update fees
-export const updateFees = async (id: string, updateData: any) => {
+export const updateFees = async (id: string, updateData: FeesInput) => {
     try {
         await ConnectDb();
         const updatedFees = await Fees.findByIdAndUpdate(id, updateData, { new: true });
@@ -15,7 +16,7 @@ export const updateFees = async (id: string, updateData: any) => {
     }
 }
 
-export const createFees = async (feesData: any) => {
+export const createFees = async (feesData: FeesInput) => {
     try {
         await ConnectDb();
         const newFees = new Fees(feesData);
