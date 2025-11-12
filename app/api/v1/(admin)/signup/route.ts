@@ -10,6 +10,7 @@ export const POST = async (request: NextRequest) => {
         const cookiesStore = await cookies();
         const token = cookiesStore.get("token")?.value || "";
         const isTokenValid = await verifyUserToken(token);
+        //needs improvement in logic
         if (data.password === process.env.ADMIN_CREATE_CREDENTIAL) {
             const validateData = AdminSchemaZod.safeParse(data);
             if (!validateData.success) {
