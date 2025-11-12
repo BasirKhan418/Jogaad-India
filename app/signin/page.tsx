@@ -16,7 +16,8 @@ export default function SignInPage() {
   
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-
+//please creare utility functions for these api calls and import here
+//try to use dry principle
   const handleSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -90,6 +91,7 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
+      //violate dry here please create utility function for api calls
       const response = await fetch("/api/v1/user/auth", {
         method: "POST",
         headers: {
