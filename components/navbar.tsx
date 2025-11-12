@@ -55,9 +55,9 @@ export function NavbarDemo() {
   }, []);
 // review
 //create a utility folder for that name anything and import here use it follow srp please
-  const checkAuth = useCallback(async () => {
+  const getData = useCallback(async () => {
     try {
-      const response = await fetch("/api/v1/verify", {
+      const response = await fetch("/api/v1/getdata", {
         cache: 'no-store',
         credentials: 'include'
       });
@@ -78,14 +78,36 @@ export function NavbarDemo() {
       setLoading(false);
     }
   }, []);
+    const checkAuth = useCallback(async () => {
+    try {
+      const response = await fetch("/api/v1/user/verify", {
+        cache: 'no-store',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      console.log('Auth check:', data); 
+      if (data.success) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      setIsAuthenticated(false);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    checkAuth();
+    getData();
     
     const interval = setInterval(checkAuth, 30000);
     
     return () => clearInterval(interval);
-  }, [checkAuth]);
+  }, []);
 
   useEffect(() => {
     const handleFocus = () => {

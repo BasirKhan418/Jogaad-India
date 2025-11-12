@@ -25,7 +25,7 @@ export default function ProfilePage() {
     //add profile update functionality with image upload and crop
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/v1/verify");
+        const response = await fetch("/api/v1/getdata");
         const data = await response.json();
 
         if (!data.success) {

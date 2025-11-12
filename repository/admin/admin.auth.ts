@@ -20,7 +20,7 @@ export const verifyAdminByEmail = async (email: string) => {
         await ConnectDb();
         const admin = await Admin.findOne({email});
         if(admin){
-            return {message:"Admin verified successfully",admin,success:true};
+            return {message:"Admin verified successfully",data:admin,success:true};
         }
         return {message:"Admin not found",success:false};
     }
