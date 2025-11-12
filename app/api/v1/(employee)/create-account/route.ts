@@ -13,7 +13,7 @@ export async function POST(request: Request) {
         const data = await request.json();
         const redisClient = setConnectionRedis();
         const checkdata = await getEmployeeByEmail(data.email);
-        if (checkdata.success && !checkdata.employee.isPaid) {
+        if (checkdata.success && !checkdata.data?.isPaid) {
             const getExistingOrder = await redisClient.get(`employee_${data.email}_order`);
             if (getExistingOrder) {
                 const order = JSON.parse(getExistingOrder);
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
             else {
                 const getFeesdata = await getFees();
                 const amount = getFeesdata.data.employeeOneTimeFee * 100; //amount in paise
-                const receipt = `emp_reg_${checkdata.employee?._id}`;
+                const receipt = `emp_reg_${checkdata.data?._id}`;
                 const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
                 if (!orderResponse.success) {
                     return NextResponse.json({ message: "Error creating payment order", success: false }, { status: 500 });
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
                 return NextResponse.json({ message: "Employee account exists , Please complete the payment for account activation", success: true, order: orderResponse.order }, { status: 200 });
             }
         }
-        if (checkdata.success && checkdata.employee.isPaid) {
+        if (checkdata.success && checkdata.data.isPaid) {
             return NextResponse.json({
                 message: "Employee account exists and is already paid",
                 success: true,
