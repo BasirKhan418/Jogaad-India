@@ -89,7 +89,7 @@ export function NavbarDemo() {
                   className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold hover:shadow-lg transition-all overflow-hidden"
                 >
                   {user.img ? (
-                    <Image 
+                    <img
                       src={user.img} 
                       alt={user.name}
                       width={40}
