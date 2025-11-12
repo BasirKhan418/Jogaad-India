@@ -14,7 +14,8 @@ import { logoutUser } from "@/actions/logout";
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FiUser, FiLogOut, FiHome } from "react-icons/fi";
-import {toast} from "sonner";
+import { toast } from "sonner";
+import { useAuth, getUserInitials } from "@/utils/auth";
 const NAV_ITEMS = [
   {
     name: "Home",
@@ -40,11 +41,9 @@ const NAV_ITEMS = [
 
 export function NavbarDemo() {
   const router = useRouter();
+  const { isAuthenticated, user, loading, logout: authLogout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [loading, setLoading] = useState(true);
   
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -53,81 +52,6 @@ export function NavbarDemo() {
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
-// review
-//create a utility folder for that name anything and import here use it follow srp please
-  const getData = useCallback(async () => {
-    try {
-      const response = await fetch("/api/v1/getdata", {
-        cache: 'no-store',
-        credentials: 'include'
-      });
-      const data = await response.json();
-      console.log('Auth check:', data); 
-      if (data.success && data.data) {
-        setIsAuthenticated(true);
-        setUser(data.data);
-      } else {
-        setIsAuthenticated(false);
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Auth check error:', error);
-      setIsAuthenticated(false);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-    const checkAuth = useCallback(async () => {
-    try {
-      const response = await fetch("/api/v1/user/verify", {
-        cache: 'no-store',
-        credentials: 'include'
-      });
-      const data = await response.json();
-      console.log('Auth check:', data); 
-      if (data.success) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Auth check error:', error);
-      setIsAuthenticated(false);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    getData();
-    
-    const interval = setInterval(checkAuth, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const handleFocus = () => {
-      checkAuth();
-    };
-    
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, [checkAuth]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        checkAuth();
-      }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [checkAuth]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -143,21 +67,11 @@ export function NavbarDemo() {
 
   const handleLogout = () => {
     logoutUser().then(() => {
-      setIsAuthenticated(false);
-      setUser(null);
+      authLogout();
       setShowDropdown(false);
       toast.success("Logged out successfully");
       router.push("/signin");
     });
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map(word => word[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
   };
 
   return (
@@ -173,7 +87,7 @@ export function NavbarDemo() {
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold hover:shadow-lg transition-all"
                 >
-                  {getInitials(user.name)}
+                  {getUserInitials(user.name)}
                 </button>
                 
                 {showDropdown && (
@@ -238,7 +152,7 @@ export function NavbarDemo() {
                   <div className="px-4 py-3 bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 rounded-lg border border-[#2B9EB3]/30">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold">
-                        {getInitials(user.name)}
+                        {getUserInitials(user.name)}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-[#0A3D62]">{user.name}</p>
