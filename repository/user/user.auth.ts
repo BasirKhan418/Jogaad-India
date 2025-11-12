@@ -20,7 +20,7 @@ export const verifyUserByEmail = async (email: string) => {
         await ConnectDb();
         const user = await User.findOne({email});
         if(user){
-            return {message:"User verified successfully",data:user,success:true};
+            return {message:"User verified successfully",data:user,success:true,type:"user"};
         }
         return {message:"User not found",success:false};
     }
