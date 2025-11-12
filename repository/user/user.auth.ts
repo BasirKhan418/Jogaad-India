@@ -57,6 +57,7 @@ export const generateOTP = async (email: string, checkUserExists: boolean = true
         }
         
         const redisClient = setConnectionRedis();
+        
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         console.log(`Generated OTP for ${email}: ${otp}`);
         await redisClient.set(`otp-user:${email}`, otp, "EX", 300);
