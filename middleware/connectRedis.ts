@@ -5,7 +5,7 @@ const redisConfig = {
     port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
     username: process.env.REDIS_USERNAME || 'default',
     password: process.env.REDIS_PASSWORD || '',
-    tls: {}
+    ...(process.env.NODE_ENV === 'development' ? {} : { tls: {} })
 };
 
 const setConnectionRedis = () => {

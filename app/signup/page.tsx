@@ -1,127 +1,34 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSignup } from "@/utils/auth";
 
 export default function SignUpPage() {
-  const router = useRouter();
-  const [step, setStep] = useState<"details" | "otp">("details");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
-  
-  const [otp, setOtp] = useState("");
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
-    setError("");
-  };
+  const {
+    step,
+    loading,
+    error,
+    success,
+    formData,
+    otp,
+    setOtp,
+    handleInputChange,
+    sendOtp,
+    submitSignup,
+    goBackToDetails
+  } = useSignup();
 
   const handleSubmitDetails = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    try {
-      // First, generate OTP
-      const otpResponse = await fetch("/api/v1/user/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: formData.email, isSignup: true }),
-      });
-
-      const otpData = await otpResponse.json();
-
-      if (!otpData.success) {
-        setError(otpData.message || "Failed to send OTP");
-        setLoading(false);
-        return;
-      }
-
-      setSuccess("OTP sent to your email!");
-      setStep("otp");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    await sendOtp();
   };
 
   const handleSubmitOTP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    try {
-      // Create user account first
-      const createUserResponse = await fetch("/api/v1/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || undefined,
-          address: formData.address || undefined,
-        }),
-      });
-
-      const userData = await createUserResponse.json();
-
-      if (!userData.success) {
-        setError(userData.message || "Failed to create account");
-        setLoading(false);
-        return;
-      }
-
-      // Then verify OTP (this will set the authentication cookie)
-      const verifyResponse = await fetch("/api/v1/user/validate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          otp: otp,
-        }),
-      });
-
-      const verifyData = await verifyResponse.json();
-
-      if (!verifyData.success) {
-        setError(verifyData.message || "Invalid OTP");
-        setLoading(false);
-        return;
-      }
-
-      setSuccess("Account created successfully!");
-      setTimeout(() => {
-        // Force a hard reload to update authentication state
-        window.location.href = "/";
-      }, 1500);
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    await submitSignup();
   };
 
   return (
@@ -247,10 +154,7 @@ export default function SignUpPage() {
                 type="text"
                 maxLength={6}
                 value={otp}
-                onChange={(e) => {
-                  setOtp(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => setOtp(e.target.value)}
                 required
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -269,12 +173,7 @@ export default function SignUpPage() {
 
             <button
               type="button"
-              onClick={() => {
-                setStep("details");
-                setOtp("");
-                setError("");
-                setSuccess("");
-              }}
+              onClick={goBackToDetails}
               className="mt-4 text-sm text-[#2B9EB3] hover:text-[#0A3D62] font-semibold hover:underline w-full text-center"
             >
               ← Back to details

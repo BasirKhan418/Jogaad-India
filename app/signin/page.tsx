@@ -1,119 +1,45 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "sonner";
-//add image, background with overlay and gradient orbs animated , modern look
+import { useSignin } from "@/utils/auth";
+//Modern signin page with optimized auth utilities
 export default function SignInPage() {
-  const router = useRouter();
-  const [step, setStep] = useState<"email" | "otp">("email");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-//please creare utility functions for these api calls and import here
-//try to use dry principle
+  const {
+    step,
+    loading,
+    error,
+    success,
+    email,
+    otp,
+    setStep,
+    setEmail,
+    setOtp,
+    handleSendOtp,
+    handleValidateOtp,
+    handleResendOtp,
+    resetForm
+  } = useSignin();
+
   const handleSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/v1/user/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        setError(data.message || "Failed to send OTP");
-        setLoading(false);
-        return;
-      }
-      toast.success("OTP sent to your email!");
-      setStep("otp");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    await handleSendOtp(email);
   };
 
   const handleSubmitOTP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/v1/user/validate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        setError(data.message || "Invalid OTP");
-        setLoading(false);
-        return;
-      }
-
-      setSuccess("Login successful!");
-      router.push("/");
-      toast.success("Logged in successfully!");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    await handleValidateOtp(email, otp);
   };
 
-  const handleResendOTP = async () => {
-    setError("");
-    setSuccess("");
-    setLoading(true);
+  const handleResendOTPClick = async () => {
+    await handleResendOtp(email);
+  };
 
-    try {
-      //violate dry here please create utility function for api calls
-      const response = await fetch("/api/v1/user/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        setError(data.message || "Failed to resend OTP");
-        setLoading(false);
-        return;
-      }
-
-      setSuccess("OTP resent successfully!");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  const handleChangeEmail = () => {
+    setStep("email");
+    setOtp("");
   };
 
   return (
@@ -174,10 +100,7 @@ export default function SignInPage() {
                 placeholder="john@example.com"
                 type="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </LabelInputContainer>
@@ -216,10 +139,7 @@ export default function SignInPage() {
                 type="text"
                 maxLength={6}
                 value={otp}
-                onChange={(e) => {
-                  setOtp(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => setOtp(e.target.value)}
                 required
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -239,12 +159,7 @@ export default function SignInPage() {
             <div className="mt-4 flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => {
-                  setStep("email");
-                  setOtp("");
-                  setError("");
-                  setSuccess("");
-                }}
+                onClick={handleChangeEmail}
                 className="text-sm text-[#2B9EB3] hover:text-[#0A3D62] font-semibold hover:underline"
               >
                 ← Change email
@@ -252,7 +167,7 @@ export default function SignInPage() {
               
               <button
                 type="button"
-                onClick={handleResendOTP}
+                onClick={handleResendOTPClick}
                 disabled={loading}
                 className="text-sm text-[#2B9EB3] hover:text-[#0A3D62] font-semibold hover:underline disabled:opacity-50"
               >
