@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-
+//add image, background with overlay and gradient orbs animated , modern look
 export default function SignInPage() {
   const router = useRouter();
   const [step, setStep] = useState<"email" | "otp">("email");

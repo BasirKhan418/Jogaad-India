@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Spotlight } from "@/components/ui/spotlight";
 import { FiUser, FiMail, FiPhone, FiMapPin, FiLogOut, FiHome, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
-
+import { logoutUser } from "@/actions/logout";
+import { toast } from "sonner";
 interface UserData {
   name: string;
   email: string;
@@ -21,9 +22,10 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    //add profile update functionality with image upload and crop
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/v1/user/verify");
+        const response = await fetch("/api/v1/verify");
         const data = await response.json();
 
         if (!data.success) {
@@ -43,8 +45,10 @@ export default function ProfilePage() {
   }, [router]);
 
   const handleLogout = async () => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "/signin";
+    logoutUser().then(() => {
+      router.push("/signin");
+      toast.success("Logged out successfully!");
+    });
   };
 
   const getInitials = (name: string) => {
