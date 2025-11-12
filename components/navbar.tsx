@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { FiUser, FiLogOut, FiHome } from "react-icons/fi";
 import { toast } from "sonner";
 import { useAuth, getUserInitials } from "@/utils/auth";
+import Image from "next/image";
 const NAV_ITEMS = [
   {
     name: "Home",
@@ -85,9 +86,19 @@ export function NavbarDemo() {
               <div className="relative profile-dropdown">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold hover:shadow-lg transition-all"
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold hover:shadow-lg transition-all overflow-hidden"
                 >
-                  {getUserInitials(user.name)}
+                  {user.img ? (
+                    <Image 
+                      src={user.img} 
+                      alt={user.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    getUserInitials(user.name)
+                  )}
                 </button>
                 
                 {showDropdown && (
@@ -151,8 +162,18 @@ export function NavbarDemo() {
                 <>
                   <div className="px-4 py-3 bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 rounded-lg border border-[#2B9EB3]/30">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold">
-                        {getUserInitials(user.name)}
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold overflow-hidden">
+                        {user.img ? (
+                          <Image 
+                            src={user.img} 
+                            alt={user.name}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          getUserInitials(user.name)
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-[#0A3D62]">{user.name}</p>
