@@ -103,16 +103,20 @@ export function NavbarDemo() {
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold hover:shadow-lg transition-all overflow-hidden"
                 >
-                  {user.img ? (
-                    <img
-                      src={user.img} 
+                  {user.img && user.img.trim() !== "" ? (
+                    <Image
+                      src={user.img}
                       alt={user.name}
                       width={40}
                       height={40}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
                     />
-                  ) : (
-                    <span className="text-sm">{getUserInitials(user.name)}</span>
+                  ) : null}
+                  {(!user.img || user.img.trim() === "") && (
+                    <span className="text-white font-bold text-sm leading-none">{getUserInitials(user.name)}</span>
                   )}
                 </button>
                 
@@ -178,16 +182,20 @@ export function NavbarDemo() {
                   <div className="px-4 py-3 bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 rounded-lg border border-[#2B9EB3]/30">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-semibold overflow-hidden">
-                        {user.img ? (
+                        {user.img && user.img.trim() !== "" ? (
                           <Image 
                             src={user.img} 
                             alt={user.name}
                             width={40}
                             height={40}
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
                           />
-                        ) : (
-                          <span className="text-sm">{getUserInitials(user.name)}</span>
+                        ) : null}
+                        {(!user.img || user.img.trim() === "") && (
+                          <span className="text-white font-bold text-sm leading-none">{getUserInitials(user.name)}</span>
                         )}
                       </div>
                       <div>

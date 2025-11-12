@@ -20,6 +20,7 @@ import {
   IconShield,
 } from "@tabler/icons-react";
 import { getAdminData, logoutAdmin, AdminData, updateAdminProfile } from "@/utils/admin/adminAuthService";
+import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -242,11 +243,13 @@ export default function AdminProfile() {
     try {
       setIsSaving(true);
 
-      const result = await updateAdminProfile({
+      const profileUpdateData = {
         name: formData.name,
         phone: formData.phone,
         img: formData.img,
-      });
+      };
+      
+      const result = await updateAdminProfile(profileUpdateData);
 
       if (result.success) {
         toast.success("Profile updated successfully");
@@ -346,23 +349,20 @@ export default function AdminProfile() {
                     label: adminData.name || adminData.email,
                     href: "#",
                     icon: (
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                        {adminData.img ? (
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center overflow-hidden relative">
+                        {adminData.img && adminData.img.trim() !== "" ? (
                           <img
                             src={adminData.img}
                             alt={adminData.name}
-                            className="h-7 w-7 rounded-full object-cover"
+                            className="h-7 w-7 rounded-full object-cover absolute inset-0"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
                           />
-                        ) : (
-                          adminData.name
-                            ? adminData.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()
-                                .slice(0, 2)
-                            : "AD"
-                        )}
+                        ) : null}
+                        <span className="text-white font-bold text-xs leading-none select-none" style={{ fontSize: '10px', color: 'white' }}>
+                          {getUserInitials(adminData.name || adminData.email || "AD")}
+                        </span>
                       </div>
                     ),
                   }}
@@ -391,27 +391,27 @@ export default function AdminProfile() {
       <div className="flex flex-1 overflow-hidden">
         <div className="flex h-full w-full flex-1 flex-col rounded-tl-2xl border border-neutral-200 bg-gradient-to-br from-white via-neutral-50 to-neutral-100 dark:border-neutral-700 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-800 overflow-y-auto">
           {/* Hero Section - Minimal height */}
-          <div className="relative bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] h-24 md:h-32">
+          <div className="relative z-0 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] h-24 md:h-32">
             <div className="absolute inset-0 bg-black/10"></div>
-            <div className="absolute -bottom-10 md:-bottom-12 left-1/2 transform -translate-x-1/2">
+            <div className="absolute -bottom-10 md:-bottom-12 left-1/2 transform -translate-x-1/2 z-20">
               <div className="relative">
                 <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-white dark:bg-neutral-800 p-1.5 shadow-2xl">
                   <div className="h-full w-full rounded-full bg-gradient-to-br from-[#F9A825] to-[#2B9EB3] flex items-center justify-center text-white font-bold text-2xl md:text-3xl overflow-hidden">
-                    {formData.img ? (
+                    {formData.img && formData.img.trim() !== "" ? (
                       <img
                         src={formData.img}
                         alt={formData.name}
                         className="h-full w-full rounded-full object-cover"
+                        onError={(e) => {
+                          setFormData(prev => ({ ...prev, img: "" }));
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
                       />
-                    ) : (
-                      formData.name
-                        ? formData.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .toUpperCase()
-                            .slice(0, 2)
-                        : "AD"
+                    ) : null}
+                    {(!formData.img || formData.img.trim() === "") && (
+                      <span className="text-white font-bold leading-none">
+                        {getUserInitials(formData.name || "AD")}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export default function AdminProfile() {
           </div>
 
           {/* Content Section - Compact spacing */}
-          <div className="mt-12 md:mt-14 px-3 md:px-6 lg:px-8 pb-4 md:pb-6">
+          <div className="mt-14 md:mt-16 px-3 md:px-6 lg:px-8 pb-4 md:pb-6 relative z-10">
             <div className="text-center mb-4 md:mb-6">
               <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-1.5">
                 {formData.name || "Admin User"}

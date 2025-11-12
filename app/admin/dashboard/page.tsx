@@ -20,6 +20,7 @@ import {
   IconUser
 } from "@tabler/icons-react";
 import { getAdminData, logoutAdmin, AdminData } from "@/utils/admin/adminAuthService";
+import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 
 interface DashboardSectionProps {
@@ -222,23 +223,21 @@ export default function AdminDashboard() {
                     label: adminData.name || adminData.email,
                     href: "/admin/profile",
                     icon: (
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                        {adminData.img ? (
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center overflow-hidden relative">
+                        {adminData.img && adminData.img.trim() !== "" ? (
                           <img
                             src={adminData.img}
                             alt={adminData.name}
-                            className="h-7 w-7 rounded-full object-cover"
+                            className="h-7 w-7 rounded-full object-cover absolute inset-0"
+                            onError={(e) => {
+                              // Hide the image on error so initials show
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
                           />
-                        ) : (
-                          adminData.name
-                            ? adminData.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()
-                                .slice(0, 2)
-                            : "AD"
-                        )}
+                        ) : null}
+                        <span className="text-white font-bold text-xs leading-none select-none" style={{ fontSize: '10px', color: 'white' }}>
+                          {getUserInitials(adminData.name || adminData.email || "AD")}
+                        </span>
                       </div>
                     ),
                   }}
