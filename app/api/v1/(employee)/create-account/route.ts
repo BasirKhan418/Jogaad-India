@@ -1,0 +1,60 @@
+import { NextResponse } from "next/server";
+import { createEmployee, updateEmployeeByEmail, getEmployeeByEmail } from "@/repository/employee/employee.auth";
+import setConnectionRedis from "@/middleware/connectRedis";
+import { CreateEmployeeOrder } from "@/utils/employee/createPayment";
+import { getFees } from "@/repository/admin/fees";
+import { updateOrderidByEmail } from "@/repository/employee/employee.auth";
+export async function POST(request: Request) {
+    try {
+        const data = await request.json();
+        const redisClient = setConnectionRedis();
+        const checkdata = await getEmployeeByEmail(data.email);
+        if (checkdata.success && !checkdata.employee.isPaid) {
+            const getExistingOrder = await redisClient.get(`employee_${data.email}_order`);
+            if (getExistingOrder) {
+                const order = JSON.parse(getExistingOrder);
+                return NextResponse.json({ message: "Employee account exists,Please complete the payment for account activation", success: true, order }, { status: 200 });
+
+            }
+            else {
+                const getFeesdata = await getFees();
+                const amount = getFeesdata.data.employeeOneTimeFee * 100; //amount in paise
+                const receipt = `emp_reg_${checkdata.employee?._id}`;
+                const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
+                if (!orderResponse.success) {
+                    return NextResponse.json({ message: "Error creating payment order", success: false }, { status: 500 });
+                }
+                await redisClient.set(`employee_${data.email}_order`, JSON.stringify(orderResponse.order), "EX", 15 * 60); //expire in 15 minutes
+                await updateOrderidByEmail(data.email, orderResponse.order.id || "");
+                return NextResponse.json({ message: "Employee account exists , Please complete the payment for account activation", success: true, order: orderResponse.order }, { status: 200 });
+            }
+        }
+        if (checkdata.success && checkdata.employee.isPaid) {
+            return NextResponse.json({
+                message: "Employee account exists and is already paid",
+                success: true,
+                redirect: true
+            }, { status: 200 });
+
+        }
+        const response = await createEmployee(data);
+        const getFeesdata = await getFees();
+        if (!getFeesdata.success) {
+            return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
+        }
+        const amount = getFeesdata.data.employeeOneTimeFee * 100; //amount in paise
+        const receipt = `emp_reg_${response.employee?._id}`;
+        const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
+        if (!orderResponse.success) {
+            return NextResponse.json({ message: "Error creating payment order", success: false }, { status: 500 });
+        }
+        await redisClient.set(`employee_${data.email}_order`, JSON.stringify(orderResponse.order), "EX", 15 * 60); //expire in 15 minutes
+        await updateOrderidByEmail(data.email, orderResponse.order.id || "");
+
+        return NextResponse.json({ ...response, order: orderResponse.order }, { status: 200 });
+
+    }
+    catch (error) {
+        return NextResponse.json({ message: "Internal Server Error", success: false }, { status: 500 });
+    }
+}
