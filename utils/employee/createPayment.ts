@@ -17,7 +17,6 @@ export const CreateEmployeeOrder = async (amount: number, currency: string, rece
     const order = await new Promise((resolve, reject) => {
       instance.orders.create(options, (err, order) => {
         if (err) {
-          console.log("Razorpay Order Creation Error:", err);
           reject(err);
         } else {
           resolve(order);
@@ -27,7 +26,6 @@ export const CreateEmployeeOrder = async (amount: number, currency: string, rece
 
     return { message: "Order created successfully", order, success: true };
   } catch (error) {
-    console.log("CreateEmployeeOrder Error:", error);
     return { message: "Error creating payment order", error, success: false, order: null };
   }
 };

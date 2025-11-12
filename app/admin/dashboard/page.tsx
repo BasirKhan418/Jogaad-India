@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -25,38 +26,9 @@ interface DashboardSectionProps {
   children: React.ReactNode;
 }
 
-const DashboardSection: React.FC<DashboardSectionProps> = ({ title, children }) => (
-  <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-white/30 shadow-lg">
-    <h2 className="text-xl font-semibold text-[#0A3D62] mb-4">{title}</h2>
-    {children}
-  </div>
-);
-
-const StatCard: React.FC<{
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  trend?: string;
-}> = ({ title, value, icon, trend }) => (
-  <motion.div
-    whileHover={{ scale: 1.02 }}
-    className="bg-gradient-to-br from-[#F9A825]/10 via-[#2B9EB3]/10 to-[#0A3D62]/10 p-6 rounded-xl border border-[#F9A825]/20 backdrop-blur-sm shadow-lg"
-  >
-    <div className="flex items-center justify-between mb-2">
-      <div className="text-[#2B9EB3]">{icon}</div>
-      {trend && (
-        <span className="text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">{trend}</span>
-      )}
-    </div>
-    <h3 className="text-sm text-[#0A3D62]/70 mb-1">{title}</h3>
-    <p className="text-2xl font-bold text-[#0A3D62]">{value}</p>
-  </motion.div>
-);
-
 export default function AdminDashboard() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('dashboard');
   const [adminData, setAdminData] = useState<AdminData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -66,58 +38,79 @@ export default function AdminDashboard() {
     {
       label: "Dashboard",
       href: "#dashboard",
-      icon: <IconDashboard className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />,
-      onClick: () => setActiveSection('dashboard')
+      icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Users",
       href: "#users",
-      icon: <IconUsers className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />,
-      onClick: () => setActiveSection('users')
+      icon: <IconUsers className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Categories",
       href: "#categories", 
-      icon: <IconCategory className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />,
-      onClick: () => setActiveSection('categories')
+      icon: <IconCategory className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Fees",
       href: "#fees",
-      icon: <IconCurrencyDollar className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />,
-      onClick: () => setActiveSection('fees')
+      icon: <IconCurrencyDollar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Analytics",
       href: "#analytics",
-      icon: <IconChartBar className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />,
-      onClick: () => setActiveSection('analytics')
+      icon: <IconChartBar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Settings",
       href: "#settings",
-      icon: <IconSettings className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />,
-      onClick: () => setActiveSection('settings')
+      icon: <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
   ];
 
   // Fetch admin data on mount
   useEffect(() => {
-    const fetchAdminData = async () => {
+    const fetchAdminData = async (retryCount = 0) => {
       try {
         setError('');
         const result = await getAdminData();
         if (result.success && result.data) {
           setAdminData(result.data);
         } else {
+          // Retry once after a short delay to handle timing issues
+          if (retryCount < 1) {
+            setTimeout(() => {
+              fetchAdminData(retryCount + 1);
+            }, 1000);
+            return;
+          }
+          
           setError(result.message || 'Failed to load admin data');
-          // Redirect to signin if not authenticated
-          router.push('/admin/signin');
+          
+          // Add a delay before redirecting to handle timing issues with fresh logins
+          setTimeout(() => {
+            router.push('/admin/signin');
+          }, 2000);
         }
       } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+        
+        // Retry once after a short delay to handle timing issues
+        if (retryCount < 1) {
+          setTimeout(() => {
+            fetchAdminData(retryCount + 1);
+          }, 1000);
+          return;
+        }
+        
         console.error('Failed to fetch admin data:', error);
         setError('Network error occurred');
-        router.push('/admin/signin');
+        
+        // Add a delay before redirecting to handle timing issues with fresh logins
+        setTimeout(() => {
+          router.push('/admin/signin');
+        }, 2000);
       } finally {
         setLoading(false);
       }
@@ -126,7 +119,6 @@ export default function AdminDashboard() {
     fetchAdminData();
   }, [router]);
 
-  // Handle logout
   const handleLogout = async () => {
     try {
       const result = await logoutAdmin();
@@ -136,13 +128,11 @@ export default function AdminDashboard() {
       } else {
         console.error('Logout failed:', result.message);
         toast.error('Logout failed');
-        // Still redirect to signin even if logout API fails
         router.push('/admin/signin');
       }
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Logout error occurred');
-      // Still redirect to signin even if there's an error
       router.push('/admin/signin');
     }
   };
@@ -203,279 +193,145 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Background */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'url(/bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-      
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-white/40 backdrop-blur-sm z-10" />
-      
-      {/* Dot Pattern */}
-      <div className="absolute inset-0 z-10 opacity-[0.02]" style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(10, 61, 98) 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }} />
-
+    <div className={cn("flex w-full flex-1 flex-col overflow-hidden md:flex-row", "h-screen")}>
       <Toaster position="top-right" richColors />
       
-      <div className="relative z-20 flex">
-        <Sidebar open={open} setOpen={setOpen}>
-          <SidebarBody className="justify-between gap-10">
-            <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-              {open ? <Logo /> : <LogoIcon />}
-              <div className="mt-8 flex flex-col gap-2">
-                {links.map((link, idx) => (
-                  <SidebarLink 
-                    key={idx} 
-                    link={{
-                      ...link,
-                      href: link.href,
-                      onClick: link.onClick
-                    }} 
-                  />
-                ))}
-              </div>
+      <Sidebar open={open} setOpen={setOpen}>
+        <SidebarBody className="justify-between gap-10">
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            {open ? <Logo /> : <LogoIcon />}
+            <div className="mt-8 flex flex-col gap-2">
+              {links.map((link, idx) => (
+                <SidebarLink key={idx} link={link} />
+              ))}
             </div>
-            
-            {/* User Section */}
-            <div>
+          </div>
+          
+          {/* User Section */}
+          <div>
+            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
               {adminData && (
                 <SidebarLink
                   link={{
                     label: adminData.name || adminData.email,
-                    href: "#profile",
-                    icon: <IconUserBolt className="text-[#0A3D62] h-5 w-5 flex-shrink-0" />
+                    href: "#",
+                    icon: (
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center text-white font-bold text-sm">
+                        {adminData.name?.charAt(0).toUpperCase() || "A"}
+                      </div>
+                    ),
                   }}
                 />
               )}
-              <SidebarLink
-                link={{
-                  label: "Logout",
-                  href: "#logout",
-                  icon: <IconLogout className="text-red-500 h-5 w-5 flex-shrink-0" />,
-                  onClick: handleLogout
-                }}
-              />
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 w-full py-2 px-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors mt-2"
+              >
+                <IconLogout className="h-5 w-5 text-neutral-700 dark:text-neutral-200 shrink-0" />
+                <motion.span
+                  animate={{
+                    display: open ? "inline-block" : "none",
+                    opacity: open ? 1 : 0,
+                  }}
+                  className="text-sm text-neutral-700 dark:text-neutral-200"
+                >
+                  Logout
+                </motion.span>
+              </button>
             </div>
-          </SidebarBody>
-        </Sidebar>
-
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-6">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-4xl font-bold text-[#0A3D62] mb-2">
-                    {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
-                  </h1>
-                  <p className="text-[#0A3D62]/70 text-lg">
-                    Welcome back, {adminData?.name || adminData?.email}
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-[#0A3D62]/60 bg-white/40 backdrop-blur-sm px-4 py-2 rounded-full">
-                  <span>Last login: {new Date().toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-
-          {/* Content based on active section */}
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-6"
-          >
-            {activeSection === 'dashboard' && (
-              <>
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <StatCard
-                    title="Total Users"
-                    value="1,234"
-                    icon={<IconUsers className="w-6 h-6" />}
-                    trend="+12%"
-                  />
-                  <StatCard
-                    title="Categories"
-                    value="45"
-                    icon={<IconCategory className="w-6 h-6" />}
-                    trend="+5%"
-                  />
-                  <StatCard
-                    title="Revenue"
-                    value="₹45,678"
-                    icon={<IconCurrencyDollar className="w-6 h-6" />}
-                    trend="+23%"
-                  />
-                  <StatCard
-                    title="Active Services"
-                    value="89"
-                    icon={<IconChartBar className="w-6 h-6" />}
-                    trend="+8%"
-                  />
-                </div>
-
-                {/* Dashboard Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <DashboardSection title="Recent Activity">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-white/40 rounded-lg border border-white/20">
-                        <span className="text-[#0A3D62]">New user registration</span>
-                        <span className="text-xs text-[#0A3D62]/60">2 mins ago</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-white/40 rounded-lg border border-white/20">
-                        <span className="text-[#0A3D62]">Category updated</span>
-                        <span className="text-xs text-[#0A3D62]/60">1 hour ago</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-white/40 rounded-lg border border-white/20">
-                        <span className="text-[#0A3D62]">Fee structure modified</span>
-                        <span className="text-xs text-[#0A3D62]/60">3 hours ago</span>
-                      </div>
-                    </div>
-                  </DashboardSection>
-
-                  <DashboardSection title="System Status">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#0A3D62]">API Status</span>
-                        <span className="px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs rounded-full">
-                          Operational
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#0A3D62]">Database</span>
-                        <span className="px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs rounded-full">
-                          Healthy
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#0A3D62]">Email Service</span>
-                        <span className="px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs rounded-full">
-                          Active
-                        </span>
-                      </div>
-                    </div>
-                  </DashboardSection>
-                </div>
-              </>
-            )}
-
-            {activeSection === 'users' && (
-              <DashboardSection title="User Management">
-                <div className="text-[#0A3D62]/80">
-                  <p>User management features will be implemented here.</p>
-                  <p className="mt-2">This section will include:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>User list with search and filtering</li>
-                    <li>User details and profile management</li>
-                    <li>User activity monitoring</li>
-                    <li>Account status management</li>
-                  </ul>
-                </div>
-              </DashboardSection>
-            )}
-
-            {activeSection === 'categories' && (
-              <DashboardSection title="Category Management">
-                <div className="text-[#0A3D62]/80">
-                  <p>Category management interface will be built here.</p>
-                  <p className="mt-2">Features include:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>Create, edit, and delete categories</li>
-                    <li>Category hierarchy management</li>
-                    <li>Service category assignments</li>
-                    <li>Category analytics</li>
-                  </ul>
-                </div>
-              </DashboardSection>
-            )}
-
-            {activeSection === 'fees' && (
-              <DashboardSection title="Fee Management">
-                <div className="text-[#0A3D62]/80">
-                  <p>Fee structure management will be implemented here.</p>
-                  <p className="mt-2">This will include:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>Service fee configuration</li>
-                    <li>Commission structure management</li>
-                    <li>Payment method settings</li>
-                    <li>Fee analytics and reporting</li>
-                  </ul>
-                </div>
-              </DashboardSection>
-            )}
-
-            {activeSection === 'analytics' && (
-              <DashboardSection title="Analytics & Reports">
-                <div className="text-[#0A3D62]/80">
-                  <p>Comprehensive analytics dashboard coming soon.</p>
-                  <p className="mt-2">Will feature:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>Revenue analytics</li>
-                    <li>User engagement metrics</li>
-                    <li>Service performance tracking</li>
-                    <li>Custom report generation</li>
-                  </ul>
-                </div>
-              </DashboardSection>
-            )}
-
-            {activeSection === 'settings' && (
-              <DashboardSection title="System Settings">
-                <div className="text-[#0A3D62]/80">
-                  <p>System configuration panel will be available here.</p>
-                  <p className="mt-2">Settings will include:</p>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>Application configuration</li>
-                    <li>Email template management</li>
-                    <li>Security settings</li>
-                    <li>Integration configurations</li>
-                  </ul>
-                </div>
-              </DashboardSection>
-            )}
-          </motion.div>
-        </div>
-      </div>
-    </div>
+          </div>
+        </SidebarBody>
+      </Sidebar>
+      
+      <Dashboard adminData={adminData} />
     </div>
   );
 }
 
 const Logo = () => {
   return (
-    <div className="font-normal flex space-x-2 items-center text-sm text-[#0A3D62] py-1 relative z-20">
-      <div className="w-8 h-8 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] rounded-lg flex items-center justify-center">
-        <IconShield className="h-5 w-5 text-white" />
-      </div>
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-bold text-[#0A3D62] whitespace-pre"
-      >
-        Jogaad Admin
-      </motion.span>
-    </div>
+    <a
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-neutral-800 dark:text-neutral-200 py-1 relative z-20"
+    >
+      <img 
+        src="/logo.png" 
+        alt="Jogaad India Logo" 
+        className="h-8 w-auto"
+      />
+    </a>
   );
 };
 
 const LogoIcon = () => {
   return (
-    <div className="font-normal flex space-x-2 items-center text-sm text-[#0A3D62] py-1 relative z-20">
-      <div className="w-8 h-8 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] rounded-lg flex items-center justify-center">
-        <IconShield className="h-5 w-5 text-white" />
+    <a
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-neutral-800 dark:text-neutral-200 py-1 relative z-20"
+    >
+      <img 
+        src="/logo.png" 
+        alt="Jogaad India" 
+        className="h-8 w-8 object-contain"
+      />
+    </a>
+  );
+};
+
+// Dashboard component
+const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <div className="flex h-full w-full flex-1 flex-col gap-4 rounded-tl-2xl border border-neutral-200 bg-white p-4 md:p-10 dark:border-neutral-700 dark:bg-neutral-900 overflow-y-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-neutral-800 dark:text-neutral-100">
+            Welcome back, {adminData?.name || "Admin"}!
+          </h1>
+          <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+            Here's what's happening with your platform today.
+          </p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <DashboardStatCard title="Total Users" value="0" />
+          <DashboardStatCard title="Categories" value="0" />
+          <DashboardStatCard title="Total Revenue" value="₹0" />
+          <DashboardStatCard title="Active Services" value="0" />
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+          <DashboardContentCard title="Recent Activity">
+            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+              No recent activity to display.
+            </p>
+          </DashboardContentCard>
+          <DashboardContentCard title="Quick Actions">
+            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+              Select an action from the sidebar to get started.
+            </p>
+          </DashboardContentCard>
+        </div>
       </div>
+    </div>
+  );
+};
+
+const DashboardStatCard = ({ title, value }: { title: string; value: string }) => {
+  return (
+    <div className="rounded-lg bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 p-6 border border-neutral-200 dark:border-neutral-700">
+      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">{title}</p>
+      <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{value}</p>
+    </div>
+  );
+};
+
+const DashboardContentCard = ({ title, children }: { title: string; children: React.ReactNode }) => {
+  return (
+    <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800 p-6 border border-neutral-200 dark:border-neutral-700">
+      <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-4">{title}</h3>
+      {children}
     </div>
   );
 };

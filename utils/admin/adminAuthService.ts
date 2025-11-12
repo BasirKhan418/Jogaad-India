@@ -163,7 +163,6 @@ export const logoutAdmin = async (signal?: AbortSignal): Promise<ApiResponse> =>
     }
     
     console.error('Logout error:', error);
-    // Even if the request fails, we can still redirect user to login
     return {
       success: true,
       message: 'Logged out (session cleared locally)'

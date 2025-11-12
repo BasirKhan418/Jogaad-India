@@ -1,18 +1,14 @@
 import mongoose from 'mongoose';
 
-// Track connection state
 let isConnecting = false;
 
 const ConnectDb = async (): Promise<void> => {
-    // Check mongoose readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
     const readyState = mongoose.connection.readyState;
     
-    // Return if already connected
     if (readyState === 1) {
         return;
     }
     
-    // Wait for ongoing connection if currently connecting
     if (readyState === 2 || isConnecting) {
         await waitForConnection();
         return;
@@ -27,18 +23,16 @@ const ConnectDb = async (): Promise<void> => {
         
         isConnecting = true;
         
-        // Optimal connection configuration for production
         const connectionOptions = {
             bufferCommands: false,
-            maxPoolSize: 10, // Maximum connections in the pool
-            minPoolSize: 2,  // Minimum connections in the pool
+            maxPoolSize: 10, 
+            minPoolSize: 2,  
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
             connectTimeoutMS: 10000,
             maxIdleTimeMS: 30000,
         };
         
-        // Only call mongoose.connect if not already connected or connecting
         if (readyState === 0) {
             await mongoose.connect(mongoUri, connectionOptions);
         }
@@ -52,7 +46,6 @@ const ConnectDb = async (): Promise<void> => {
     }
 };
 
-// Helper function to wait for ongoing connection
 const waitForConnection = async (): Promise<void> => {
     return new Promise((resolve, reject) => {
         const checkInterval = setInterval(() => {
@@ -65,7 +58,6 @@ const waitForConnection = async (): Promise<void> => {
             }
         }, 100);
         
-        // Timeout after 10 seconds
         setTimeout(() => {
             clearInterval(checkInterval);
             reject(new Error('Connection timeout'));
@@ -73,7 +65,6 @@ const waitForConnection = async (): Promise<void> => {
     });
 };
 
-// Handle connection events
 mongoose.connection.on('connected', () => {
     console.log('Mongoose connected to MongoDB');
 });
@@ -86,7 +77,6 @@ mongoose.connection.on('disconnected', () => {
     console.log('Mongoose disconnected');
 });
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
     if (mongoose.connection.readyState === 1) {
         await mongoose.connection.close();

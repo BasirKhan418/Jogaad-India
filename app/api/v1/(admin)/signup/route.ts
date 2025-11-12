@@ -7,7 +7,6 @@ import { sendWelcomeEmail } from "@/email/user/sendWelcome";
 export const POST = async (request: NextRequest) => {
     try {
         const data = await request.json();
-        console.log("Request Data:", data);
         const cookiesStore = await cookies();
         const token = cookiesStore.get("token")?.value || "";
         const isTokenValid = await verifyUserToken(token);

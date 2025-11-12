@@ -20,23 +20,19 @@ export const Preloader = () => {
     let progressInterval: NodeJS.Timeout;
     let hideTimeout: NodeJS.Timeout;
 
-    // Slower progress animation
     progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) return 100;
-        return prev + 0.8; // Very slow increment
+        return prev + 0.8;
       });
     }, 50);
 
-    // Force hide after fixed duration - this WILL run
     hideTimeout = setTimeout(() => {
-      console.log('Hiding preloader after timeout');
       clearInterval(progressInterval);
       setProgress(100);
       setTimeout(() => {
         setIsLoading(false);
-        // sessionStorage.setItem('hasVisited', 'true');
-      }, 1000); // Longer delay for animation
+      }, 1000); 
     }, LOADING_DURATION);
 
     return () => {

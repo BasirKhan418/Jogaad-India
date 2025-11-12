@@ -35,18 +35,14 @@ export default function AdminSigninPage() {
   } = useAdminSignin();
 
   const [showOtp, setShowOtp] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
-  // Handle successful authentication
   useEffect(() => {
-    if (success && step === 'otp') {
-      const timer = setTimeout(() => {
-        router.push('/admin/dashboard');
-      }, 2000);
-      return () => clearTimeout(timer);
+    if (isVerified) {
+      router.push('/admin/dashboard');
     }
-  }, [success, step, router]);
+  }, [isVerified, router]);
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearMessages();
@@ -56,12 +52,11 @@ export default function AdminSigninPage() {
     } else {
       const adminData = await verifyOtp();
       if (adminData) {
-        console.log('Admin authenticated:', adminData);
+        setIsVerified(true);
       }
     }
   };
 
-  // Form validation on change
   useEffect(() => {
     const timer = setTimeout(() => {
       validateForm();

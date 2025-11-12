@@ -5,5 +5,6 @@ const AdminSchema = new mongoose.Schema({
     img: { type: String },
     phone: { type: String },
     isSuperAdmin: { type: Boolean, default: false },
+    isVerified: { type: Boolean, default: false },
 }, { timestamps: true })
 export default mongoose.models?.Admin || mongoose.model('Admin', AdminSchema);

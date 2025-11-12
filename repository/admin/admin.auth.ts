@@ -58,7 +58,6 @@ export const generateOTP = async (email: string,) => {
         const redisClient = setConnectionRedis();
         
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        console.log(`Generated OTP for ${email}: ${otp}`);
         await redisClient.set(`otp-admin:${email}`, otp, "EX", 300);
         const emailResponse = await sendOtpEmail({ email, otp, isAdmin: true });
         if(!emailResponse.success){
@@ -70,7 +69,6 @@ export const generateOTP = async (email: string,) => {
       
     }
     catch(error){
-        console.log(error);
         return {message:"Error generating OTP",error,success:false};
     }
 }
@@ -82,7 +80,12 @@ export const verifyOTP = async (email: string, otp: string) => {
         const storedOtp = await redisClient.get(`otp-admin:${email}`);
         if(storedOtp === otp){
             // Update user's verification status if user exists
-            const user = await Admin.findOneAndUpdate({email},{isVerified:true},{new:true});
+            const admin = await Admin.findOneAndUpdate({email},{isVerified:true},{new:true});
+            
+            if(!admin){
+                return {message:"Admin not found",success:false};
+            }
+            
             await redisClient.del(`otp-admin:${email}`);
             
             // Generate token with user's name if available, otherwise just email
@@ -90,8 +93,21 @@ export const verifyOTP = async (email: string, otp: string) => {
             if (!jwtSecret) {
                 throw new Error('JWT_SECRET environment variable is not set');
             }
-            const token = jwt.sign({email,type:"admin",name:user?.name || "Admin"}, jwtSecret, {expiresIn:"7d"});
-            return {message:"OTP verified successfully",success:true,token};
+            const token = jwt.sign({email,type:"admin",name:admin.name || "Admin"}, jwtSecret, {expiresIn:"7d"});
+            
+            // Return admin data along with token
+            const adminData = {
+                _id: admin._id,
+                name: admin.name,
+                email: admin.email,
+                img: admin.img,
+                phone: admin.phone,
+                isSuperAdmin: admin.isSuperAdmin,
+                createdAt: admin.createdAt,
+                updatedAt: admin.updatedAt
+            };
+            
+            return {message:"OTP verified successfully",success:true,token,data:adminData};
         }
         return {message:"Invalid OTP",success:false};
     }
