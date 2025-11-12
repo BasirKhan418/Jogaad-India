@@ -4,7 +4,7 @@ import "./globals.css";
 import { NavbarDemo } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Preloader } from "@/components/ui/preloader";
-
+import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >   
+        <Toaster position="top-right" richColors />
        <Preloader />
        <NavbarDemo />
         {children}

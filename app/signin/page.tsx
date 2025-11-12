@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -38,8 +39,7 @@ export default function SignInPage() {
         setLoading(false);
         return;
       }
-
-      setSuccess("OTP sent to your email!");
+      toast.success("OTP sent to your email!");
       setStep("otp");
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -75,10 +75,8 @@ export default function SignInPage() {
       }
 
       setSuccess("Login successful!");
-      setTimeout(() => {
-        // Force a hard reload to update authentication state
-        window.location.href = "/";
-      }, 1500);
+      router.push("/");
+      toast.success("Logged in successfully!");
     } catch (err) {
       setError("An error occurred. Please try again.");
     } finally {

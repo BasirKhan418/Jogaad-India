@@ -10,10 +10,11 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
+import { logoutUser } from "@/actions/logout";
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FiUser, FiLogOut, FiHome } from "react-icons/fi";
-
+import {toast} from "sonner";
 const NAV_ITEMS = [
   {
     name: "Home",
@@ -52,7 +53,8 @@ export function NavbarDemo() {
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
-
+// review
+//create a utility folder for that name anything and import here use it follow srp please
   const checkAuth = useCallback(async () => {
     try {
       const response = await fetch("/api/v1/verify", {
@@ -118,11 +120,13 @@ export function NavbarDemo() {
   }, [showDropdown]);
 
   const handleLogout = () => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    setIsAuthenticated(false);
-    setUser(null);
-    setShowDropdown(false);
-    window.location.href = "/";
+    logoutUser().then(() => {
+      setIsAuthenticated(false);
+      setUser(null);
+      setShowDropdown(false);
+      toast.success("Logged out successfully");
+      router.push("/signin");
+    });
   };
 
   const getInitials = (name: string) => {
