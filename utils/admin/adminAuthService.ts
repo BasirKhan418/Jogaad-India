@@ -21,8 +21,15 @@ export interface AdminData {
   img?: string;
   phone?: string;
   isSuperAdmin: boolean;
+  isVerified?: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface UpdateAdminProfileRequest {
+  name: string;
+  phone?: string;
+  img?: string;
 }
 
 
@@ -197,4 +204,46 @@ export const validateOtp = (otp: string): string | null => {
   }
   
   return null;
+};
+
+export const updateAdminProfile = async (
+  profileData: UpdateAdminProfileRequest,
+  signal?: AbortSignal
+): Promise<ApiResponse<AdminData>> => {
+  try {
+    const response = await fetch('/api/v1/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(profileData),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      return {
+        success: false,
+        message: data.message || 'Failed to update profile'
+      };
+    }
+
+    return {
+      success: true,
+      data: data.data,
+      message: data.message
+    };
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw error;
+    }
+    
+    console.error('Update profile error:', error);
+    return {
+      success: false,
+      message: 'Network error occurred. Please try again.'
+    };
+  }
 };
