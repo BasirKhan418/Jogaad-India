@@ -46,6 +46,21 @@ export function NavbarDemo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   
+  // Check if user is admin
+  const isAdmin = user?.type === 'admin' || user?.isSuperAdmin === true;
+  const profileRoute = isAdmin ? '/admin/dashboard' : '/profile';
+  const profileLabel = isAdmin ? 'Dashboard' : 'Profile';
+  
+  // Debug logging
+  useEffect(() => {
+    if (user) {
+      console.log('User data in navbar:', user);
+      console.log('User type:', user.type);
+      console.log('Is Admin:', isAdmin);
+      console.log('Profile Label:', profileLabel);
+    }
+  }, [user, isAdmin, profileLabel]);
+  
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
@@ -97,7 +112,7 @@ export function NavbarDemo() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    getUserInitials(user.name)
+                    <span className="text-sm">{getUserInitials(user.name)}</span>
                   )}
                 </button>
                 
@@ -110,12 +125,12 @@ export function NavbarDemo() {
                     <button
                       onClick={() => {
                         setShowDropdown(false);
-                        router.push("/profile");
+                        router.push(profileRoute);
                       }}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                     >
                       <FiHome className="w-4 h-4" />
-                      Profile
+                      {profileLabel}
                     </button>
                     <button
                       onClick={handleLogout}
@@ -172,7 +187,7 @@ export function NavbarDemo() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          getUserInitials(user.name)
+                          <span className="text-sm">{getUserInitials(user.name)}</span>
                         )}
                       </div>
                       <div>
@@ -184,12 +199,12 @@ export function NavbarDemo() {
                   <NavbarButton
                     onClick={() => {
                       closeMobileMenu();
-                      router.push("/profile");
+                      router.push(profileRoute);
                     }}
                     variant="secondary"
                     className="w-full"
                   >
-                    Dashboard
+                    {profileLabel}
                   </NavbarButton>
                   <NavbarButton
                     onClick={() => {

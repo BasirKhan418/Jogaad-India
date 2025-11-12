@@ -16,7 +16,8 @@ import {
   IconChartBar,
   IconLogout,
   IconDashboard,
-  IconShield
+  IconShield,
+  IconUser
 } from "@tabler/icons-react";
 import { getAdminData, logoutAdmin, AdminData } from "@/utils/admin/adminAuthService";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
@@ -59,6 +60,11 @@ export default function AdminDashboard() {
       label: "Analytics",
       href: "#analytics",
       icon: <IconChartBar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Profile",
+      href: "/admin/profile",
+      icon: <IconUser className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Settings",
@@ -214,10 +220,25 @@ export default function AdminDashboard() {
                 <SidebarLink
                   link={{
                     label: adminData.name || adminData.email,
-                    href: "#",
+                    href: "/admin/profile",
                     icon: (
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center text-white font-bold text-sm">
-                        {adminData.name?.charAt(0).toUpperCase() || "A"}
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
+                        {adminData.img ? (
+                          <img
+                            src={adminData.img}
+                            alt={adminData.name}
+                            className="h-7 w-7 rounded-full object-cover"
+                          />
+                        ) : (
+                          adminData.name
+                            ? adminData.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()
+                                .slice(0, 2)
+                            : "AD"
+                        )}
                       </div>
                     ),
                   }}

@@ -5,6 +5,8 @@ export interface AuthUser {
   img?: string;
   phone?: string;
   address?: string;
+  type?: 'admin' | 'user';
+  isSuperAdmin?: boolean;
   [key: string]: any;
 }
 

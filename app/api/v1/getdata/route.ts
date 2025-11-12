@@ -15,10 +15,22 @@ export async function GET(request: NextRequest) {
         let response;
         if (isTokenValid.type == "admin") {
             response = await verifyAdminByEmail(isTokenValid.email);
+            if (response.success && response.data) {
+                // Convert Mongoose document to plain object and add type
+                const userData = response.data.toObject ? response.data.toObject() : {...response.data};
+                userData.type = "admin";
+                response.data = userData;
+            }
             return NextResponse.json(response);
         }
         else if (isTokenValid.type == "user") {
             response = await verifyUserByEmail(isTokenValid.email);
+            if (response.success && response.data) {
+                // Convert Mongoose document to plain object and add type
+                const userData = response.data.toObject ? response.data.toObject() : {...response.data};
+                userData.type = "user";
+                response.data = userData;
+            }
             return NextResponse.json(response);
         }
         else if (isTokenValid.type == "employee") {
