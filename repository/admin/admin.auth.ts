@@ -86,7 +86,11 @@ export const verifyOTP = async (email: string, otp: string) => {
             await redisClient.del(`otp-admin:${email}`);
             
             // Generate token with user's name if available, otherwise just email
-            const token = jwt.sign({email,type:"admin",name:user?.name || "Admin"},process.env.JWT_SECRET||"",{expiresIn:"7d"});
+            const jwtSecret = process.env.JWT_SECRET;
+            if (!jwtSecret) {
+                throw new Error('JWT_SECRET environment variable is not set');
+            }
+            const token = jwt.sign({email,type:"admin",name:user?.name || "Admin"}, jwtSecret, {expiresIn:"7d"});
             return {message:"OTP verified successfully",success:true,token};
         }
         return {message:"Invalid OTP",success:false};

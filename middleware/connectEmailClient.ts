@@ -1,13 +1,21 @@
 import nodemailer from 'nodemailer';
 const ConnectEmailClient = async () => {
   try {
+    const emailHost = process.env.EMAIL_HOST;
+    const emailUser = process.env.EMAIL_USER;
+    const emailPassword = process.env.EMAIL_PASSWORD;
+    
+    if (!emailHost || !emailUser || !emailPassword) {
+      throw new Error('Missing required email environment variables: EMAIL_HOST, EMAIL_USER, EMAIL_PASSWORD');
+    }
+    
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST||"",
+      host: emailHost,
       port: process.env.EMAIL_PORT ? Number(process.env.EMAIL_PORT) : 587,
       secure: false, 
       auth: {
-        user: process.env.EMAIL_USER || "", 
-        pass: process.env.EMAIL_PASSWORD || "",
+        user: emailUser,
+        pass: emailPassword,
       },
     });
     return transporter;

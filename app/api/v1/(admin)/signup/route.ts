@@ -11,8 +11,15 @@ export const POST = async (request: NextRequest) => {
         const cookiesStore = await cookies();
         const token = cookiesStore.get("token")?.value || "";
         const isTokenValid = await verifyUserToken(token);
+        
+        // Validate admin creation credential
+        const adminCredential = process.env.ADMIN_CREATE_CREDENTIAL;
+        if (!adminCredential) {
+            return NextResponse.json({ message: "Admin creation is not configured", success: false }, { status: 503 });
+        }
+        
         //needs improvement in logic
-        if (data.password === process.env.ADMIN_CREATE_CREDENTIAL) {
+        if (data.password === adminCredential) {
             const validateData = AdminSchemaZod.safeParse(data);
             if (!validateData.success) {
                 return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
