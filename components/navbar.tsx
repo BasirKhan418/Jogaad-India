@@ -55,7 +55,7 @@ export function NavbarDemo() {
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetch("/api/v1/user/verify", {
+      const response = await fetch("/api/v1/verify", {
         cache: 'no-store',
         credentials: 'include'
       });
