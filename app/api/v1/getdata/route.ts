@@ -3,6 +3,7 @@ import { verifyUserByEmail } from "@/repository/user/user.auth";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import { cookies } from "next/headers";
 import { verifyAdminByEmail } from "@/repository/admin/admin.auth";
+import { getEmployeeByEmail } from "@/repository/employee/employee.auth";
 export async function GET(request: NextRequest) {
     try {
         const cookieStore = await cookies();
@@ -18,6 +19,10 @@ export async function GET(request: NextRequest) {
         }
         else if (isTokenValid.type == "user") {
             response = await verifyUserByEmail(isTokenValid.email);
+            return NextResponse.json(response);
+        }
+        else if (isTokenValid.type == "employee") {
+            response = await getEmployeeByEmail(isTokenValid.email);
             return NextResponse.json(response);
         }
         return NextResponse.json({ message: "Invalid user type", success: false }, { status: 400 });

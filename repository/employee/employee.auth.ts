@@ -19,7 +19,7 @@ export const getEmployeeByEmail = async (email: string) => {
         await ConnectDb();
         const employee = await Employee.findOne({email});
         if(employee){
-            return {message:"Employee retrieved successfully",employee,success:true};
+            return {message:"Employee retrieved successfully",data:employee,success:true};
         }
         return {message:"Employee not found",success:false};
     }
