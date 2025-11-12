@@ -3,7 +3,7 @@ import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import { cookies } from "next/headers";
 import { CategorySchemaZod } from "@/validator/admin/category";
 import { createCategory,updateCategoryById } from "@/repository/admin/category";
-
+import { verifyAdminByEmail } from "@/repository/admin/admin.auth";
 export const POST = async (request:NextRequest) => {
     try{
         const data = await request.json();
@@ -13,15 +13,21 @@ export const POST = async (request:NextRequest) => {
         if(!isTokenValid.success||isTokenValid.type!=="admin"){
             return NextResponse.json({message:"Invalid token",success:false}, {status:401});
         }
-        const validateData = CategorySchemaZod.safeParse(data);
+        const isAdmin = await verifyAdminByEmail(isTokenValid.email);
+        if(!isAdmin){
+            return NextResponse.json({message:"Unauthorized",success:false}, {status:403});
+        }
+        const newdata ={...data, updatedBy: isAdmin.data._id};
+        const validateData = CategorySchemaZod.safeParse(newdata);
         if(!validateData.success){
             return NextResponse.json({message:"Invalid data",success:false}, {status:400});
         }
-        const result = await createCategory(validateData.data);
+        const result = await createCategory(newdata);
         return NextResponse.json(result);
 
     }
     catch(error){
+        console.error("Error in admin category POST:", error);
         return NextResponse.json({message:"Internal Server Error",success:false}, {status:500});
     }
 }
@@ -35,11 +41,16 @@ export const PUT = async (request:NextRequest) => {
         if(!isTokenValid.success||isTokenValid.type!=="admin"){
             return NextResponse.json({message:"Invalid token",success:false}, {status:401});
         }
-        const validateData = CategorySchemaZod.safeParse(data);
+        const isAdmin = await verifyAdminByEmail(isTokenValid.email);
+        if(!isAdmin){
+            return NextResponse.json({message:"Unauthorized",success:false}, {status:403});
+        }
+        const newdata ={...data, updatedBy: isAdmin.data._id};
+        const validateData = CategorySchemaZod.safeParse(newdata);
         if(!validateData.success){
             return NextResponse.json({message:"Invalid data",success:false}, {status:400});
         }
-        const result = await updateCategoryById(data.id, validateData.data);
+        const result = await updateCategoryById(data.id, newdata);
         return NextResponse.json(result);
 
     }

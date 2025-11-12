@@ -37,11 +37,6 @@ export const CategorySchemaZod = z.object({
     .string()
     .url("Invalid image URL")
     .optional(),
-  
-  updatedBy: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId")
-    .optional(),
 });
 
 export type CategoryInput = z.infer<typeof CategorySchemaZod>;
