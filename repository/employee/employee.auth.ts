@@ -31,7 +31,7 @@ export const getEmployeeByEmail = async (email: string) => {
 export const updateEmployeeByEmail = async (email: string, updateData: EmployeeInput) => {
     try{
         await ConnectDb();
-        const updatedEmployee = await Employee.findOneAndUpdate({email},updateData,{new:true});
+        const updatedEmployee = await Employee.findOneAndUpdate({email:email},updateData,{new:true});
         if(updatedEmployee){
             return {message:"Employee updated successfully",employee:updatedEmployee,success:true};
         }

@@ -4,6 +4,10 @@ import setConnectionRedis from "@/middleware/connectRedis";
 import { CreateEmployeeOrder } from "@/utils/employee/createPayment";
 import { getFees } from "@/repository/admin/fees";
 import { updateOrderidByEmail } from "@/repository/employee/employee.auth";
+import { cookies } from "next/headers";
+import { verifyUserToken } from "@/utils/user/usertoken.verify";
+import { EmployeeZodSchema } from "@/validator/employee/employee.auth";
+//this is called production grade idempotant api see aniket
 export async function POST(request: Request) {
     try {
         const data = await request.json();
@@ -37,6 +41,10 @@ export async function POST(request: Request) {
             }, { status: 200 });
 
         }
+        const validate = EmployeeZodSchema.safeParse(data);
+        if (!validate.success) {
+            return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
+        }
         const response = await createEmployee(data);
         const getFeesdata = await getFees();
         if (!getFeesdata.success) {
@@ -55,6 +63,30 @@ export async function POST(request: Request) {
 
     }
     catch (error) {
+        return NextResponse.json({ message: "Internal Server Error", success: false }, { status: 500 });
+    }
+}
+
+
+export const PUT = async (request: Request) => {
+    try{
+        const data = await request.json();
+
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value || "";
+        const verifyToken = await verifyUserToken(token);
+        if(!verifyToken.success){
+            return NextResponse.json({ message: "Unauthorized", success: false }, { status: 401 });
+        }
+        const validate = EmployeeZodSchema.safeParse(data);
+        if (!validate.success) {
+            return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
+        }
+        const response = await updateEmployeeByEmail(data.email, data);
+        return NextResponse.json(response);
+        
+    }
+    catch(error){
         return NextResponse.json({ message: "Internal Server Error", success: false }, { status: 500 });
     }
 }
