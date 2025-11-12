@@ -1,27 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import {
   IconArrowLeft,
   IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
+  IconLogout,
+  IconDashboard,
   IconUsers,
   IconCategory,
   IconCurrencyDollar,
   IconChartBar,
-  IconLogout,
-  IconDashboard,
-  IconShield,
-  IconUser
+  IconUser,
+  IconSettings,
 } from "@tabler/icons-react";
-import { getAdminData, logoutAdmin, AdminData } from "@/utils/admin/adminAuthService";
+import { AdminData } from "@/utils/admin/adminAuthService";
 import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
+import { useAdminNavigation, NavigationLink } from "@/utils/admin/useAdminNavigation";
+import { useAdminData, useAdminLogout, useAdminSidebar } from "@/utils/admin/useAdminHooks";
 
 interface DashboardSectionProps {
   title: string;
@@ -30,119 +30,10 @@ interface DashboardSectionProps {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [adminData, setAdminData] = useState<AdminData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-
-  // Navigation links for sidebar
-  const links = [
-    {
-      label: "Dashboard",
-      href: "#dashboard",
-      icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Users",
-      href: "#users",
-      icon: <IconUsers className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Categories",
-      href: "#categories", 
-      icon: <IconCategory className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Fees",
-      href: "#fees",
-      icon: <IconCurrencyDollar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Analytics",
-      href: "#analytics",
-      icon: <IconChartBar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Profile",
-      href: "/admin/profile",
-      icon: <IconUser className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Settings",
-      href: "#settings",
-      icon: <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-  ];
-
-  // Fetch admin data on mount
-  useEffect(() => {
-    const fetchAdminData = async (retryCount = 0) => {
-      try {
-        setError('');
-        const result = await getAdminData();
-        if (result.success && result.data) {
-          setAdminData(result.data);
-        } else {
-          // Retry once after a short delay to handle timing issues
-          if (retryCount < 1) {
-            setTimeout(() => {
-              fetchAdminData(retryCount + 1);
-            }, 1000);
-            return;
-          }
-          
-          setError(result.message || 'Failed to load admin data');
-          
-          // Add a delay before redirecting to handle timing issues with fresh logins
-          setTimeout(() => {
-            router.push('/admin/signin');
-          }, 2000);
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          return;
-        }
-        
-        // Retry once after a short delay to handle timing issues
-        if (retryCount < 1) {
-          setTimeout(() => {
-            fetchAdminData(retryCount + 1);
-          }, 1000);
-          return;
-        }
-        
-        console.error('Failed to fetch admin data:', error);
-        setError('Network error occurred');
-        
-        // Add a delay before redirecting to handle timing issues with fresh logins
-        setTimeout(() => {
-          router.push('/admin/signin');
-        }, 2000);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAdminData();
-  }, [router]);
-
-  const handleLogout = async () => {
-    try {
-      const result = await logoutAdmin();
-      if (result.success) {
-        toast.success('Logged out successfully');
-        router.push('/admin/signin');
-      } else {
-        console.error('Logout failed:', result.message);
-        toast.error('Logout failed');
-        router.push('/admin/signin');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast.error('Logout error occurred');
-      router.push('/admin/signin');
-    }
-  };
+  const { adminData, loading, error } = useAdminData();
+  const { handleLogout } = useAdminLogout();
+  const { open, setOpen } = useAdminSidebar();
+  const { links, logoutLink } = useAdminNavigation();
 
   if (loading) {
     return (

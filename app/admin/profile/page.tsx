@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
@@ -19,143 +19,34 @@ import {
   IconCamera,
   IconShield,
 } from "@tabler/icons-react";
-import { getAdminData, logoutAdmin, AdminData, updateAdminProfile } from "@/utils/admin/adminAuthService";
+import { AdminData, updateAdminProfile } from "@/utils/admin/adminAuthService";
+import { uploadFile } from "@/utils/admin/adminApiService";
 import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useAdminNavigation } from "@/utils/admin/useAdminNavigation";
+import { useAdminDataWithForm, useAdminLogout, useAdminSidebar } from "@/utils/admin/useAdminHooks";
 
 export default function AdminProfile() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [adminData, setAdminData] = useState<AdminData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const { adminData, loading, error, formData, setFormData, refetch } = useAdminDataWithForm({
+    name: '',
+    email: '',
+    phone: '',
+    img: '',
+  });
+  const { handleLogout } = useAdminLogout();
+  const { open, setOpen } = useAdminSidebar();
+  const { links, logoutLink } = useAdminNavigation();
   const [isSaving, setIsSaving] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    img: "",
-  });
-
-  // Navigation links for sidebar
-  const links = [
-    {
-      label: "Dashboard",
-      href: "/admin/dashboard",
-      icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Users",
-      href: "#users",
-      icon: <IconUsers className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Categories",
-      href: "#categories",
-      icon: <IconCategory className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Fees",
-      href: "#fees",
-      icon: <IconCurrencyDollar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Analytics",
-      href: "#analytics",
-      icon: <IconChartBar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Profile",
-      href: "/admin/profile",
-      icon: <IconUser className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Settings",
-      href: "#settings",
-      icon: <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-    },
-  ];
-
-  // Fetch admin data on mount
-  useEffect(() => {
-    const fetchAdminData = async (retryCount = 0) => {
-      try {
-        setError("");
-        const result = await getAdminData();
-        if (result.success && result.data) {
-          setAdminData(result.data);
-          setFormData({
-            name: result.data.name || "",
-            email: result.data.email || "",
-            phone: result.data.phone || "",
-            img: result.data.img || "",
-          });
-        } else {
-          if (retryCount < 1) {
-            setTimeout(() => {
-              fetchAdminData(retryCount + 1);
-            }, 1000);
-            return;
-          }
-
-          setError(result.message || "Failed to load admin data");
-          setTimeout(() => {
-            router.push("/admin/signin");
-          }, 2000);
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") {
-          return;
-        }
-
-        if (retryCount < 1) {
-          setTimeout(() => {
-            fetchAdminData(retryCount + 1);
-          }, 1000);
-          return;
-        }
-
-        console.error("Failed to fetch admin data:", error);
-        setError("Network error occurred");
-        setTimeout(() => {
-          router.push("/admin/signin");
-        }, 2000);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAdminData();
-  }, [router]);
-
-  const handleLogout = async () => {
-    try {
-      const result = await logoutAdmin();
-      if (result.success) {
-        toast.success("Logged out successfully");
-        router.push("/admin/signin");
-      } else {
-        console.error("Logout failed:", result.message);
-        toast.error("Logout failed");
-        router.push("/admin/signin");
-      }
-    } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("Logout error occurred");
-      router.push("/admin/signin");
-    }
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [name]: value,
     }));
@@ -165,59 +56,21 @@ export default function AdminProfile() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file");
-      return;
-    }
-
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB");
-      return;
-    }
-
     try {
       setImageUploading(true);
 
-      // Get signed URL from API
-      const response = await fetch("/api/v1/upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type,
-        }),
-      });
+      const result = await uploadFile(file);
 
-      const data = await response.json();
+      if (result.success && result.data?.fileUrl) {
+        setFormData((prev: any) => ({
+          ...prev,
+          img: result.data!.fileUrl,
+        }));
 
-      if (!data.uploadURL || !data.fileURL) {
-        throw new Error("Failed to get upload URL");
+        toast.success("Image uploaded successfully");
+      } else {
+        toast.error(result.message || "Failed to upload image");
       }
-
-      // Upload file to S3
-      const uploadResponse = await fetch(data.uploadURL, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error("Failed to upload image");
-      }
-
-      // Update form data with new image URL
-      setFormData((prev) => ({
-        ...prev,
-        img: data.fileURL,
-      }));
-
-      toast.success("Image uploaded successfully");
     } catch (error) {
       console.error("Image upload error:", error);
       toast.error("Failed to upload image. Please try again.");
@@ -253,7 +106,7 @@ export default function AdminProfile() {
 
       if (result.success) {
         toast.success("Profile updated successfully");
-        setAdminData(result.data || null);
+        refetch(); // Refresh admin data
       } else {
         toast.error(result.message || "Failed to update profile");
       }
@@ -403,7 +256,7 @@ export default function AdminProfile() {
                         alt={formData.name}
                         className="h-full w-full rounded-full object-cover"
                         onError={(e) => {
-                          setFormData(prev => ({ ...prev, img: "" }));
+                          setFormData((prev: any) => ({ ...prev, img: "" }));
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
