@@ -3,6 +3,7 @@ import { AdminSchemaZod } from "@/validator/admin/admin.auth";
 import { createAdmin } from "@/repository/admin/admin.auth";
 import { cookies } from "next/headers";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
+import { sendWelcomeEmail } from "@/email/user/sendWelcome";
 export const POST = async (request: NextRequest) => {
     try {
         const data = await request.json();
@@ -17,6 +18,9 @@ export const POST = async (request: NextRequest) => {
                 return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
             }
             const response = await createAdmin(validateData.data);
+            if(response.success){
+                await sendWelcomeEmail({name: validateData.data.name, email: validateData.data.email, isAdmin: true});
+            }
             return NextResponse.json(response);
         }
         if (!isTokenValid.success || isTokenValid.type !== "admin") {

@@ -8,6 +8,7 @@ export const createUser = async (userData: any) => {
         await ConnectDb();
         const newUser = new User(userData);
         await newUser.save();
+        //fire welconme email here
         return {message:"User created successfully",user:newUser,success:true};
     }
     catch(error){
