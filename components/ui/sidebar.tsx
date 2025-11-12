@@ -168,28 +168,15 @@ export const SidebarLink = ({
   
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault(); 
-    
-    if (link.href.startsWith('#')) {
-      console.log(`${link.label} page is not implemented yet`);
-      return;
-    }
-    
-    if (link.href.startsWith('/')) {
-      router.push(link.href);
-    }
+    router.push(link.href);
   };
-  
-  const isImplemented = link.href.startsWith('/');
   
   return (
     <a
       href={link.href}
       onClick={handleClick}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer rounded-md px-2 transition-colors",
-        isImplemented 
-          ? "hover:bg-neutral-100 dark:hover:bg-neutral-800" 
-          : "opacity-60 cursor-not-allowed hover:bg-neutral-50 dark:hover:bg-neutral-850",
+        "flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer rounded-md px-2 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800",
         className
       )}
       {...props}
@@ -204,11 +191,6 @@ export const SidebarLink = ({
         className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {link.label}
-        {!isImplemented && (
-          <span className="ml-1 text-xs text-neutral-400 dark:text-neutral-500">
-            (Soon)
-          </span>
-        )}
       </motion.span>
     </a>
   );
