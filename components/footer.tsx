@@ -13,10 +13,10 @@ const footerLinks = {
     { label: 'Contact', href: '/contact' },
   ],
   socials: [
-    { icon: FaFacebookF, label: 'Facebook', href: 'https://facebook.com' },
-    { icon: FaInstagram, label: 'Instagram', href: 'https://instagram.com' },
-    { icon: FaTwitter, label: 'Twitter', href: 'https://twitter.com' },
-    { icon: FaLinkedinIn, label: 'LinkedIn', href: 'https://linkedin.com' },
+    { icon: FaFacebookF, label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61583383065934' },
+    { icon: FaInstagram, label: 'Instagram', href: 'https://www.instagram.com/jogaadindia25/' },
+    { icon: FaTwitter, label: 'Twitter', href: 'https://x.com/jogaadindia' },
+    { icon: FaLinkedinIn, label: 'LinkedIn', href: 'http://www.linkedin.com/in/jogaad-india-40833a357' },
   ],
   legal: [
     { label: 'Privacy Policy', href: '/privacy' },
