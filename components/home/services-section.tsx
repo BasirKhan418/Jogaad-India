@@ -15,7 +15,7 @@ interface Service {
   title: string;
   description: string;
   image: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   accentColor: string;
   accentColorHover: string;
 }
