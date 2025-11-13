@@ -5,27 +5,27 @@ const PrivacyPolicyPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0A3D62] to-[#2B9EB3] py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 mt-20">
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-[#F9A825]/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-[#2B9EB3]/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#F9A825]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-            <Shield className="w-5 h-5 text-[#F9A825]" />
-            <span className="text-white/90 font-medium">Privacy & Data Protection</span>
+          <div className="inline-flex items-center gap-2 bg-[#2B9EB3]/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+            <Shield className="w-5 h-5 text-[#2B9EB3]" />
+            <span className="text-[#0A3D62] font-medium">Privacy & Data Protection</span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-6">
             Privacy Policy
           </h1>
           
-          <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Your privacy matters to us. Learn how Jogaad India protects, collects, and uses your personal information.
           </p>
           
-          <div className="flex items-center justify-center gap-4 text-sm text-white/70">
+          <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#F9A825] animate-pulse"></span>
               Last updated: November 13, 2025
