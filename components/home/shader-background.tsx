@@ -14,8 +14,8 @@ function ShaderBackground({ children }: ShaderBackgroundProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    // Reduce delay for faster shader loading
-    const timer = setTimeout(() => setIsVisible(true), 50)
+    // Delay shader loading to improve initial render
+    const timer = setTimeout(() => setIsVisible(true), 500)
     return () => clearTimeout(timer)
   }, [])
 
@@ -25,8 +25,8 @@ function ShaderBackground({ children }: ShaderBackgroundProps) {
 
     const container = containerRef.current
     if (container) {
-      container.addEventListener("mouseenter", handleMouseEnter)
-      container.addEventListener("mouseleave", handleMouseLeave)
+      container.addEventListener("mouseenter", handleMouseEnter, { passive: true })
+      container.addEventListener("mouseleave", handleMouseLeave, { passive: true })
     }
 
     return () => {
@@ -73,7 +73,7 @@ function ShaderBackground({ children }: ShaderBackgroundProps) {
           <MeshGradient
             className="absolute inset-0 w-full h-full"
             colors={["#F9A825", "#2B9EB3", "#ffffff"]}
-            speed={0.3}
+            speed={0.15}
           />
         </div>
       )}

@@ -116,8 +116,28 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
+  }
+  
+  /* Optimize image rendering */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  /* GPU acceleration for scrollable sections only */
+  section {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 }
 

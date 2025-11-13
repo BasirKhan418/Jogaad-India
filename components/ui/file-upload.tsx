@@ -47,7 +47,10 @@ export const FileUpload = ({
     noClick: true,
     onDrop: handleFileChange,
     onDropRejected: (error: any) => {
-      console.log(error);
+      // Error handling for rejected files
+      if (process.env.NODE_ENV === 'development') {
+        console.error('File upload rejected:', error);
+      }
     },
   });
 

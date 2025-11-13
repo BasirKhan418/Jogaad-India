@@ -6,37 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const Preloader = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // REMOVE sessionStorage check temporarily to test
-    // const hasVisited = sessionStorage.getItem('hasVisited');
-    // if (hasVisited) {
-    //   setIsLoading(false);
-    //   return;
-    // }
+    const LOADING_DURATION = 2500;
 
-    const LOADING_DURATION = 500; 
-    let progressInterval: NodeJS.Timeout;
-    let hideTimeout: NodeJS.Timeout;
-
-    progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) return 100;
-        return prev + 0.8;
-      });
-    }, 50);
-
-    hideTimeout = setTimeout(() => {
-      clearInterval(progressInterval);
-      setProgress(100);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000); 
+    const hideTimeout = setTimeout(() => {
+      setIsLoading(false);
     }, LOADING_DURATION);
 
     return () => {
-      clearInterval(progressInterval);
       clearTimeout(hideTimeout);
     };
   }, []);
@@ -46,170 +24,228 @@ export const Preloader = () => {
       {isLoading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-white via-orange-50/30 to-cyan-50/30"
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.7, ease: [0.43, 0.13, 0.23, 0.96] }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white overflow-hidden"
         >
-          {/* Animated background circles */}
-          <div className="absolute inset-0 overflow-hidden">
+          {/* Animated background patterns */}
+          <div className="absolute inset-0">
+            {/* Radial gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-radial from-transparent via-gray-50/50 to-gray-100/30" />
+            
+            {/* Subtle moving shapes */}
             <motion.div
               animate={{
+                x: [0, 100, 0],
+                y: [0, -50, 0],
                 scale: [1, 1.2, 1],
-                opacity: [0.3, 0.5, 0.3],
+                opacity: [0.03, 0.06, 0.03],
               }}
               transition={{
-                duration: 3,
+                duration: 8,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: "easeInOut"
               }}
-              className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-200/40 rounded-full blur-3xl"
+              className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-[#2B9EB3] to-[#F9A825] rounded-full blur-3xl"
             />
             <motion.div
               animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.3, 0.5, 0.3],
+                x: [0, -80, 0],
+                y: [0, 60, 0],
+                scale: [1.2, 1, 1.2],
+                opacity: [0.04, 0.08, 0.04],
               }}
               transition={{
-                duration: 4,
+                duration: 10,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: 0.5,
+                delay: 1
               }}
-              className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-200/40 rounded-full blur-3xl"
+              className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-gradient-to-tl from-[#F9A825] to-[#2B9EB3] rounded-full blur-3xl"
             />
           </div>
 
           {/* Main content */}
-          <div className="relative z-10 flex flex-col items-center justify-center space-y-8">
-            {/* Logo with animations */}
-            <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="relative"
-            >
-              {/* Rotating ring behind logo */}
+          <div className="relative flex flex-col items-center justify-center">
+            
+            {/* Elegant logo container */}
+            <div className="relative mb-10">
+              
+              {/* Outer rotating ring - clockwise */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{
-                  duration: 3,
+                  duration: 15,
                   repeat: Infinity,
-                  ease: "linear",
+                  ease: "linear"
                 }}
-                className="absolute inset-0 -m-6"
+                className="absolute inset-0 -m-12"
               >
-                <div className="w-full h-full border-4 border-transparent border-t-orange-400 border-r-cyan-400 rounded-full" />
+                <svg width="240" height="240" viewBox="0 0 240 240" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="ringGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#2B9EB3" stopOpacity="0.6" />
+                      <stop offset="50%" stopColor="#F9A825" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#2B9EB3" stopOpacity="0.6" />
+                    </linearGradient>
+                  </defs>
+                  <circle 
+                    cx="120" 
+                    cy="120" 
+                    r="110" 
+                    fill="none" 
+                    stroke="url(#ringGradient1)" 
+                    strokeWidth="2"
+                    strokeDasharray="8 8"
+                  />
+                </svg>
               </motion.div>
 
-              {/* Pulsing glow effect */}
+              {/* Inner rotating ring - counter-clockwise */}
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+                className="absolute inset-0 -m-8"
+              >
+                <svg width="200" height="200" viewBox="0 0 200 200" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="ringGradient2" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#F9A825" stopOpacity="0.5" />
+                      <stop offset="50%" stopColor="#2B9EB3" stopOpacity="0.3" />
+                      <stop offset="100%" stopColor="#F9A825" stopOpacity="0.5" />
+                    </linearGradient>
+                  </defs>
+                  <circle 
+                    cx="100" 
+                    cy="100" 
+                    r="90" 
+                    fill="none" 
+                    stroke="url(#ringGradient2)" 
+                    strokeWidth="2"
+                    strokeDasharray="6 6"
+                  />
+                </svg>
+              </motion.div>
+
+              {/* Subtle pulse effect */}
               <motion.div
                 animate={{
                   scale: [1, 1.1, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute inset-0 -m-4 bg-gradient-to-r from-orange-400 to-cyan-400 rounded-full blur-xl opacity-50"
-              />
-
-              {/* Logo */}
-              <motion.div
-                animate={{
-                  y: [0, -10, 0],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="relative w-32 h-32 md:w-40 md:h-40"
-              >
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  fill
-                  className="object-contain drop-shadow-2xl"
-                  priority
-                />
-              </motion.div>
-            </motion.div>
-
-            {/* Loading text with gradient */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-center space-y-4"
-            >
-              <motion.h2
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  opacity: [0.1, 0.2, 0.1],
                 }}
                 transition={{
                   duration: 3,
                   repeat: Infinity,
-                  ease: "linear",
+                  ease: "easeInOut"
                 }}
-                className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-500 via-cyan-500 to-orange-500 bg-clip-text text-transparent bg-[length:200%_auto]"
+                className="absolute -inset-8 bg-gradient-to-br from-[#2B9EB3]/20 via-transparent to-[#F9A825]/20 rounded-full blur-2xl"
+              />
+
+              {/* Logo without box */}
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0, rotate: -20 }}
+                animate={{ 
+                  scale: 1, 
+                  opacity: 1,
+                  rotate: 0
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 150,
+                  damping: 15,
+                  delay: 0.2
+                }}
+                className="relative w-36 h-36 md:w-44 md:h-44"
               >
-                Jogaad India
-              </motion.h2>
+                <Image
+                  src="/logo.png"
+                  alt="Jogaad India"
+                  fill
+                  className="object-contain drop-shadow-xl"
+                  priority
+                />
+              </motion.div>
+            </div>
 
-              {/* Progress bar */}
-              <div className="w-64 md:w-80 mx-auto">
-                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.3 }}
-                    className="h-full bg-gradient-to-r from-orange-400 via-orange-500 to-cyan-500 rounded-full relative"
-                  >
-                    {/* Shimmer effect */}
-                    <motion.div
-                      animate={{
-                        x: ["-100%", "200%"],
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
-                    />
-                  </motion.div>
-                </div>
-                {/* Progress percentage */}
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-center mt-3 text-sm font-medium text-gray-600"
+            {/* Brand name with sophisticated animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+              className="text-center mb-8"
+            >
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-3">
+                <motion.span 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7, duration: 0.5 }}
+                  className="inline-block bg-gradient-to-br from-[#F9A825] to-[#f39c12] bg-clip-text text-transparent"
                 >
-                  {Math.round(progress)}%
-                </motion.p>
-              </div>
+                  Jogaad
+                </motion.span>
+                <span className="text-gray-300 mx-2">•</span>
+                <motion.span 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.9, duration: 0.5 }}
+                  className="inline-block bg-gradient-to-br from-[#2B9EB3] to-[#1e7a8f] bg-clip-text text-transparent"
+                >
+                  India
+                </motion.span>
+              </h1>
+              
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.1, duration: 0.6 }}
+                className="text-xs md:text-sm text-gray-400 tracking-wide uppercase font-light"
+              >
+                Customer Solution Is Our Satisfaction
+              </motion.p>
+            </motion.div>
 
-              {/* Loading dots */}
-              <div className="flex justify-center space-x-2 pt-2">
-                {[0, 1, 2].map((i) => (
+            {/* Elegant loading indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.3, duration: 0.5 }}
+              className="flex items-center gap-3"
+            >
+              {[0, 1, 2, 3].map((i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    scale: [1, 1.5, 1],
+                    opacity: [0.3, 1, 0.3],
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    delay: i * 0.15,
+                    ease: "easeInOut",
+                  }}
+                  className="relative"
+                >
+                  <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#2B9EB3] to-[#F9A825]" />
                   <motion.div
-                    key={i}
                     animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 2, 1],
+                      opacity: [0.5, 0, 0.5],
                     }}
                     transition={{
-                      duration: 1,
+                      duration: 1.2,
                       repeat: Infinity,
-                      delay: i * 0.2,
+                      delay: i * 0.15,
+                      ease: "easeInOut",
                     }}
-                    className="w-2 h-2 bg-gradient-to-r from-orange-400 to-cyan-400 rounded-full"
+                    className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#2B9EB3] to-[#F9A825]"
                   />
-                ))}
-              </div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </motion.div>

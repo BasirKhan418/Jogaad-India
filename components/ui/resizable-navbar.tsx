@@ -8,7 +8,7 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 
 
 interface NavbarProps {
@@ -53,12 +53,18 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
+  const lastScrollRef = useRef<number>(0);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest > 0.05) {
-      setVisible(true);
-    } else {
-      setVisible(false);
+    // Throttle updates - only update if change is significant
+    const diff = Math.abs(latest - lastScrollRef.current);
+    if (diff < 0.001) return;
+    
+    lastScrollRef.current = latest;
+    const shouldBeVisible = latest > 0.05;
+    
+    if (shouldBeVisible !== visible) {
+      setVisible(shouldBeVisible);
     }
   });
 
@@ -66,11 +72,15 @@ export const Navbar = ({ children, className }: NavbarProps) => {
     <>
       <motion.div
         className="left-0 right-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-[#F9A825] via-[#2B9EB3] to-[#0A3D62]"
-        style={{ scaleX: scrollYProgress }}
+        style={{ 
+          scaleX: scrollYProgress,
+          willChange: 'transform'
+        }}
       />
       <motion.div
         ref={ref}
         className={cn("fixed inset-x-0 top-0 z-50 w-full", className)}
+        style={{ willChange: visible ? 'transform' : 'auto' }}
       >
         {React.Children.map(children, (child) =>
           React.isValidElement(child)
@@ -86,29 +96,33 @@ export const Navbar = ({ children, className }: NavbarProps) => {
 };
 
 export const NavBody = ({ children, className, visible }: NavBodyProps) => {
+  const animationProps = useMemo(() => ({
+    backdropFilter: visible ? "blur(8px)" : "blur(0px)",
+    boxShadow: visible
+      ? "0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 0 rgba(255,255,255,0.08) inset"
+      : "none",
+    width: visible ? "60%" : "100%",
+    y: visible ? 12 : 8,
+  }), [visible]);
+
   return (
     <motion.div
-      animate={{
-        backdropFilter: visible ? "blur(8px)" : "blur(0px)",
-        boxShadow: visible
-          ? "0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 0 rgba(255,255,255,0.08) inset"
-          : "none",
-        width: visible ? "60%" : "100%",
-        y: visible ? 12 : 8,
-      }}
+      animate={animationProps}
       transition={{
         type: "spring",
-        stiffness: 220,
-        damping: 36,
+        stiffness: 260,
+        damping: 40,
+        mass: 0.8,
       }}
       className={cn(
         "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start px-3 lg:px-5 py-1 lg:py-1.5 lg:flex mt-4",
         "pointer-events-auto",
         visible
           ? "rounded-full bg-white/30 dark:bg-neutral-950/30 ring-1 ring-[#F9A825]/20 backdrop-saturate-150 shadow-lg shadow-[#2B9EB3]/5"
-          : "rounded-full  dark:bg-neutral-950/40 backdrop-blur-md",
+          : "rounded-full dark:bg-neutral-950/40 backdrop-blur-md",
         className,
       )}
+      style={{ willChange: visible ? 'width, transform, backdrop-filter' : 'auto' }}
       role="navigation"
       aria-label="Primary"
     >
@@ -155,29 +169,33 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
 };
 
 export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
+  const mobileAnimProps = useMemo(() => ({
+    backdropFilter: visible ? "blur(16px)" : "blur(8px)",
+    boxShadow: visible
+      ? "0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 0 rgba(255,255,255,0.08) inset"
+      : "none",
+    width: visible ? "96%" : "100%",
+    paddingRight: visible ? "8px" : "0px",
+    paddingLeft: visible ? "8px" : "0px",
+    borderRadius: visible ? "1.5rem" : "2rem",
+    y: visible ? 10 : 8,
+  }), [visible]);
+
   return (
     <motion.div
-      animate={{
-        backdropFilter: visible ? "blur(16px)" : "blur(8px)",
-        boxShadow: visible
-          ? "0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 0 rgba(255,255,255,0.08) inset"
-          : "none",
-        width: visible ? "96%" : "100%",
-        paddingRight: visible ? "8px" : "0px",
-        paddingLeft: visible ? "8px" : "0px",
-        borderRadius: visible ? "1.5rem" : "2rem",
-        y: visible ? 10 : 8,
-      }}
+      animate={mobileAnimProps}
       transition={{
         type: "spring",
-        stiffness: 220,
-        damping: 36,
+        stiffness: 260,
+        damping: 40,
+        mass: 0.8,
       }}
       className={cn(
         "pointer-events-auto relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-white/25 px-0 py-1.5 lg:hidden mt-4",
         visible && "rounded-xl bg-white/20 dark:bg-neutral-950/30 ring-1 ring-white/20 backdrop-saturate-150",
         className,
       )}
+      style={{ willChange: visible ? 'width, transform, backdrop-filter' : 'auto' }}
     >
       {children}
     </motion.div>

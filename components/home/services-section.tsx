@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, memo, useCallback } from "react";
-import { CometCard } from "@/components/ui/comet-card";
+import { useRouter } from "next/navigation";
 import { 
   ManpowerIcon, 
   PlumbingIcon, 
@@ -9,13 +9,15 @@ import {
   AstrologerIcon, 
   ArchitectureIcon 
 } from "@/components/ui/service-icons";
+import { ArrowRight } from "lucide-react";
 
 interface Service {
   title: string;
   description: string;
   image: string;
   icon: React.ComponentType<{ className?: string }>;
-  bgGradient: string;
+  accentColor: string;
+  accentColorHover: string;
 }
 
 const services: Service[] = [
@@ -24,49 +26,55 @@ const services: Service[] = [
     description: "Connect with verified professionals across various domains. Skilled workforce for all your project needs.",
     image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2400&auto=format&fit=crop",
     icon: ManpowerIcon,
-    bgGradient: "from-pink-50 via-rose-50 to-pink-50"
+    accentColor: "#2B9EB3",
+    accentColorHover: "#1B7A8F"
   },
   {
     title: "Plumbing Service",
     description: "Expert plumbers at your doorstep for all repairs and installations. Fast, reliable, and professional service.",
     image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?q=80&w=2400&auto=format&fit=crop",
     icon: PlumbingIcon,
-    bgGradient: "from-rose-50 via-pink-50 to-rose-50"
+    accentColor: "#F9A825",
+    accentColorHover: "#F57C00"
   },
   {
     title: "Tours & Travels",
     description: "Explore Odisha with our premium travel services. Comfortable rides and unforgettable experiences.",
     image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2400&auto=format&fit=crop",
     icon: TravelIcon,
-    bgGradient: "from-pink-50 via-rose-50 to-pink-50"
+    accentColor: "#2B9EB3",
+    accentColorHover: "#1B7A8F"
   },
   {
     title: "Astrologer",
     description: "Seek guidance from experienced astrologers. Find clarity, direction, and peace in your life's journey.",
     image: "https://images.unsplash.com/photo-1532153955177-f59af40d6472?q=80&w=2400&auto=format&fit=crop",
     icon: AstrologerIcon,
-    bgGradient: "from-rose-50 via-pink-50 to-rose-50"
+    accentColor: "#F9A825",
+    accentColorHover: "#F57C00"
   },
   {
     title: "Architecture",
     description: "Professional architectural design and planning services. Transform your vision into stunning reality.",
     image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2400&auto=format&fit=crop",
     icon: ArchitectureIcon,
-    bgGradient: "from-pink-50 via-rose-50 to-pink-50"
+    accentColor: "#2B9EB3",
+    accentColorHover: "#1B7A8F"
   }
 ];
 
 export const ServicesSection = memo(function ServicesSection() {
+  const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
   const lastTimeRef = useRef(0);
 
-  const handleMouseEnter = useCallback(() => {
+  const handleCardMouseEnter = useCallback(() => {
     isPausedRef.current = true;
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
+  const handleCardMouseLeave = useCallback(() => {
     isPausedRef.current = false;
     lastTimeRef.current = 0;
   }, []);
@@ -76,7 +84,7 @@ export const ServicesSection = memo(function ServicesSection() {
     if (!scrollContainer) return;
 
     let scrollAmount = 0;
-    const scrollSpeed = 0.4; // Increased speed for better visual feedback
+    const scrollSpeed = 0.3; // Reduced speed for better performance
 
     const smoothScroll = (timestamp: number) => {
       if (!scrollContainer || isPausedRef.current) {
@@ -104,26 +112,21 @@ export const ServicesSection = memo(function ServicesSection() {
       animationFrameRef.current = requestAnimationFrame(smoothScroll);
     };
 
-    // Start animation with reduced delay
+    // Start animation with delay to reduce initial load
     const timer = setTimeout(() => {
       animationFrameRef.current = requestAnimationFrame(smoothScroll);
-    }, 100);
-
-    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    }, 1000);
 
     return () => {
       clearTimeout(timer);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [handleMouseEnter, handleMouseLeave]);
+  }, []);
 
   return (
-    <section className="relative py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+    <section className="relative py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0"
@@ -164,116 +167,123 @@ export const ServicesSection = memo(function ServicesSection() {
         {/* Services Carousel */}
         <div 
           ref={scrollContainerRef}
-          className="flex gap-4 sm:gap-6 overflow-x-hidden overflow-y-visible py-8 pb-8 [&::-webkit-scrollbar]:hidden px-2 sm:px-0"
+          className="flex gap-6 sm:gap-7 overflow-x-hidden overflow-y-visible py-8 pb-12 [&::-webkit-scrollbar]:hidden px-4 sm:px-2"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {/* Duplicate services array for infinite loop effect */}
           {[...services, ...services].map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <div key={index} className="flex-shrink-0 py-2 px-3">
-                <CometCard 
-                  rotateDepth={8} 
-                  translateDepth={8}
-                  className="w-[280px] sm:w-[340px] md:w-[380px] lg:w-[420px]"
+              <div 
+                key={index} 
+                className="flex-shrink-0"
+                onMouseEnter={handleCardMouseEnter}
+                onMouseLeave={handleCardMouseLeave}
+              >
+                <div 
+                  className="group relative w-[300px] sm:w-[340px] lg:w-[380px] cursor-pointer"
+                  onClick={() => router.push('/coming-soon')}
                 >
-                  <div 
-                    className={`relative group w-full h-[380px] sm:h-[400px] rounded-2xl p-5 sm:p-6 border-2 border-white/90 flex flex-col overflow-hidden shadow-xl shadow-gray-300/30 hover:shadow-2xl hover:shadow-[#2B9EB3]/30 hover:border-[#2B9EB3]/50 transition-all duration-500`}
+                  {/* Main Card */}
+                  <div className="relative bg-white rounded-3xl overflow-hidden transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]"
                     style={{
-                      transformStyle: "preserve-3d",
-                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 50%, rgba(255, 255, 255, 0.95) 100%)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
+                      boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.1)',
                     }}
                   >
-                    {/* Dot Pattern Background */}
-                    <div 
-                      className="absolute inset-0 opacity-[0.08] group-hover:opacity-[0.12] transition-opacity duration-300 z-0"
-                      style={{
-                        backgroundImage: `radial-gradient(circle at 2px 2px, rgb(43, 158, 179) 1.5px, transparent 0)`,
-                        backgroundSize: '20px 20px'
-                      }}
-                    />
-                    
-                    {/* Diagonal Lines Pattern */}
-                    <div 
-                      className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-300 z-0"
-                      style={{
-                        backgroundImage: `repeating-linear-gradient(45deg, rgba(249, 168, 37, 0.5) 0px, rgba(249, 168, 37, 0.5) 1px, transparent 1px, transparent 10px)`,
-                      }}
-                    />
-                    
-                    {/* Grid Pattern */}
-                    <div 
-                      className="absolute inset-0 opacity-[0.04] group-hover:opacity-[0.07] transition-opacity duration-300 z-0"
-                      style={{
-                        backgroundImage: `linear-gradient(rgba(43, 158, 179, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(43, 158, 179, 0.4) 1px, transparent 1px)`,
-                        backgroundSize: '30px 30px'
-                      }}
-                    />
-                    
-                    {/* Decorative corner elements */}
-                    <div className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 border-[#F9A825]/20 rounded-tl-2xl group-hover:border-[#F9A825]/40 transition-all duration-300 z-10" />
-                    <div className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 border-[#2B9EB3]/20 rounded-br-2xl group-hover:border-[#2B9EB3]/40 transition-all duration-300 z-10" />
-                    
-                    {/* Circular pattern accent - top right */}
-                    <div 
-                      className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-[0.06] group-hover:opacity-[0.10] transition-opacity duration-300 z-0"
-                      style={{
-                        background: `radial-gradient(circle, rgba(43, 158, 179, 0.3) 0%, transparent 70%)`
-                      }}
-                    />
-                    
-                    {/* Circular pattern accent - bottom left */}
-                    <div 
-                      className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full opacity-[0.06] group-hover:opacity-[0.10] transition-opacity duration-300 z-0"
-                      style={{
-                        background: `radial-gradient(circle, rgba(249, 168, 37, 0.3) 0%, transparent 70%)`
-                      }}
-                    />
-                    
-                    {/* Gradient overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#2B9EB3]/0 via-transparent to-[#F9A825]/0 group-hover:from-[#2B9EB3]/5 group-hover:to-[#F9A825]/5 transition-all duration-500 rounded-2xl pointer-events-none" />
-                    
-                    {/* Icon */}
-                    <div className="mb-3 sm:mb-4 flex-shrink-0 relative z-10">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#2B9EB3] to-[#1B7A8F] shadow-lg flex items-center justify-center border-2 border-[#2B9EB3]/20 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#2B9EB3]/30 group-hover:rotate-6 transition-all duration-300 relative overflow-hidden">
-                        {/* Shimmer effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                        <IconComponent className="w-9 h-9 sm:w-11 sm:h-11 text-white relative z-10" />
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0A3D62] mb-2 sm:mb-3 flex-shrink-0 relative z-10 group-hover:text-[#2B9EB3] transition-colors duration-300">
-                      {service.title}
-                    </h3>
-
-                    {/* Decorative line */}
-                    <div className="w-12 h-1 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] rounded-full mb-2 sm:mb-3 group-hover:w-20 transition-all duration-300" />
-
-                    {/* Description */}
-                    <p className="text-gray-700 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-3 flex-shrink-0 relative z-10">
-                      {service.description}
-                    </p>
-
-                    {/* Image */}
-                    <div className="w-full mt-auto flex-shrink-0 relative z-10">
-                      <div className="relative overflow-hidden rounded-xl group-hover:shadow-lg transition-all duration-300">
-                        <img
-                          src={service.image}
-                          height="400"
-                          width="400"
-                          loading="lazy"
-                          className="h-32 sm:h-36 w-full object-cover rounded-xl group-hover:scale-110 transition-all duration-500"
-                          alt={service.title}
+                    {/* Image Section with Overlay */}
+                    <div className="relative h-[220px] sm:h-[240px] overflow-hidden">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                      
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/60" />
+                      
+                      {/* Content Over Image */}
+                      <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 pb-6">
+                        {/* Icon Badge */}
+                        <div className="mb-3 inline-block">
+                          <div 
+                            className="p-2.5 sm:p-3 rounded-xl backdrop-blur-md transition-all duration-500 group-hover:scale-110"
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.95)',
+                              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)'
+                            }}
+                          >
+                            <IconComponent 
+                              className="w-6 h-6 sm:w-7 sm:h-7"
+                              style={{ color: service.accentColor }}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Title */}
+                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 drop-shadow-lg">
+                          {service.title}
+                        </h3>
+                        
+                        {/* Accent Bar */}
+                        <div 
+                          className="h-1 w-16 rounded-full transition-all duration-500 group-hover:w-24"
+                          style={{
+                            background: `linear-gradient(90deg, ${service.accentColor}, ${service.accentColorHover})`
+                          }}
                         />
-                        {/* Image overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A3D62]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
                       </div>
                     </div>
+
+                    {/* Description Section */}
+                    <div className="p-5 sm:p-6 bg-white">
+                      <p className="text-gray-600 text-[13px] sm:text-sm leading-relaxed mb-4 line-clamp-3">
+                        {service.description}
+                      </p>
+                      
+                      {/* CTA */}
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                        <span 
+                          className="text-sm sm:text-[15px] font-semibold flex items-center gap-2 transition-all duration-300"
+                          style={{ color: service.accentColor }}
+                        >
+                          View Details
+                          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-2" />
+                        </span>
+                        
+                        {/* Service Number Badge */}
+                        <div 
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 group-hover:scale-110 group-hover:rotate-12"
+                          style={{
+                            background: `${service.accentColor}15`,
+                            color: service.accentColor
+                          }}
+                        >
+                          {(index % 5) + 1}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hover Border Glow */}
+                    <div 
+                      className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        boxShadow: `inset 0 0 0 2px ${service.accentColor}40`
+                      }}
+                    />
                   </div>
-                </CometCard>
+
+                  {/* Floating Corner Indicator */}
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <div 
+                      className="w-2 h-2 rounded-full animate-pulse"
+                      style={{
+                        background: service.accentColor,
+                        boxShadow: `0 0 20px ${service.accentColor}80`
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             );
           })}

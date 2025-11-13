@@ -6,12 +6,12 @@ import { FiArrowRight } from "react-icons/fi"
 import { LayoutGridDemo } from "@/components/home/layout-grid-demo"
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip"
 import { Cover } from "@/components/ui/cover"
-import { Button } from "@/components/ui/button"
+import { Button as MovingBorderButton } from "@/components/ui/moving-border"
 import Link from "next/link"
 
 function ShaderHeroContent() {
   return (
-    <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-32">
+    <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-8 pt-24 pb-16 sm:py-20 md:py-24 lg:py-32">
       <div className="flex flex-col xl:grid xl:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 xl:gap-20 xl:items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -26,21 +26,23 @@ function ShaderHeroContent() {
             <span className="text-xs font-medium text-[#0A3D62]">24/7 Available • All Odisha</span>
           </div>
 
-          <div className="space-y-6">
-            <LayoutTextFlip
-              text="Professional"
-              words={["Doorstep", "Quality", "Reliable", "Fast"]}
-              duration={2500}
-            />
-            
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-4xl font-bold text-[#0A3D62] leading-tight">
-              Services
-              <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] bg-clip-text text-transparent">
+          <div className="space-y-5">
+            <div className="space-y-3">
+              <LayoutTextFlip
+                text="Professional"
+                words={["Doorstep", "Quality", "Reliable", "Fast"]}
+                duration={2500}
+              />
+              
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#0A3D62] leading-[1.1]">
+                Services
+              </h2>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] bg-clip-text text-transparent leading-[1.1]">
                 Anywhere in Odisha
-              </span>
-            </h2>
+              </div>
+            </div>
             
-            <div className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xl">
+            <div className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl pt-2">
               From cities to villages, <Cover>skilled professionals</Cover> deliver 
               essential services across every block and panchayat with guaranteed 
               <span className="font-semibold text-[#2B9EB3]"> quick response time</span>.
@@ -66,16 +68,16 @@ function ShaderHeroContent() {
           {/* Premium CTA */}
           <div className="flex items-center gap-4 pt-2">
             <Link href="/signin" className="w-full sm:w-auto">
-              <Button 
-                size="lg" 
-                className="group relative w-full sm:w-auto bg-[#0A3D62] text-white font-semibold hover:bg-[#0A3D62]/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-[#0A3D62]/20 transition-all duration-300 overflow-hidden"
+              <MovingBorderButton
+                borderRadius="1rem"
+                containerClassName="w-full sm:w-auto h-auto"
+                borderClassName="bg-[radial-gradient(#F9A825_40%,#FFD700_60%)] opacity-100"
+                duration={3000}
+                className="bg-[#0A3D62] text-white font-semibold border-slate-800/50 hover:bg-[#0A3D62]/90 px-8 py-3 flex items-center justify-center gap-2 group"
               >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  Get Started Today
-                  <FiArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[#2B9EB3] to-[#1B7A8F] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </Button>
+                Get Started Today
+                <FiArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </MovingBorderButton>
             </Link>
           </div>
 
@@ -101,16 +103,50 @@ function ShaderHeroContent() {
           <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-tr from-[#2B9EB3]/20 to-[#0A3D62]/20 rounded-full blur-3xl" />
           
           {/* Image Grid Container */}
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-[#0A3D62]/10 ring-1 ring-white/20 backdrop-blur-sm h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] xl:h-[600px]">
-            <LayoutGridDemo />
+          <div className="relative rounded-[2rem] overflow-hidden h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] xl:h-[600px]">
+            {/* Outer frame with sophisticated border */}
+            <div className="absolute inset-0 rounded-[2rem] p-[2px] bg-gradient-to-br from-[#F9A825]/40 via-[#2B9EB3]/40 to-[#0A3D62]/40" 
+              style={{
+                boxShadow: '0 20px 60px -15px rgba(10, 61, 98, 0.3), 0 10px 30px -10px rgba(43, 158, 179, 0.2)'
+              }}>
+              <div className="h-full w-full rounded-[2rem] bg-white/90 backdrop-blur-lg overflow-hidden relative">
+                {/* Inner subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-[#2B9EB3]/5" />
+                <div className="relative h-full w-full">
+                  <LayoutGridDemo />
+                </div>
+              </div>
+            </div>
+            
+            {/* Corner accents */}
+            <div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-[#F9A825] rounded-tl-xl opacity-60" />
+            <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-[#2B9EB3] rounded-br-xl opacity-60" />
           </div>
 
           {/* Floating Badge */}
           <div className="absolute -bottom-4 sm:-bottom-6 left-1/2 -translate-x-1/2 px-3 sm:px-6 py-2 sm:py-3 bg-white rounded-full shadow-xl border border-gray-100 flex items-center gap-2 sm:gap-3 max-w-[280px] sm:max-w-none">
             <div className="flex -space-x-1 sm:-space-x-2">
-              <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-gradient-to-br from-[#F9A825] to-[#FF9800] ring-2 ring-white" />
-              <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#3BB4CF] ring-2 ring-white" />
-              <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-gradient-to-br from-[#0A3D62] to-[#1B7A8F] ring-2 ring-white" />
+              <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-gradient-to-br from-[#F9A825] to-[#FF9800] ring-2 ring-white overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=100&h=100&fit=crop" 
+                  alt="Service Professional"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#3BB4CF] ring-2 ring-white overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=100&h=100&fit=crop" 
+                  alt="Happy Customer"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-gradient-to-br from-[#0A3D62] to-[#1B7A8F] ring-2 ring-white overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" 
+                  alt="Service Expert"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
             <div className="text-left">
               <div className="text-xs sm:text-sm font-bold text-[#0A3D62]">Quality Service</div>

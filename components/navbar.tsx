@@ -11,7 +11,7 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import { logoutUser } from "@/actions/logout";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { FiUser, FiLogOut, FiHome } from "react-icons/fi";
 import { toast } from "sonner";
@@ -46,20 +46,15 @@ export function NavbarDemo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   
-  // Check if user is admin
-  const isAdmin = user?.type === 'admin' || user?.isSuperAdmin === true;
-  const profileRoute = isAdmin ? '/admin/dashboard' : '/profile';
-  const profileLabel = isAdmin ? 'Dashboard' : 'Profile';
-  
-  // Debug logging
-  useEffect(() => {
-    if (user) {
-      console.log('User data in navbar:', user);
-      console.log('User type:', user.type);
-      console.log('Is Admin:', isAdmin);
-      console.log('Profile Label:', profileLabel);
-    }
-  }, [user, isAdmin, profileLabel]);
+  // Memoize admin check and routes
+  const { isAdmin, profileRoute, profileLabel } = useMemo(() => {
+    const admin = user?.type === 'admin' || user?.isSuperAdmin === true;
+    return {
+      isAdmin: admin,
+      profileRoute: admin ? '/admin/dashboard' : '/profile',
+      profileLabel: admin ? 'Dashboard' : 'Profile',
+    };
+  }, [user?.type, user?.isSuperAdmin]);
   
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -77,18 +72,20 @@ export function NavbarDemo() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside, { passive: true });
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
   }, [showDropdown]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logoutUser().then(() => {
       authLogout();
       setShowDropdown(false);
       toast.success("Logged out successfully");
       router.push("/signin");
     });
-  };
+  }, [authLogout, router]);
 
   return (
     <div className="relative w-full">

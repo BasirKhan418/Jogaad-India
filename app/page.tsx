@@ -51,7 +51,7 @@ const AppDownloadSection = dynamic(() => import('@/components/home/app-download-
   loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
 })
 
-const page = () => {
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <section className="relative">
@@ -97,5 +97,3 @@ const page = () => {
     </div>
   )
 }
-
-export default page

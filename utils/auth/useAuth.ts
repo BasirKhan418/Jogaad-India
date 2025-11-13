@@ -106,9 +106,9 @@ export const useAuth = (): UseAuthReturn => {
       }
     };
     
-    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
-    window.addEventListener('focus', handleVisibilityOrFocus);
-    
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus, { passive: true });
+    window.addEventListener('focus', handleVisibilityOrFocus, { passive: true });
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
       window.removeEventListener('focus', handleVisibilityOrFocus);

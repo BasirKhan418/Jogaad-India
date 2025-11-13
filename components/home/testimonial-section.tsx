@@ -1,48 +1,58 @@
 "use client";
-import React, { useState, useEffect, memo, useCallback } from 'react';
-import { FaStar } from 'react-icons/fa';
+import React, { memo, useState, useCallback, useEffect } from 'react';
+import { FaStar, FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface Testimonial {
   id: number;
   name: string;
-  role: string;
+  location: string;
   rating: number;
-  comment: string;
+  review: string;
+  service: string;
   image: string;
+  accentColor: string;
 }
 
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Marvin McKinney",
-    role: "Directors",
-    rating: 4.8,
-    comment: "Clean & Shine did an amazing job with our deep clean. The team was punctual, professional, and thorough. Every corner of the house sparkles now! Will definitely hire them again.",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&q=80"
+    name: "Rajesh Kumar Patel",
+    location: "Bhubaneswar, Odisha",
+    rating: 5,
+    review: "Jogaad India helped us find excellent manpower for our construction project. The workers were skilled, punctual, and the entire process was seamless. Highly recommend their services!",
+    service: "Construction Services",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    accentColor: "from-[#F9A825] to-[#FF9800]"
   },
   {
     id: 2,
-    name: "Andrea Silvana",
-    role: "Directors",
-    rating: 5.0,
-    comment: "Clean & Shine did an amazing job with our deep clean. The team was punctual, professional, and thorough. Every corner of the house sparkles now! Will definitely hire them again.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&q=80"
+    name: "Priya Sharma",
+    location: "Cuttack, Odisha",
+    rating: 5,
+    review: "When my father needed emergency medical assistance, Jogaad India arranged an ambulance within 30 minutes. Their quick response and professional healthcare support was life-saving. Forever grateful!",
+    service: "Medical Services",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    accentColor: "from-[#2B9EB3] to-[#1B7A8F]"
   },
   {
     id: 3,
-    name: "Andrea Silvana",
-    role: "Directors",
-    rating: 5.0,
-    comment: "Clean & Shine did an amazing job with our deep clean. The team was punctual, professional, and thorough. Every corner of the house sparkles now! Will definitely hire them again.",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&q=80"
+    name: "Amit Mishra",
+    location: "Puri, Odisha",
+    rating: 5,
+    review: "Our college fest was a huge success thanks to Jogaad India's event management team. They handled everything from sound to decorations perfectly. Very professional and creative!",
+    service: "Event Management",
+    image: "https://randomuser.me/api/portraits/men/22.jpg",
+    accentColor: "from-[#0A3D62] to-[#2B9EB3]"
   },
   {
     id: 4,
-    name: "Marvin McKinney",
-    role: "Directors",
-    rating: 5.0,
-    comment: "Clean & Shine did an amazing job with our deep clean. The team was punctual, professional, and thorough. Every corner of the house sparkles now! Will definitely hire them again.",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&q=80"
+    name: "Sneha Dash",
+    location: "Rourkela, Odisha",
+    rating: 5,
+    review: "Found the perfect plumber through Jogaad India for our new home. He was experienced, reasonable, and completed the work on time. Such a relief to have trusted service providers!",
+    service: "Home Services",
+    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    accentColor: "from-[#F9A825] to-[#FF9800]"
   }
 ];
 
@@ -56,8 +66,7 @@ export const TestimonialSection = memo(function TestimonialSection() {
     };
     
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
+    window.addEventListener('resize', checkMobile, { passive: true });
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -76,136 +85,163 @@ export const TestimonialSection = memo(function TestimonialSection() {
     setCurrentIndex(index);
   }, []);
 
-  const getVisibleTestimonials = useCallback(() => {
-    const start = currentIndex * itemsPerView;
-    return testimonials.slice(start, start + itemsPerView);
-  }, [currentIndex, itemsPerView]);
-
   return (
-    <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.015]" style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(10, 61, 98) 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }} />
+    <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white via-gray-50/30 to-white">
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-10 left-[10%] w-72 h-72 bg-[#2B9EB3]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-[10%] w-96 h-96 bg-[#F9A825]/5 rounded-full blur-3xl"></div>
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0A3D62]">
-            What Our Client Says
+        <div className="text-center mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#2B9EB3]/10 rounded-full mb-4">
+            <div className="w-2 h-2 bg-[#2B9EB3] rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-[#2B9EB3]">Client Testimonials</span>
+          </div>
+          
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <span className="text-[#0A3D62]">What Our </span>
+            <span className="bg-gradient-to-r from-[#2B9EB3] to-[#F9A825] bg-clip-text text-transparent">
+              Clients Say
+            </span>
           </h2>
+          
+          <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
+            Real experiences from real people across Odisha who trust Jogaad India
+          </p>
         </div>
 
         {/* Testimonials Carousel */}
-        <div className="relative">
-          <div className="overflow-hidden">
-            <div className="flex gap-4 sm:gap-6 lg:gap-8 transition-all duration-500 ease-in-out">
-              {getVisibleTestimonials().map((testimonial) => (
+        <div className="relative max-w-6xl mx-auto">
+          <div className="overflow-hidden rounded-3xl">
+            <div 
+              className="flex transition-transform duration-500 ease-out"
+              style={{ 
+                transform: `translateX(-${currentIndex * 100}%)` 
+              }}
+            >
+              {testimonials.map((testimonial) => (
                 <div
                   key={testimonial.id}
-                  className={`${isMobile ? 'w-full' : 'w-1/2'} flex-shrink-0`}
+                  className="w-full md:w-1/2 flex-shrink-0 p-3"
                 >
-                  <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 h-full flex flex-col">
-                    {/* Avatar and Rating */}
-                    <div className="flex flex-col items-center mb-6">
-                      <div className="relative mb-4">
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                          <img
-                            src={testimonial.image}
-                            alt={testimonial.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover"
-                          />
+                  {/* Card */}
+                  <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-[#2B9EB3]/30 h-full">
+                    {/* Accent Line */}
+                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${testimonial.accentColor} rounded-t-2xl`}></div>
+                    
+                    {/* Quote Background */}
+                    <div className="absolute top-4 right-4 opacity-[0.07] pointer-events-none">
+                      <FaQuoteLeft className="text-8xl text-[#2B9EB3]" />
+                    </div>
+
+                    <div className="relative p-6 sm:p-8">
+                      {/* Profile Section */}
+                      <div className="flex items-start gap-4 mb-6">
+                        {/* Avatar with Glow */}
+                        <div className="relative flex-shrink-0">
+                          <div className={`absolute -inset-1 bg-gradient-to-r ${testimonial.accentColor} rounded-full opacity-40 blur-lg group-hover:opacity-60 transition-opacity`}></div>
+                          <div className="relative w-16 h-16 sm:w-20 sm:h-20">
+                            <img
+                              src={testimonial.image}
+                              alt={testimonial.name}
+                              className="w-full h-full rounded-full object-cover border-4 border-white shadow-md"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.name)}&background=random&size=200`;
+                              }}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Name and Rating */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg sm:text-xl font-bold text-[#0A3D62] mb-1">
+                            {testimonial.name}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-gray-500 mb-2 flex items-center gap-1">
+                            <span>📍</span>
+                            <span className="truncate">{testimonial.location}</span>
+                          </p>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <FaStar 
+                                key={i} 
+                                className={`text-sm ${i < testimonial.rating ? 'text-[#F9A825]' : 'text-gray-300'}`}
+                              />
+                            ))}
+                            <span className="ml-1 text-sm font-bold text-[#0A3D62]">{testimonial.rating}.0</span>
+                          </div>
                         </div>
                       </div>
-                      
-                      {/* Star Rating */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="flex gap-1">
-                          {[...Array(5)].map((_, index) => (
-                            <FaStar
-                              key={index}
-                              className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                                index < Math.floor(testimonial.rating)
-                                  ? 'text-[#F9A825]'
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-[#0A3D62] font-bold text-sm sm:text-base">
-                          {testimonial.rating.toFixed(1)}
+
+                      {/* Review */}
+                      <div className="mb-6">
+                        <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
+                          &ldquo;{testimonial.review}&rdquo;
+                        </p>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <span className={`inline-block px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${testimonial.accentColor}`}>
+                          {testimonial.service}
+                        </span>
+                        <span className="text-xs text-gray-400 flex items-center gap-1">
+                          <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                          </svg>
+                          Verified Client
                         </span>
                       </div>
                     </div>
 
-                    {/* Testimonial Text */}
-                    <div className="flex-1 flex flex-col items-center text-center">
-                      <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-6 italic">
-                        "{testimonial.comment}"
-                      </p>
-
-                      {/* Name and Role */}
-                      <div className="mt-auto">
-                        <h4 className="text-[#0A3D62] font-bold text-lg sm:text-xl mb-1">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-gray-500 text-sm sm:text-base">
-                          {testimonial.role}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Hover Gradient Overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${testimonial.accentColor} opacity-0 group-hover:opacity-[0.02] transition-opacity rounded-2xl pointer-events-none`}></div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Navigation Dots */}
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-xl border-2 border-gray-100 flex items-center justify-center text-[#2B9EB3] hover:bg-[#2B9EB3] hover:text-white hover:border-[#2B9EB3] transition-all duration-300 z-10 group"
+            aria-label="Previous"
+          >
+            <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+          
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-xl border-2 border-gray-100 flex items-center justify-center text-[#2B9EB3] hover:bg-[#2B9EB3] hover:text-white hover:border-[#2B9EB3] transition-all duration-300 z-10 group"
+            aria-label="Next"
+          >
+            <FaChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
+          {/* Dots Navigation */}
           <div className="flex justify-center gap-2 mt-8">
-            {[...Array(maxIndex + 1)].map((_, index) => (
+            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${
+                className={`transition-all duration-300 rounded-full ${
                   currentIndex === index
-                    ? 'w-8 sm:w-10 bg-[#5B4FD9]'
-                    : 'w-2.5 sm:w-3 bg-gray-300 hover:bg-gray-400'
+                    ? 'w-8 h-2.5 bg-[#2B9EB3]'
+                    : 'w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}
           </div>
-
-          {/* Optional: Arrow Navigation for larger screens */}
-          <div className="hidden md:block">
-            <button
-              onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white shadow-lg hover:shadow-xl border border-gray-200 flex items-center justify-center text-[#5B4FD9] hover:bg-[#5B4FD9] hover:text-white transition-all duration-300"
-              aria-label="Previous testimonial"
-            >
-              <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white shadow-lg hover:shadow-xl border border-gray-200 flex items-center justify-center text-[#5B4FD9] hover:bg-[#5B4FD9] hover:text-white transition-all duration-300"
-              aria-label="Next testimonial"
-            >
-              <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Swipe Hint */}
-        <div className="md:hidden text-center mt-6 text-gray-500 text-sm">
-          Swipe or use dots to navigate
         </div>
       </div>
     </section>
   );
 });
+
+TestimonialSection.displayName = "TestimonialSection";

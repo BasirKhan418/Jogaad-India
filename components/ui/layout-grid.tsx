@@ -25,23 +25,26 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
   };
 
   return (
-    <div className="w-full h-full p-1 sm:p-3 md:p-4 lg:p-6 xl:p-10 grid grid-cols-2 md:grid-cols-3 max-w-7xl mx-auto gap-1 sm:gap-2 md:gap-3 lg:gap-4 relative">
+    <div className="w-full h-full p-1 sm:p-3 md:p-4 lg:p-6 xl:p-10 grid grid-cols-2 md:grid-cols-3 max-w-7xl mx-auto gap-2 sm:gap-3 md:gap-4 lg:gap-5 relative">
       {cards.map((card, i) => (
         <div key={i} className={cn(card.className, "min-h-[120px] sm:min-h-[140px] md:min-h-[160px] lg:min-h-[180px]")}>
           <motion.div
             onClick={() => handleClick(card)}
             className={cn(
               card.className,
-              "relative overflow-hidden",
+              "relative overflow-hidden group",
               selected?.id === card.id
                 ? "rounded-lg cursor-pointer absolute inset-0 h-1/2 w-full md:w-1/2 m-auto z-50 flex justify-center items-center flex-wrap flex-col"
                 : lastSelected?.id === card.id
-                ? "z-40 bg-white rounded-lg sm:rounded-xl h-full w-full"
-                : "bg-white rounded-lg sm:rounded-xl h-full w-full"
+                ? "z-40 bg-white rounded-xl sm:rounded-2xl h-full w-full shadow-lg border border-gray-200/50"
+                : "bg-white rounded-xl sm:rounded-2xl h-full w-full shadow-lg hover:shadow-2xl border border-gray-200/50 hover:border-[#2B9EB3]/30 transition-all duration-300"
             )}
             layoutId={`card-${card.id}`}
+            whileHover={{ scale: selected?.id === card.id ? 1 : 1.02 }}
+            transition={{ duration: 0.2 }}
           >
             {selected?.id === card.id && <SelectedCard selected={selected} />}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 rounded-xl sm:rounded-2xl" />
             <ImageComponent card={card} />
           </motion.div>
         </div>
@@ -66,7 +69,7 @@ const ImageComponent = ({ card }: { card: Card }) => {
       height="500"
       width="500"
       className={cn(
-        "object-cover object-center sm:object-top absolute inset-0 h-full w-full transition duration-200"
+        "object-cover object-center sm:object-top absolute inset-0 h-full w-full transition-all duration-300 group-hover:scale-105"
       )}
       alt="thumbnail"
     />
