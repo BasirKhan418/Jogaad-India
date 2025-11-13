@@ -48,7 +48,7 @@ function ShaderHeroContent() {
           </div>
 
           {/* Elegant Stats */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-6 py-4 sm:py-6 border-t border-b border-gray-200/50">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6 py-4 sm:py-6 border-t border-b border-gray-400/60">
             <div className="space-y-1 text-center sm:text-left">
               <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-br from-[#0A3D62] to-[#1B7A8F] bg-clip-text text-transparent">Expert</div>
               <div className="text-xs sm:text-sm text-gray-600">Professionals</div>
