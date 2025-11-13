@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Preloader } from "@/components/ui/preloader";
 import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
+import { NavbarDemo } from "@/components/navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  variable: "--font-space-grotesk",
 });
 
 const geistMono = Geist_Mono({
@@ -28,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${spaceGrotesk.variable} ${geistMono.variable} font-sans antialiased`}
+        style={{ overflowX: 'hidden' }}
       >   
         <Toaster position="top-right" richColors />
         <Preloader />
         <ConditionalLayout>
+          
           {children}
         </ConditionalLayout>
       </body>

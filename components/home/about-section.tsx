@@ -3,6 +3,7 @@
 import React from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { Button } from "@/components/ui/moving-border";
 import { Cover } from "@/components/ui/cover";
@@ -157,18 +158,20 @@ export function AboutSection() {
               viewport={{ once: true }}
               className="pt-4"
             >
-              <Button
-                borderRadius="1.25rem"
-                containerClassName="h-14 w-48 hover:scale-105 transition-transform duration-300"
-                borderClassName="h-20 w-20 bg-[radial-gradient(#F9A825_40%,transparent_60%)] opacity-[0.9]"
-                duration={4000}
-                className="bg-gradient-to-br from-[#3BB4CF] to-[#1B7A8F] border-[#F9A825]/30 text-white font-semibold text-base hover:shadow-2xl hover:shadow-[#F9A825]/20 hover:from-[#45C4E0] hover:to-[#2B9EB3] transition-all duration-300 group"
-              >
-                <span className="flex items-center gap-2">
-                  More Details
-                  <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-              </Button>
+              <Link href="/about">
+                <Button
+                  borderRadius="1.25rem"
+                  containerClassName="h-14 w-48 hover:scale-105 transition-transform duration-300"
+                  borderClassName="h-20 w-20 bg-[radial-gradient(#F9A825_40%,transparent_60%)] opacity-[0.9]"
+                  duration={4000}
+                  className="bg-gradient-to-br from-[#3BB4CF] to-[#1B7A8F] border-[#F9A825]/30 text-white font-semibold text-base hover:shadow-2xl hover:shadow-[#F9A825]/20 hover:from-[#45C4E0] hover:to-[#2B9EB3] transition-all duration-300 group"
+                >
+                  <span className="flex items-center gap-2">
+                    More Details
+                    <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
 

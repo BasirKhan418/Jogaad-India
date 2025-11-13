@@ -7,10 +7,10 @@ import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/f
 const footerLinks = {
   pages: [
     { label: 'Home', href: '/' },
-    { label: 'Services', href: '/#services' },
-    { label: 'Core Areas', href: '/#core-areas' },
+    { label: 'About', href: '/about' },
+    { label: 'Services', href: '/services' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Contact', href: '/contact' },
   ],
   socials: [
     { icon: FaFacebookF, label: 'Facebook', href: 'https://facebook.com' },
@@ -25,7 +25,7 @@ const footerLinks = {
   ],
   account: [
     { label: 'Sign Up', href: '/signup' },
-    { label: 'Login', href: '/login' },
+    { label: 'Login', href: '/signin' },
   ]
 };
 
@@ -37,7 +37,7 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="space-y-5 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 group">
-              <Image src="/logo.png" alt="Jogaad India" width={200} height={170} className="drop-shadow-md" />
+              <Image src="/lg.png" alt="Jogaad India" width={200} height={170} className="drop-shadow-md" />
               <span className="sr-only">Jogaad India</span>
             </Link>
             <p className="text-sm leading-relaxed text-gray-400 max-w-xs">

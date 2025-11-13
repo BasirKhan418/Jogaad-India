@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { FaStar } from 'react-icons/fa';
 
 interface Testimonial {
@@ -46,7 +46,7 @@ const testimonials: Testimonial[] = [
   }
 ];
 
-export const TestimonialSection = () => {
+export const TestimonialSection = memo(function TestimonialSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -64,27 +64,27 @@ export const TestimonialSection = () => {
   const itemsPerView = isMobile ? 1 : 2;
   const maxIndex = Math.ceil(testimonials.length / itemsPerView) - 1;
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
+  }, [maxIndex]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
+  }, [maxIndex]);
 
-  const goToSlide = (index: number) => {
+  const goToSlide = useCallback((index: number) => {
     setCurrentIndex(index);
-  };
+  }, []);
 
-  const getVisibleTestimonials = () => {
+  const getVisibleTestimonials = useCallback(() => {
     const start = currentIndex * itemsPerView;
     return testimonials.slice(start, start + itemsPerView);
-  };
+  }, [currentIndex, itemsPerView]);
 
   return (
-    <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
+      <div className="absolute inset-0 opacity-[0.015]" style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(10, 61, 98) 1px, transparent 0)`,
         backgroundSize: '40px 40px'
       }} />
@@ -114,6 +114,7 @@ export const TestimonialSection = () => {
                           <img
                             src={testimonial.image}
                             alt={testimonial.name}
+                            loading="lazy"
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -207,4 +208,4 @@ export const TestimonialSection = () => {
       </div>
     </section>
   );
-};
+});

@@ -103,20 +103,9 @@ export const BlogSection = () => {
                   </h3>
 
                   {/* Description - Fixed Height with Line Clamp */}
-                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 min-h-[4.5rem] mb-4">
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 min-h-[4.5rem]">
                     {post.description}
                   </p>
-
-                  {/* Read More Link - Push to Bottom */}
-                  <div className="mt-auto pt-4 border-t border-gray-100">
-                    <Link 
-                      href={`/blog/${post.id}`}
-                      className="group/link inline-flex items-center gap-2 text-[#2B9EB3] hover:text-[#0A3D62] font-semibold text-sm transition-colors duration-300"
-                    >
-                      Read More
-                      <FiArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
-                    </Link>
-                  </div>
                 </div>
               </div>
             </CometCard>

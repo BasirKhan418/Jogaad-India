@@ -25,9 +25,9 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
   };
 
   return (
-    <div className="w-full h-full p-2 sm:p-4 md:p-6 lg:p-10 grid grid-cols-2 md:grid-cols-3 max-w-7xl mx-auto gap-2 sm:gap-3 md:gap-4 relative">
+    <div className="w-full h-full p-1 sm:p-3 md:p-4 lg:p-6 xl:p-10 grid grid-cols-2 md:grid-cols-3 max-w-7xl mx-auto gap-1 sm:gap-2 md:gap-3 lg:gap-4 relative">
       {cards.map((card, i) => (
-        <div key={i} className={cn(card.className, "min-h-[140px] sm:min-h-[160px] md:min-h-[180px]")}>
+        <div key={i} className={cn(card.className, "min-h-[120px] sm:min-h-[140px] md:min-h-[160px] lg:min-h-[180px]")}>
           <motion.div
             onClick={() => handleClick(card)}
             className={cn(

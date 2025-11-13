@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, memo, useCallback } from "react";
 import { CometCard } from "@/components/ui/comet-card";
 import { 
   ManpowerIcon, 
@@ -56,18 +56,27 @@ const services: Service[] = [
   }
 ];
 
-export function ServicesSection() {
+export const ServicesSection = memo(function ServicesSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
   const lastTimeRef = useRef(0);
+
+  const handleMouseEnter = useCallback(() => {
+    isPausedRef.current = true;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    isPausedRef.current = false;
+    lastTimeRef.current = 0;
+  }, []);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
 
     let scrollAmount = 0;
-    const scrollSpeed = 0.5; // Pixels per frame (reduced for smoother motion)
+    const scrollSpeed = 0.4; // Increased speed for better visual feedback
 
     const smoothScroll = (timestamp: number) => {
       if (!scrollContainer || isPausedRef.current) {
@@ -95,33 +104,26 @@ export function ServicesSection() {
       animationFrameRef.current = requestAnimationFrame(smoothScroll);
     };
 
-    // Start animation
-    animationFrameRef.current = requestAnimationFrame(smoothScroll);
-
-    // Pause on hover
-    const handleMouseEnter = () => {
-      isPausedRef.current = true;
-    };
-
-    const handleMouseLeave = () => {
-      isPausedRef.current = false;
-      lastTimeRef.current = 0; // Reset time to avoid jump
-    };
+    // Start animation with reduced delay
+    const timer = setTimeout(() => {
+      animationFrameRef.current = requestAnimationFrame(smoothScroll);
+    }, 100);
 
     scrollContainer.addEventListener('mouseenter', handleMouseEnter);
     scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      clearTimeout(timer);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
       scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
       scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, []);
+  }, [handleMouseEnter, handleMouseLeave]);
 
   return (
-    <section className="relative py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0"
@@ -133,38 +135,19 @@ export function ServicesSection() {
         }}
       />
       
-      {/* Multi-layered Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-[#2B9EB3]/8 to-[#F9A825]/12 z-10" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-[#F9A825]/8 via-white/50 to-[#2B9EB3]/15 z-10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-transparent z-10" />
+      {/* Simplified Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-[#2B9EB3]/5 to-[#F9A825]/8 z-10" />
       
       {/* Glass Effect */}
-      <div className="absolute inset-0 backdrop-blur-xl z-10" />
+      <div className="absolute inset-0 backdrop-blur-lg z-10" />
       
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 z-10 opacity-[0.04]" style={{
+      {/* Grid Pattern - Removed other patterns for performance */}
+      <div className="absolute inset-0 z-10 opacity-[0.03]" style={{
         backgroundImage: `linear-gradient(rgba(43, 158, 179, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(43, 158, 179, 0.3) 1px, transparent 1px)`,
         backgroundSize: '60px 60px'
       }} />
-      
-      {/* Dot Pattern Overlay */}
-      <div className="absolute inset-0 z-10 opacity-[0.05]" style={{
-        backgroundImage: `radial-gradient(circle at 2px 2px, rgb(249, 168, 37) 1.5px, transparent 0)`,
-        backgroundSize: '50px 50px',
-        backgroundPosition: '0 0, 25px 25px'
-      }} />
-      
-      {/* Diagonal Lines Pattern */}
-      <div className="absolute inset-0 z-10 opacity-[0.02]" style={{
-        backgroundImage: `repeating-linear-gradient(45deg, rgba(10, 61, 98, 0.5) 0px, rgba(10, 61, 98, 0.5) 1px, transparent 1px, transparent 12px)`,
-      }} />
-      
-      {/* Animated Gradient Orbs */}
-      <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-[#2B9EB3]/20 to-[#3BB4CF]/10 rounded-full blur-3xl animate-pulse z-10" />
-      <div className="absolute -bottom-20 -right-20 w-[500px] h-[500px] bg-gradient-to-tl from-[#F9A825]/20 to-[#FF9800]/10 rounded-full blur-3xl animate-pulse z-10" style={{ animationDelay: '1.5s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#2B9EB3]/5 via-white/5 to-[#F9A825]/5 rounded-full blur-3xl animate-pulse z-10" style={{ animationDelay: '0.75s' }} />
 
-      <div className="relative z-20 max-w-[1600px] mx-auto">
+      <div className="relative z-20 max-w-[1600px] mx-auto"  style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
         {/* Section Header */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#F9A825]/20 backdrop-blur-sm mb-3">
@@ -281,6 +264,7 @@ export function ServicesSection() {
                           src={service.image}
                           height="400"
                           width="400"
+                          loading="lazy"
                           className="h-32 sm:h-36 w-full object-cover rounded-xl group-hover:scale-110 transition-all duration-500"
                           alt={service.title}
                         />
@@ -297,4 +281,4 @@ export function ServicesSection() {
       </div>
     </section>
   );
-}
+});
