@@ -200,22 +200,30 @@ const TermsOfServicePage = () => {
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-semibold text-[#0A3D62] mb-4">Refund Policy</h3>
-                  <ul className="space-y-2 text-gray-700">
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
-                      <span>Service quality guarantee with satisfaction assurance</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
-                      <span>Cancellation policy varies by service type</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
-                      <span>Dispute resolution through customer support</span>
-                    </li>
-                  </ul>
-                </div>
+  <h3 className="text-lg font-semibold text-[#0A3D62] mb-4">Refund Policy</h3>
+  <ul className="space-y-2 text-gray-700">
+    <li className="flex items-start gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
+      <span>Full 100% refund if the booking is cancelled within the first 10 minutes.</span>
+    </li>
+    <li className="flex items-start gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
+      <span>
+        If cancelled after 10 minutes but within 24 hours, you will still receive a full 100% refund, 
+        but a penalty will be applied to your next booking.
+      </span>
+    </li>
+    <li className="flex items-start gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
+      <span>Cancellation policy varies by service type for special or fixed-time services.</span>
+    </li>
+    <li className="flex items-start gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#F9A825] mt-2 flex-shrink-0"></span>
+      <span>Dispute resolution through customer support for refund-related issues.</span>
+    </li>
+  </ul>
+</div>
+
               </div>
             </div>
           </div>
