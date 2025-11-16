@@ -105,6 +105,14 @@ export const PUT = async (request: Request) => {
         if (!validate.success) {
             return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
         }
+        const categoryData = await getCategoryById(data.categoryid);
+        console.log("CATEGORY DATA", categoryData);
+        if (!categoryData.success) {
+            return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
+        }
+        if (data.payrate! < categoryData.category!.categoryMinPrice || data.payrate! > categoryData.category!.categoryMaxPrice) {
+            return NextResponse.json({ message: `Payrate must be between ${categoryData.category!.categoryMinPrice} and ${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
+        }
         const response = await updateEmployeeByEmail(data.email, data);
         return NextResponse.json(response);
 
