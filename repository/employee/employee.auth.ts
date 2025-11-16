@@ -17,7 +17,7 @@ export const createEmployee = async (employeeData: EmployeeInput) => {
 export const getEmployeeByEmail = async (email: string) => {
     try{
         await ConnectDb();
-        const employee = await Employee.findOne({email});
+        const employee = await Employee.findOne({email}).populate('categoryid');
         if(employee){
             return {message:"Employee retrieved successfully",data:employee,success:true};
         }

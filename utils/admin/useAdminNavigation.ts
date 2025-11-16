@@ -7,7 +7,8 @@ import {
   IconChartBar,
   IconUser,
   IconSettings,
-  IconLogout
+  IconLogout,
+  IconUserPlus
 } from "@tabler/icons-react";
 
 export interface NavigationLink {
@@ -34,6 +35,13 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       label: "Users",
       href: "#users",
       icon: React.createElement(IconUsers, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
+      label: "Employees",
+      href: "/admin/employees",
+      icon: React.createElement(IconUserPlus, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },

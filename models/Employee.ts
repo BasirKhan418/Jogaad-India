@@ -9,6 +9,7 @@ const EmployeeSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     address: { type: String ,required:false},
     phone: { type: String ,required:true},
+    pincode: { type: String, required: false },
     bankName: { type: String ,required:false},
     bankAccountNumber: { type: String ,required:false},
     bankIfscCode: { type: String ,required:false},
