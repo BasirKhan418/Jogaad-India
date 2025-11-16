@@ -21,5 +21,6 @@ const EmployeeSchema = new mongoose.Schema({
     paymentStatus: { type: String, default: PaymentStatus.PENDING },
     categoryid: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
     payrate: { type: Number, required: false  },
+    feid: { type: mongoose.Schema.Types.ObjectId, ref: 'FieldExecutive', required: false },
 }, { timestamps: true })
 export default mongoose.models?.Employee || mongoose.model('Employee', EmployeeSchema);
