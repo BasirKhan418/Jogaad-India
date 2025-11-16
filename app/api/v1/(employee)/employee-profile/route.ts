@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({ 
             message: "Employee profile retrieved successfully", 
-            employee: response.data,
+            data: response.data,
             success: true 
         }, { status: 200 });
 

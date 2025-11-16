@@ -8,14 +8,34 @@ export const SendOtpEmployee=async(email:string)=>{
         await ConnectDb();
         const redisClient = setConnectionRedis();
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const isEligible = await Employee.findOne({email,isPaid:true});
-        if(!isEligible){
-            return {message:"No active employee account found with this email",success:false};
+        
+        // Check if employee account exists
+        const employee = await Employee.findOne({email});
+        
+        // Case 1: No account found - user needs to create account
+        if(!employee){
+            return {
+                message:"No employee account found. Please create an account first.",
+                success:false,
+                redirect: "/employee/create"
+            };
         }
-        await redisClient.set(`otp-employee:${email}`,otp,"EX",5*60); //expire in 10 minutes
+        
+        // Case 2: Account exists but payment not completed
+        if(!employee.isPaid){
+            return {
+                message:"Your account is pending payment. Please complete payment to activate.",
+                success:false,
+                requiresPayment: true,
+                redirect: "/employee/create"
+            };
+        }
+        
+        // Case 3: Account is active and paid - send OTP
+        await redisClient.set(`otp-employee:${email}`,otp,"EX",5*60); //expire in 5 minutes
         const data = await sendEmployeeOtpEmail({ email, otp });
         if(!data.success){
-            return {message:"error sending otp ",success:false}
+            return {message:"Error sending OTP. Please try again.",success:false}
         }
         return {message:"OTP sent successfully",success:true};
     }

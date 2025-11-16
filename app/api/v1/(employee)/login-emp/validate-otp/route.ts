@@ -9,6 +9,20 @@ export async function POST(request:NextRequest) {
             return NextResponse.json({message:"Invalid data",success:false}, {status:400});
         }
         const response = await verifyOTPEmployee(validateData.data.email, validateData.data.otp);
+        
+        if(response.success && response.token){
+            // Set token as HTTP-only cookie
+            const cookieResponse = NextResponse.json(response, {status: 200});
+            cookieResponse.cookies.set('token', response.token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 7 * 24 * 60 * 60, 
+                path: '/' 
+            });
+            return cookieResponse;
+        }
+        
         return NextResponse.json(response, {status: response.success ? 200 : 400});
     }
     catch(error){

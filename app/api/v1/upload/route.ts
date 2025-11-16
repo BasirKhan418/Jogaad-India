@@ -15,13 +15,19 @@ export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value || '';
-    const isTokenValid = await verifyUserToken(token);
-    if (!isTokenValid.success) {
-      return NextResponse.json(
-        { message: 'Invalid token', success: false },
-        { status: 401 }
-      );
+    
+    // If token exists, validate it
+    if (token) {
+      const isTokenValid = await verifyUserToken(token);
+      if (!isTokenValid.success) {
+        return NextResponse.json(
+          { message: 'Invalid token', success: false },
+          { status: 401 }
+        );
+      }
     }
+    // If no token, allow upload (for employee signup process)
+    
     const { filename, contentType } = await request.json();
 
     if (!filename || !contentType) {

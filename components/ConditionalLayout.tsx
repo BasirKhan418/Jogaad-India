@@ -8,12 +8,13 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
   const isAdminRoute = pathname?.startsWith("/admin");
+  const isEmployeeRoute = pathname?.startsWith("/employee");
 
   return (
     <>
-      {!isAdminRoute && <NavbarDemo />}
+      {!isAdminRoute && !isEmployeeRoute && <NavbarDemo />}
       {children}
-      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && !isEmployeeRoute && <Footer />}
     </>
   );
 }
