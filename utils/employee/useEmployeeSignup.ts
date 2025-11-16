@@ -466,11 +466,14 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
       if (result.success) {
         // Scenario 1: Account exists and is already paid - redirect to login
         if (result.redirect) {
-          toast.success('Account already exists and is active!');
-          setSuccess('Your account is already active. Redirecting to login...');
+          toast.success('Account Already Exists!', {
+            description: 'Your employee account is already active. Redirecting you to the dashboard...',
+            duration: 3000,
+          });
+          setSuccess('Account already exists and is active! Redirecting to dashboard...');
           setTimeout(() => {
-            router.push('/employee/login');
-          }, 1500);
+            router.push('/employee/dashboard');
+          }, 2000);
           return true;
         }
 

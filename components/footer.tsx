@@ -117,6 +117,22 @@ export const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
+            
+            {/* Staff Login Buttons */}
+            <div className="pt-2 space-y-2">
+              <Link 
+                href="/admin/signin"
+                className="block w-full px-4 py-2 text-xs font-medium text-center text-white bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] rounded-lg hover:from-[#0A3D62] hover:to-[#2B9EB3] transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Admin Login
+              </Link>
+              <Link 
+                href="/employee/login"
+                className="block w-full px-4 py-2 text-xs font-medium text-center text-white bg-gradient-to-r from-[#F9A825] to-[#F57C00] rounded-lg hover:from-[#F57C00] hover:to-[#F9A825] transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Employee Login
+              </Link>
+            </div>
           </div>
         </div>
 
