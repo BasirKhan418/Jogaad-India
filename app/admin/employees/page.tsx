@@ -1109,7 +1109,7 @@ const EditEmployeeModal = React.memo(({ employee, onClose }: { employee: Employe
     bankAccountNumber: employee.bankAccountNumber || '',
     bankIfscCode: employee.bankIfscCode || '',
     img: employee.img || '',
-    categoryid: employee.categoryid?._id || employee.categoryid || '',
+    categoryid: (typeof employee.categoryid === 'string' ? employee.categoryid : employee.categoryid?._id) || '',
     payrate: employee.payrate || 0
   });
 
