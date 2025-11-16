@@ -248,6 +248,7 @@ export default function EmployeeSignupPage() {
                       </Label>
                       <Input
                         id="pincode"
+                        name="pincode"
                         placeholder="6-digit"
                         type="text"
                         value={formData.pincode}

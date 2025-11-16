@@ -170,13 +170,14 @@ export const useEmployeeUpdate = (initialData?: EmployeeUpdateData): UseEmployee
   }, []);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { id, value, type } = e.target;
+    const { id, name, value, type } = e.target;
+    const fieldName = name || id; // Use name if available, fallback to id
     
     if (type === 'number') {
       const numValue = parseFloat(value) || 0;
-      setFormData(prev => ({ ...prev, [id]: numValue }));
+      setFormData(prev => ({ ...prev, [fieldName]: numValue }));
     } else {
-      setFormData(prev => ({ ...prev, [id]: value }));
+      setFormData(prev => ({ ...prev, [fieldName]: value }));
     }
     
     clearMessages();

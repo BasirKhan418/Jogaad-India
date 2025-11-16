@@ -2,9 +2,20 @@ import Razorpay from "razorpay";
 
 export const CreateEmployeeOrder = async (amount: number, currency: string, receipt: string) => {
   try {
+    // Check if Razorpay credentials are configured
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error("Razorpay credentials not configured");
+      return { 
+        message: "Payment gateway not configured. Please contact administrator.", 
+        error: "Missing Razorpay credentials", 
+        success: false, 
+        order: null 
+      };
+    }
+
     const instance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID!,
-      key_secret: process.env.RAZORPAY_KEY_SECRET!,
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
     const options = {
@@ -17,6 +28,7 @@ export const CreateEmployeeOrder = async (amount: number, currency: string, rece
     const order = await new Promise((resolve, reject) => {
       instance.orders.create(options, (err, order) => {
         if (err) {
+          console.error("Razorpay order creation error:", err);
           reject(err);
         } else {
           resolve(order);
@@ -26,6 +38,12 @@ export const CreateEmployeeOrder = async (amount: number, currency: string, rece
 
     return { message: "Order created successfully", order, success: true };
   } catch (error) {
-    return { message: "Error creating payment order", error, success: false, order: null };
+    console.error("CreateEmployeeOrder error:", error);
+    return { 
+      message: "Error creating payment order", 
+      error: error instanceof Error ? error.message : "Unknown error", 
+      success: false, 
+      order: null 
+    };
   }
 };

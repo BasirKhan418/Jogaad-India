@@ -7,9 +7,9 @@ export enum PaymentStatus {
 const EmployeeSchema = new mongoose.Schema({
     name: { type: String, required: true},
     email: { type: String, required: true, unique: true },
-    address: { type: String ,required:true},
+    address: { type: String ,required:false},
     phone: { type: String ,required:true},
-    pincode: { type: String, required: true },
+    pincode: { type: String, required: false },
     bankName: { type: String ,required:false},
     bankAccountNumber: { type: String ,required:false},
     bankIfscCode: { type: String ,required:false},
