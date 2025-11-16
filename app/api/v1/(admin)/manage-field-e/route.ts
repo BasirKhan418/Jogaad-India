@@ -5,6 +5,7 @@ import { FieldExecutiveSchemaZod } from "@/validator/fieldexecutive/field.valida
 import { createFieldExecutive } from "@/repository/fieldexecutive/auth";
 import { getAllFieldExecutives } from "@/repository/fieldexecutive/auth";
 import { updateFieldExecutive } from "@/repository/fieldexecutive/auth";
+import { date } from "zod";
 export const GET = async (request: NextRequest) => {
     try {
         const cookiesStore = await cookies();
@@ -55,7 +56,7 @@ export const PUT = async (request: Request) => {
         if (!parseResult.success) {
             return NextResponse.json({ message: "Invalid request data", success: false, errors: parseResult.error.format() }, { status: 400 });
         }
-        const response = await updateFieldExecutive(reqBody.id, reqBody);
+        const response = await updateFieldExecutive(reqBody.id, {...reqBody,targetDate:Date.now()});
         return NextResponse.json(response);
     }
     catch (error) {

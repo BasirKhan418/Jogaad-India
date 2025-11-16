@@ -8,5 +8,7 @@ const FieldExecutiveSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true },
     phone: { type: String ,required:true},
     img: { type: String,required:false},
+    target: { type: Number, default: 0 },
+    targetDate: { type: Date, required: false },
 }, { timestamps: true })
 export default mongoose.models?.FieldExecutive || mongoose.model('FieldExecutive', FieldExecutiveSchema);
