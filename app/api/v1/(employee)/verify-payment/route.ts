@@ -3,7 +3,7 @@ import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
 import crypto from "crypto";
 import setConnectionRedis from "@/middleware/connectRedis";
-
+import { sendEmployeeActivationEmail } from "@/email/employee/welcome";
 
 export async function POST(request: NextRequest) {
     try {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
             },
             { new: true }
         );
-
+        sendEmployeeActivationEmail({ email: employee!.email, name: employee!.name });
         if (!employee) {
             return NextResponse.json({
                 message: "Employee account not found",
