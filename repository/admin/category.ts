@@ -50,3 +50,17 @@ catch(error){
     return {message:"Error fetching categories by type",error,success:false};
 }
 }
+
+export const getCategoryById = async (id: string) => {
+    try{
+        await ConnectDb();
+        const category = await Category.findById(id);
+        if(category){
+            return {message:"Category fetched successfully",category,success:true};
+        }
+        return {message:"Category not found",success:false};
+    }
+    catch(error){
+        return {message:"Error fetching category by id",error,success:false};
+    }
+}

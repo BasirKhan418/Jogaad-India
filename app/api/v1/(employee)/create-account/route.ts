@@ -7,6 +7,7 @@ import { updateOrderidByEmail } from "@/repository/employee/employee.auth";
 import { cookies } from "next/headers";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import { EmployeeZodSchema } from "@/validator/employee/employee.auth";
+import { getCategoryById } from "@/repository/admin/category";
 //this is called production grade idempotant api see aniket
 export async function POST(request: Request) {
     try {
@@ -22,6 +23,18 @@ export async function POST(request: Request) {
             }
             else {
                 const getFeesdata = await getFees();
+                if (!getFeesdata.success) {
+                    return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
+                }
+                const categoryData = await getCategoryById(data.categoryid);
+                console.log("CATEGORY DATA", categoryData);
+                if (!categoryData.success) {
+                    return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
+                }
+                if (data.payrate! < categoryData.category!.minPayRate || data.payrate! > categoryData.category!.maxPayRate) {
+                    return NextResponse.json({ message: `Payrate must be between ${categoryData.category!.minPayRate} and ${categoryData.category!.maxPayRate}`, success: false }, { status: 400 });
+                }
+
                 const amount = getFeesdata.data.employeeOneTimeFee * 100; //amount in paise
                 const receipt = `emp_reg_${checkdata.data?._id}`;
                 const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
@@ -45,11 +58,21 @@ export async function POST(request: Request) {
         if (!validate.success) {
             return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
         }
-        const response = await createEmployee(data);
+        
         const getFeesdata = await getFees();
+
         if (!getFeesdata.success) {
             return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
         }
+        const categoryData = await getCategoryById(data.categoryid);
+        console.log("CATEGORY DATA", categoryData);
+        if (!categoryData.success) {
+            return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
+        }
+        if (data.payrate! < categoryData.category!.categoryMinPrice || data.payrate! > categoryData.category!.categoryMaxPrice) {
+            return NextResponse.json({ message: `Payrate must be between ${categoryData.category!.categoryMinPrice} and ${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
+        }
+        const response = await createEmployee(data);
         const amount = getFeesdata.data.employeeOneTimeFee * 100; //amount in paise
         const receipt = `emp_reg_${response.employee?._id}`;
         const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
@@ -69,13 +92,13 @@ export async function POST(request: Request) {
 
 
 export const PUT = async (request: Request) => {
-    try{
+    try {
         const data = await request.json();
 
         const cookieStore = await cookies();
         const token = cookieStore.get("token")?.value || "";
         const verifyToken = await verifyUserToken(token);
-        if(!verifyToken.success){
+        if (!verifyToken.success) {
             return NextResponse.json({ message: "Unauthorized", success: false }, { status: 401 });
         }
         const validate = EmployeeZodSchema.safeParse(data);
@@ -84,9 +107,9 @@ export const PUT = async (request: Request) => {
         }
         const response = await updateEmployeeByEmail(data.email, data);
         return NextResponse.json(response);
-        
+
     }
-    catch(error){
+    catch (error) {
         return NextResponse.json({ message: "Internal Server Error", success: false }, { status: 500 });
     }
 }
