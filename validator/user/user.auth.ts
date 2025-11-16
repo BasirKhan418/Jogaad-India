@@ -22,4 +22,5 @@ export const userUpdateSchema = z.object({
   address: z.string().optional(),
   phone: z.string().optional(),
   img: z.string().url("Invalid image URL").optional(),
+  pincode: z.string().length(6, "Pincode must be exactly 6 digits").regex(/^\d{6}$/, "Pincode must contain only numbers")
 });
