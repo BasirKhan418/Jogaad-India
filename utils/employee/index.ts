@@ -1,34 +1,34 @@
-/**
- * Employee Utilities - Central Export File
- * Following DRY principle - all employee utilities in one place
- */
 
-// Authentication Service
-export * from './employeeAuthService';
+export { 
+  sendEmployeeLoginOtp, 
+  validateEmployeeLoginOtp, 
+  resendEmployeeLoginOtp,
+  type ApiResponse 
+} from './employeeAuthService';
 
-// Login Hook
-export * from './useEmployeeLogin';
+export { useEmployeeLogin, type UseEmployeeLoginReturn, type EmployeeLoginStep } from './useEmployeeLogin';
 
-// Employee Creation
 export * from './useEmployeeCreation';
 
-// Employee Data
-export * from './useEmployeeData';
+export { useEmployeeData, type Employee, type EmployeeStats } from './useEmployeeData';
 
-// Employee Signup
-export * from './useEmployeeSignup';
+export { useEmployeeSignup, type UseEmployeeSignupReturn, type SignupStep } from './useEmployeeSignup';
 
-// Employee Update
 export * from './useEmployeeUpdate';
 
-// Payment Service
 export * from './createPayment';
 
-// API Service
-export * from './employeeApiService';
+export { 
+  fetchAllCategories,
+  fetchCategoriesByType,
+  createEmployeeAccount,
+  getUploadUrl,
+  uploadToS3,
+  uploadImage,
+  type CategoryData as ApiCategoryData,
+  type EmployeeCreateRequest
+} from './employeeApiService';
 
-// Navigation
 export * from './useEmployeeNavigation';
 
-// Employee Hooks
 export * from './useEmployeeHooks';

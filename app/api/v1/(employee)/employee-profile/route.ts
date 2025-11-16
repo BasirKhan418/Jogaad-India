@@ -35,9 +35,15 @@ export async function GET(request: NextRequest) {
             }, { status: 404 });
         }
 
+        // Transform the data to extract categoryid from populated object
+        const employeeData = response.data.toObject ? response.data.toObject() : response.data;
+        if (employeeData.categoryid && typeof employeeData.categoryid === 'object' && employeeData.categoryid._id) {
+            employeeData.categoryid = employeeData.categoryid._id.toString();
+        }
+
         return NextResponse.json({ 
             message: "Employee profile retrieved successfully", 
-            data: response.data,
+            data: employeeData,
             success: true 
         }, { status: 200 });
 

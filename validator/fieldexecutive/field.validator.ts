@@ -6,7 +6,7 @@ export const FieldExecutiveSchemaZod = z.object({
   address: z.string().optional(),
   pincode: z.string().optional(),
   block: z.string().optional(),
-  isActive: z.boolean().optional(), // defaults handled in backend
+  isActive: z.boolean().optional(), 
   phone: z.string().min(10, "Phone must be at least 10 digits"),
   img: z.string().optional(),
 });

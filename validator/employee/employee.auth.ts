@@ -5,7 +5,10 @@ export const EmployeeZodSchema = z.object({
   email: z.string().email("Invalid email format"),
   address: z.string().optional(),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  pincode: z.string().length(6, "Pincode must be exactly 6 digits").regex(/^\d{6}$/, "Pincode must contain only numbers"),
+  pincode: z.union([
+    z.string().length(6, "Pincode must be exactly 6 digits").regex(/^\d{6}$/, "Pincode must contain only numbers"),
+    z.literal('')
+  ]).optional(),
   bankName: z.string().optional(),
   bankAccountNumber: z.string().optional(),
   bankIfscCode: z.string().optional(),

@@ -360,6 +360,7 @@ export default function AdminEmployeeCreationPage() {
                           </Label>
                           <Input
                             id="pincode"
+                            name="pincode"
                             type="text"
                             placeholder="123456"
                             value={formData.pincode}
