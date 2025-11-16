@@ -6,6 +6,7 @@ export const GET = async (request:NextRequest) => {
         const cookieStore = await cookies();
         const token = cookieStore.get("token")?.value||"";
         const isTokenValid = await verifyUserToken(token);
+        console.log(isTokenValid);
         if(!isTokenValid.success){
             return NextResponse.json({message:"Invalid token",success:false}, {status:401});
         }

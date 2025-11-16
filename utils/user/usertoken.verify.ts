@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 export const verifyUserToken = async (token:string) => {
     try{
         const jwtSecret = process.env.JWT_SECRET;
+        console.log("JWT Secret:", jwtSecret);
         if (!jwtSecret) {
             throw new Error('JWT_SECRET environment variable is not set');
         }

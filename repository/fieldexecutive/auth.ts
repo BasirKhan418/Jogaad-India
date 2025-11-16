@@ -75,7 +75,7 @@ export const verifyFieldExecutiveOtp = async (email:string,otp:string) => {
         if(storedOtp!==otp){
             return {message:"Invalid OTP",success:false};
         }
-        const token = jwt.sign({email,type:"field-exec"},process.env.JWT_SECRET_KEY||"secretkey",{expiresIn:"7d"});
+        const token = jwt.sign({email,type:"field-exec"},process.env.JWT_SECRET||"secretkey",{expiresIn:"7d"});
         return {message:"OTP verified successfully",token,success:true};
     }
     catch(error){
