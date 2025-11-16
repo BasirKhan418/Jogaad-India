@@ -49,10 +49,22 @@ export function NavbarDemo() {
   // Memoize admin check and routes
   const { isAdmin, profileRoute, profileLabel } = useMemo(() => {
     const admin = user?.type === 'admin' || user?.isSuperAdmin === true;
+    const employee = user?.type === 'employee';
+    let route = '/profile';
+    let label = 'Profile';
+    
+    if (admin) {
+      route = '/admin/dashboard';
+      label = 'Dashboard';
+    } else if (employee) {
+      route = '/employee/dashboard';
+      label = 'Dashboard';
+    }
+    
     return {
       isAdmin: admin,
-      profileRoute: admin ? '/admin/dashboard' : '/profile',
-      profileLabel: admin ? 'Dashboard' : 'Profile',
+      profileRoute: route,
+      profileLabel: label,
     };
   }, [user?.type, user?.isSuperAdmin]);
   

@@ -345,12 +345,12 @@ export default function EmployeeLoginPage() {
             <div className="mt-8 pt-6 border-t border-slate-200">
               <div className="text-center space-y-3">
                 <p className="text-sm text-slate-600">
-                  Not an employee?{' '}
+                  Want to join as an employee?{' '}
                   <Link 
-                    href="/signin" 
+                    href="/employee/create" 
                     className="font-semibold text-[#2B9EB3] hover:text-[#0A3D62] transition-colors"
                   >
-                    User Login
+                    Sign Up Here
                   </Link>
                 </p>
                 <p className="text-xs text-slate-500">

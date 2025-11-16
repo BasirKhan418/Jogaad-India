@@ -5,7 +5,7 @@ export interface AuthUser {
   img?: string;
   phone?: string;
   address?: string;
-  type?: 'admin' | 'user';
+  type?: 'admin' | 'user' | 'employee' | 'field-exec';
   isSuperAdmin?: boolean;
   [key: string]: any;
 }
