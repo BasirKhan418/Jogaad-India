@@ -151,6 +151,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
       amount: order.amount,
+      image:"https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png",
       currency: order.currency,
       name: 'Jogaad India',
       description: 'Employee Registration Fee',
