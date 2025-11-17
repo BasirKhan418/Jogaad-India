@@ -304,7 +304,7 @@ export default function EmployeeSignupPage() {
                     </select>
                   </LabelInputContainer>
 
-                  {formData.categoryid === 'others' && (
+                  {(!formData.categoryid || formData.categoryid === '') && (
                     <LabelInputContainer>
                       <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-2 text-sm">
                         <Briefcase className="w-4 h-4" />
@@ -323,7 +323,7 @@ export default function EmployeeSignupPage() {
                     </LabelInputContainer>
                   )}
 
-                  {selectedCategory && formData.categoryid !== 'others' && (
+                  {selectedCategory && formData.categoryid && formData.categoryid !== '' && (
                     <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40">
                       <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
                         <div>
@@ -342,7 +342,7 @@ export default function EmployeeSignupPage() {
                     </div>
                   )}
 
-                  {formData.categoryid === 'others' && (
+                  {(!formData.categoryid || formData.categoryid === '') && (
                     <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40">
                       <p className="text-xs sm:text-sm text-[#0A3D62]">
                         <strong>Note:</strong> Since you selected 'Others', you can set any service rate. Our team will review your profile before activation.

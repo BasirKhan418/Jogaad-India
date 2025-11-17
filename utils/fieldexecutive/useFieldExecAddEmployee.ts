@@ -205,8 +205,8 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
   }, []);
 
   const validatePrice = useCallback((price: number): boolean => {
-    // Skip validation for Others category
-    if (formData.categoryid === 'others') {
+    // Skip validation for Others category (empty categoryid means custom service)
+    if (!formData.categoryid || formData.categoryid === '') {
       setPriceError('');
       return true;
     }
@@ -299,7 +299,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
    * Handle category selection
    */
   const handleCategorySelect = useCallback((categoryId: string) => {
-    setFormData(prev => ({ ...prev, categoryid: categoryId }));
+    setFormData(prev => ({ ...prev, categoryid: categoryId === 'others' ? '' : categoryId }));
     
     if (categoryId === 'others') {
       setSelectedCategory(null);

@@ -445,7 +445,7 @@ export default function FieldExecAddEmployeePage() {
                         )}
                       </LabelInputContainer>
 
-                      {formData.categoryid === 'others' && (
+                      {(!formData.categoryid || formData.categoryid === '') && (
                         <LabelInputContainer>
                           <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-xs sm:text-sm">
                             <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -464,7 +464,7 @@ export default function FieldExecAddEmployeePage() {
                         </LabelInputContainer>
                       )}
 
-                      {selectedCategory && formData.categoryid !== 'others' && (
+                      {selectedCategory && formData.categoryid && formData.categoryid !== '' && (
                         <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40">
                           <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
                             <div>
@@ -483,7 +483,7 @@ export default function FieldExecAddEmployeePage() {
                         </div>
                       )}
 
-                      {formData.categoryid === 'others' && (
+                      {(!formData.categoryid || formData.categoryid === '') && (
                         <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40">
                           <p className="text-xs sm:text-sm text-[#0A3D62]">
                             <strong>Note:</strong> For custom services, you can set any rate. The profile will be reviewed before activation.

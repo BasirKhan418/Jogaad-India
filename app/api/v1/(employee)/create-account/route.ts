@@ -37,7 +37,7 @@ export async function POST(request: Request) {
                 return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
             }
 
-            if (validatedData.categoryid !== 'others') {
+            if (validatedData.categoryid && validatedData.categoryid !== '') {
                 const categoryData = await getCategoryById(validatedData.categoryid!);
                 if (!categoryData.success) {
                     return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
         }
 
-        if (validatedData.categoryid !== 'others') {
+        if (validatedData.categoryid && validatedData.categoryid !== '') {
             const categoryData = await getCategoryById(validatedData.categoryid!);
             if (!categoryData.success) {
                 return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
@@ -135,8 +135,8 @@ export const PUT = async (request: Request) => {
         
         const validatedData = validate.data;
         
-        // Skip category validation for 'others'
-        if (validatedData.categoryid !== 'others') {
+        // Skip category validation for custom services (empty categoryid)
+        if (validatedData.categoryid && validatedData.categoryid !== '') {
             const categoryData = await getCategoryById(validatedData.categoryid!);
             if (!categoryData.success) {
                 return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });

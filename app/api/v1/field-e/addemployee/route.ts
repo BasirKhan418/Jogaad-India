@@ -44,7 +44,7 @@ export async function POST(request: Request) {
                     return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
                 }
                 
-                if (data.categoryid !== 'others') {
+                if (data.categoryid && data.categoryid !== '') {
                     const categoryData = await getCategoryById(data.categoryid);
                     console.log("CATEGORY DATA", categoryData);
                     if (!categoryData.success) {
@@ -85,8 +85,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
         }
         
-        // Skip category validation for 'others'
-        if (data.categoryid !== 'others') {
+        // Skip category validation for custom services (empty categoryid)
+        if (data.categoryid && data.categoryid !== '') {
             const categoryData = await getCategoryById(data.categoryid);
             console.log("CATEGORY DATA", categoryData);
             if (!categoryData.success) {
@@ -130,8 +130,8 @@ export const PUT = async (request: Request) => {
             return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
         }
         
-        // Skip category validation for 'others'
-        if (data.categoryid !== 'others') {
+        // Skip category validation for custom services (empty categoryid)
+        if (data.categoryid && data.categoryid !== '') {
             const categoryData = await getCategoryById(data.categoryid);
             console.log("CATEGORY DATA", categoryData);
             if (!categoryData.success) {

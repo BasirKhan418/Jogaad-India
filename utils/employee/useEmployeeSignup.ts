@@ -210,8 +210,8 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
   }, []);
 
   const validatePrice = useCallback((price: number): boolean => {
-    // Skip validation for Others category
-    if (formData.categoryid === 'others') {
+    // Skip validation for Others category (empty categoryid means custom service)
+    if (!formData.categoryid || formData.categoryid === '') {
       setPriceError('');
       return true;
     }
@@ -340,7 +340,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     setSelectedCategory(category || null);
     setFormData(prev => ({ 
       ...prev, 
-      categoryid: categoryId,
+      categoryid: categoryId === 'others' ? '' : categoryId,
       payrate: category?.recommendationPrice || 0,
       customDescription: categoryId === 'others' ? prev.customDescription : ''
     }));

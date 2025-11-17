@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -38,10 +38,10 @@ import { getUserInitials } from "@/utils/auth";
 import { Toaster } from "sonner";
 
 /**
- * Field Executive Edit Employee Page
+ * Field Executive Edit Employee Page Content Component
  * Allows field executives to edit employee details within 12 hours of creation
  */
-export default function FieldExecEditEmployeePage() {
+function FieldExecEditEmployeePageContent() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -762,3 +762,21 @@ const LabelInputContainer = ({
     </div>
   );
 };
+
+/**
+ * Main Page Component with Suspense Boundary
+ */
+export default function FieldExecEditEmployeePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#2B9EB3] animate-spin mx-auto mb-4" />
+          <p className="text-lg text-[#0A3D62] font-semibold">Loading...</p>
+        </div>
+      </div>
+    }>
+      <FieldExecEditEmployeePageContent />
+    </Suspense>
+  );
+}
