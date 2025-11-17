@@ -6,6 +6,7 @@ import {
   IconSettings,
   IconFileText,
   IconShoppingBag,
+  IconPlus,
 } from "@tabler/icons-react";
 
 export interface NavLink {
@@ -24,7 +25,14 @@ export const useUserNavigation = () => {
       }),
     },
     {
-      label: "Bookings",
+      label: "New Booking",
+      href: "/user/bookings/new",
+      icon: React.createElement(IconPlus, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
+      label: "My Bookings",
       href: "/user/bookings",
       icon: React.createElement(IconCalendar, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"

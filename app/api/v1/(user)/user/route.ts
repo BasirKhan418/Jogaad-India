@@ -1,7 +1,30 @@
 import { NextResponse,NextRequest } from "next/server";
-import {createUser,updateUserByEmail } from "@/repository/user/user.auth";
+import {createUser,updateUserByEmail,verifyUserByEmail } from "@/repository/user/user.auth";
 import { sendWelcomeEmail } from "@/email/user/sendWelcome";
 import { userSchema,userUpdateSchema } from "@/validator/user/user.auth";
+import { verifyUserToken } from "@/utils/user/usertoken.verify";
+import { cookies } from "next/headers";
+
+//get user data
+export async function GET(request:NextRequest) {
+    try{
+        const cookiesStore = await cookies();
+        const token = cookiesStore.get("token")?.value||"";
+        const isTokenValid = await verifyUserToken(token);
+        if(!isTokenValid.success||isTokenValid.type!=="user"){
+            return NextResponse.json({message:"Invalid token",success:false}, {status:401});
+        }
+        const user = await verifyUserByEmail(isTokenValid.email);
+        if(!user.success){
+            return NextResponse.json({message:"User not found",success:false}, {status:404});
+        }
+        return NextResponse.json({message:"User data fetched successfully",data:user.data,success:true}, {status:200});
+    }
+    catch(error){
+        return NextResponse.json({message:"Internal Server Error",success:false}, {status:500});
+    }
+}
+
 export async function POST(request:NextRequest) {
     try{
          const data = await request.json();

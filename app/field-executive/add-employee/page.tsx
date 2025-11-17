@@ -445,7 +445,7 @@ export default function FieldExecAddEmployeePage() {
                         )}
                       </LabelInputContainer>
 
-                      {(!formData.categoryid || formData.categoryid === '') && (
+                      {formData.categoryid === 'others' && (
                         <LabelInputContainer>
                           <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-xs sm:text-sm">
                             <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

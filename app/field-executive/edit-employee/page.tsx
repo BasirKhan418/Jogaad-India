@@ -305,7 +305,7 @@ function FieldExecEditEmployeePageContent() {
                           value={formData.name}
                           onChange={handleInputChange}
                           required
-                          className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                          className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
                         />
                       </LabelInputContainer>
 
@@ -322,7 +322,7 @@ function FieldExecEditEmployeePageContent() {
                           onChange={handleInputChange}
                           required
                           disabled
-                          className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-gray-100 text-sm cursor-not-allowed"
+                          className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-gray-100 text-sm cursor-not-allowed"
                         />
                         <p className="text-xs text-slate-500">Email cannot be changed</p>
                       </LabelInputContainer>
@@ -334,33 +334,17 @@ function FieldExecEditEmployeePageContent() {
                         </Label>
                         <Input
                           id="phone"
-                          placeholder="1234567890"
+                          placeholder="10-digit mobile"
                           type="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
                           required
-                          pattern="[0-9]{10}"
-                          className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                          maxLength={10}
+                          className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
                         />
                       </LabelInputContainer>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <LabelInputContainer>
-                          <Label htmlFor="city" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-sm">
-                            <MapPin className="w-4 h-4" />
-                            City *
-                          </Label>
-                          <Input
-                            id="city"
-                            placeholder="Enter city"
-                            type="text"
-                            value={formData.city}
-                            onChange={handleInputChange}
-                            required
-                            className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
-                          />
-                        </LabelInputContainer>
-
                         <LabelInputContainer>
                           <Label htmlFor="pincode" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-sm">
                             <MapPin className="w-4 h-4" />
@@ -368,13 +352,15 @@ function FieldExecEditEmployeePageContent() {
                           </Label>
                           <Input
                             id="pincode"
-                            placeholder="123456"
+                            name="pincode"
+                            placeholder="6-digit"
                             type="text"
                             value={formData.pincode}
                             onChange={handleInputChange}
                             required
+                            maxLength={6}
                             pattern="[0-9]{6}"
-                            className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                            className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm font-mono tracking-wider"
                           />
                         </LabelInputContainer>
                       </div>
@@ -391,7 +377,7 @@ function FieldExecEditEmployeePageContent() {
                           onChange={handleInputChange}
                           required
                           rows={3}
-                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm resize-none touch-manipulation"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm resize-none"
                         />
                       </LabelInputContainer>
                     </div>
@@ -411,7 +397,7 @@ function FieldExecEditEmployeePageContent() {
                           onChange={(e) => handleCategorySelect(e.target.value)}
                           required
                           disabled
-                          className="h-11 px-4 rounded-xl border-2 border-gray-200/60 bg-gray-100 text-sm cursor-not-allowed"
+                          className="h-10 sm:h-11 px-4 rounded-xl border-2 border-gray-200/60 bg-gray-100 text-sm cursor-not-allowed"
                         >
                           <option value="">
                             {categories.length === 0 ? 'Loading categories...' : 'Select a service category'}
@@ -439,7 +425,7 @@ function FieldExecEditEmployeePageContent() {
                             onChange={handleInputChange}
                             required
                             rows={3}
-                            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm resize-none touch-manipulation"
+                            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm resize-none"
                           />
                         </LabelInputContainer>
                       )}
@@ -477,7 +463,7 @@ function FieldExecEditEmployeePageContent() {
                           required
                           min={selectedCategory?.categoryMinPrice || 0}
                           max={selectedCategory?.categoryMaxPrice || 100000}
-                          className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                          className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
                         />
                         {priceError && (
                           <p className="text-xs text-red-600 mt-1">{priceError}</p>
@@ -506,7 +492,7 @@ function FieldExecEditEmployeePageContent() {
                               type="text"
                               value={formData.bankName}
                               onChange={handleInputChange}
-                              className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                              className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
                             />
                           </LabelInputContainer>
 
@@ -521,7 +507,7 @@ function FieldExecEditEmployeePageContent() {
                               type="text"
                               value={formData.bankAccountNumber}
                               onChange={handleInputChange}
-                              className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                              className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
                             />
                           </LabelInputContainer>
 
@@ -536,7 +522,7 @@ function FieldExecEditEmployeePageContent() {
                               type="text"
                               value={formData.bankIfscCode}
                               onChange={handleInputChange}
-                              className="h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm touch-manipulation"
+                              className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
                             />
                           </LabelInputContainer>
                         </div>
@@ -559,7 +545,7 @@ function FieldExecEditEmployeePageContent() {
                             </div>
                           )}
                           <label className="flex-1 w-full cursor-pointer">
-                            <div className="flex items-center justify-center gap-2 h-11 px-4 rounded-xl border-2 border-dashed border-[#2B9EB3]/40 bg-white/60 hover:bg-[#2B9EB3]/5 transition-all duration-300 touch-manipulation">
+                            <div className="flex items-center justify-center gap-2 h-10 sm:h-11 px-4 rounded-xl border-2 border-dashed border-[#2B9EB3]/40 bg-white/60 hover:bg-[#2B9EB3]/5 transition-all duration-300">
                               <Upload className="w-4 h-4 text-[#2B9EB3]" />
                               <span className="text-sm text-[#0A3D62] font-medium">
                                 {uploadingImage ? 'Uploading...' : 'Upload Photo'}

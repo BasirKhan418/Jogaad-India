@@ -210,8 +210,8 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
   }, []);
 
   const validatePrice = useCallback((price: number): boolean => {
-    // Skip validation for Others category (empty categoryid means custom service)
-    if (!formData.categoryid || formData.categoryid === '') {
+    // Skip validation for Others category
+    if (!formData.categoryid || formData.categoryid === '' || formData.categoryid === 'others') {
       setPriceError('');
       return true;
     }
@@ -340,7 +340,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     setSelectedCategory(category || null);
     setFormData(prev => ({ 
       ...prev, 
-      categoryid: categoryId === 'others' ? '' : categoryId,
+      categoryid: categoryId, // keep 'others' in state so select shows correctly
       payrate: category?.recommendationPrice || 0,
       customDescription: categoryId === 'others' ? prev.customDescription : ''
     }));
@@ -458,7 +458,11 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          // Map 'others' to empty string for backend compatibility if needed
+          categoryid: formData.categoryid === 'others' ? '' : formData.categoryid,
+        }),
         signal: abortControllerRef.current.signal
       });
 

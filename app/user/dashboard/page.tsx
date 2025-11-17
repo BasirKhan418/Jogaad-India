@@ -222,7 +222,20 @@ const UserAvatar = ({ userData }: { userData: any }) => (
 const QuickActions = () => (
   <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 mb-8">
     <h2 className="text-xl font-bold text-[#0A3D62] mb-4">Quick Actions</h2>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Link
+        href="/user/bookings/new"
+        className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl hover:shadow-md transition-shadow border border-green-500/30"
+      >
+        <div className="p-2 bg-green-600 rounded-lg">
+          <ShoppingBag className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <p className="font-semibold text-[#0A3D62]">Book Service</p>
+          <p className="text-xs text-slate-600">Create new booking</p>
+        </div>
+      </Link>
+
       <Link
         href="/services"
         className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#2B9EB3]/5 to-[#0A3D62]/5 rounded-xl hover:shadow-md transition-shadow border border-[#2B9EB3]/20"
@@ -251,9 +264,9 @@ const QuickActions = () => (
       
       <Link
         href="/user/profile"
-        className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-500/5 to-green-600/5 rounded-xl hover:shadow-md transition-shadow border border-green-500/20"
+        className="flex items-center gap-3 p-4 bg-gradient-to-br from-purple-500/5 to-purple-600/5 rounded-xl hover:shadow-md transition-shadow border border-purple-500/20"
       >
-        <div className="p-2 bg-green-600 rounded-lg">
+        <div className="p-2 bg-purple-600 rounded-lg">
           <Settings className="w-5 h-5 text-white" />
         </div>
         <div>

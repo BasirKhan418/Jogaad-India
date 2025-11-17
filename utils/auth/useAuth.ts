@@ -71,8 +71,8 @@ export const useAuth = (): UseAuthReturn => {
         return;
       }
       
-      console.error('Auth refresh error:', error);
       if (isMountedRef.current) {
+        console.error('Auth refresh error:', error);
         resetAuthState();
       }
     } finally {

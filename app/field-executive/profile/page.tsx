@@ -33,6 +33,7 @@ import {
   useFieldExecSidebar 
 } from "@/utils/fieldexecutive/useFieldExecHooks";
 import { getUserInitials } from "@/utils/auth";
+import { uploadImage } from "@/utils/fieldexecutive/fieldExecutiveApiService";
 
 /**
  * Field Executive Profile Page
@@ -86,23 +87,43 @@ export default function FieldExecProfile() {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setUploadingImage(true);
-      try {
-        // Create preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result as string);
-          setFormData(prev => ({ ...prev, img: reader.result as string }));
-        };
-        reader.readAsDataURL(file);
-        
-        toast.info("Image upload feature coming soon!");
-      } catch (error) {
-        toast.error("Failed to process image");
-      } finally {
-        setUploadingImage(false);
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      // Create preview
+      const preview = URL.createObjectURL(file);
+      setImagePreview(preview);
+
+      // Upload to S3
+      const result = await uploadImage(file);
+
+      if (result.success && result.data?.url) {
+        setFormData(prev => ({ ...prev, img: result.data!.url }));
+        toast.success('Image uploaded successfully');
+      } else {
+        // Revert preview on failure
+        URL.revokeObjectURL(preview);
+        setImagePreview(fieldExecData?.img || '');
+        toast.error(result.message || 'Failed to upload image');
       }
+    } catch (error) {
+      toast.error('Failed to upload image');
+      console.error('Image upload error:', error);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -125,17 +146,44 @@ export default function FieldExecProfile() {
       return;
     }
 
+    if (!fieldExecData?._id) {
+      toast.error("Field Executive ID not found");
+      return;
+    }
+
     setIsSaving(true);
     
     try {
-      // API call would go here
-      toast.info("Profile update feature coming soon!");
-      
-      // Simulated delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const response = await fetch('/api/v1/field-e/update-profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: fieldExecData._id,
+          name: formData.name,
+          phone: formData.phone,
+          address: formData.address,
+          pincode: formData.pincode,
+          block: formData.block,
+          img: formData.img,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('Profile updated successfully');
+        // Optionally refresh the page data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        toast.error(result.message || 'Failed to update profile');
+      }
     } catch (error) {
-      toast.error("Failed to update profile");
+      console.error('Profile update error:', error);
+      toast.error('Failed to update profile');
     } finally {
       setIsSaving(false);
     }

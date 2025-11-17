@@ -330,12 +330,11 @@ export const useFieldExecEditEmployee = () => {
   const isStepValid = useCallback(() => {
     if (step === 'personal') {
       return (
-        formData.name &&
-        formData.email &&
-        formData.phone &&
-        formData.city &&
-        formData.pincode &&
-        formData.address
+        !!formData.name &&
+        !!formData.email &&
+        !!formData.phone && formData.phone.toString().length >= 10 &&
+        !!formData.pincode && formData.pincode.toString().length === 6 &&
+        !!formData.address
       );
     }
     

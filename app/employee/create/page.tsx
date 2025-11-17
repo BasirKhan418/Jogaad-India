@@ -304,7 +304,7 @@ export default function EmployeeSignupPage() {
                     </select>
                   </LabelInputContainer>
 
-                  {(!formData.categoryid || formData.categoryid === '') && (
+                  {formData.categoryid === 'others' && (
                     <LabelInputContainer>
                       <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-2 text-sm">
                         <Briefcase className="w-4 h-4" />
