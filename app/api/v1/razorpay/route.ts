@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         isActive: true,
         paymentid: p.id,
         paymentStatus: "paid",
-        razorpay_order_id: p.order_id,
+        orderid: p.order_id,
       }
     );
   }
