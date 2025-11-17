@@ -139,7 +139,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
 
     const razorpayInstance = new (window as any).Razorpay(options);
     razorpayInstance.open();
-  }, [formData.name, formData.phone]);
+  }, [formData.name, formData.phone, verifyPayment]);
 
   /**
    * Verify payment on backend after Razorpay success
@@ -479,8 +479,21 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
 
         // Scenario 2 & 3: Account needs payment (existing unpaid or new account)
         if (result.order) {
-          toast.success(result.message || 'Please complete payment to activate your account');
-          setSuccess(result.message || 'Account ready for payment');
+          const isExistingAccount = result.message?.toLowerCase().includes('exists');
+          
+          if (isExistingAccount) {
+            toast.info('Account Found!', {
+              description: 'Your account exists but payment is pending. Redirecting you to complete payment...',
+              duration: 3000,
+            });
+            setSuccess('Account found! Completing payment to activate your account...');
+          } else {
+            toast.success('Account Created!', {
+              description: 'Please complete payment to activate your account',
+              duration: 3000,
+            });
+            setSuccess('Account created! Proceeding to payment...');
+          }
           
           // Initialize Razorpay payment
           setTimeout(() => {
