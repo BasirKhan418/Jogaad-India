@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   // Razorpay signature from header
   const signature = request.headers.get("x-razorpay-signature")!;
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
-  
+
   const expectedSignature = crypto
     .createHmac("sha256", secret)
     .update(body)
