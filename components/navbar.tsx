@@ -47,26 +47,18 @@ export function NavbarDemo() {
   const [showDropdown, setShowDropdown] = useState(false);
   
   // Memoize role-based routes
-  const { dashboardRoute, profileRoute } = useMemo(() => {
+  const dashboardRoute = useMemo(() => {
     const userType = user?.type;
-    let dashboard = '/user/dashboard';
-    let profile = '/user/profile';
     
     if (userType === 'admin' || user?.isSuperAdmin === true) {
-      dashboard = '/admin/dashboard';
-      profile = '/admin/profile';
+      return '/admin/dashboard';
     } else if (userType === 'employee') {
-      dashboard = '/employee/dashboard';
-      profile = '/employee/profile';
+      return '/employee/dashboard';
     } else if (userType === 'field-exec') {
-      dashboard = '/field-executive/dashboard';
-      profile = '/field-executive/profile';
+      return '/field-executive/dashboard';
     }
     
-    return {
-      dashboardRoute: dashboard,
-      profileRoute: profile,
-    };
+    return '/user/dashboard';
   }, [user?.type, user?.isSuperAdmin]);
   
   const toggleMobileMenu = useCallback(() => {
