@@ -1,0 +1,100 @@
+import ConnectEmailClient from "@/middleware/connectEmailClient";
+
+interface SendRefundInitiatedEmailParams {
+  name: string;
+  email: string;
+  serviceName: string;
+  orderId: string;
+}
+
+export const sendRefundInitiatedEmail = async ({
+  name,
+  email,
+  serviceName,
+  orderId,
+}: SendRefundInitiatedEmailParams) => {
+  try {
+    const emailTransporter = await ConnectEmailClient();
+
+    if (!emailTransporter) {
+      return { message: "Failed to connect to mail client", success: false };
+    }
+
+    await emailTransporter.sendMail({
+      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `Refund Initiated – Order ${orderId}`,
+      html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Refund Initiated</title>
+
+<style>
+  body { margin:0; padding:0; background:#f7f9fb; font-family:Arial; }
+  .container { max-width:650px; margin:30px auto; background:#ffffff; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); overflow:hidden; }
+  .header { background:linear-gradient(135deg,#2B9EB3,#0A3D62); padding:35px 20px; text-align:center; }
+  .header img { width:110px; }
+  .header h1 { color:white; margin-top:10px; font-size:24px; }
+  .content { padding:30px; }
+  .content p { font-size:16px; color:#555; line-height:1.7; }
+  .highlight { background:#e9f9fc; border-left:5px solid #2B9EB3; padding:18px; border-radius:10px; margin:25px 0; font-size:16px; color:#0A3D62; font-weight:bold; }
+  .footer { background:#f1f3f4; text-align:center; padding:15px; font-size:12px; color:#777; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <img src="https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png" alt="Jogaad Logo">
+    <h1>Refund Initiated</h1>
+  </div>
+
+  <div class="content">
+    <p>Dear ${name},</p>
+    <p>We want to inform you that the refund process for your booking has been <strong>successfully initiated</strong>.</p>
+
+    <div class="highlight">
+      📌 Service: <strong>${serviceName}</strong><br/>
+      📌 Order ID: <strong>${orderId}</strong><br/>
+      📌 Status: <strong>Refund Initiated</strong>
+    </div>
+
+    <p>Your refund will be processed and credited to your original payment method within <strong>3 to 5 business days</strong>.</p>
+
+    <p>If you have any questions, our support team is always here to help you.<br/><strong>Customer’s Problem is Our Solution.</strong></p>
+  </div>
+
+  <div class="footer">
+    © 2025 Jogaad India. This is an automated message. Please do not reply.
+  </div>
+
+</div>
+
+</body>
+</html>
+      `,
+      text: `
+Dear ${name},
+
+Your refund request has been initiated.
+
+Service: ${serviceName}
+Order ID: ${orderId}
+
+Your amount will be refunded to your original payment method within 3 to 5 business days.
+
+Thank you,
+Jogaad India Team
+`,
+    });
+
+    return { message: "Refund initiated email sent", success: true };
+  } catch (error) {
+    console.error("Error sending refund initiated email:", error);
+    return { message: "Failed to send refund initiated email", error, success: false };
+  }
+};

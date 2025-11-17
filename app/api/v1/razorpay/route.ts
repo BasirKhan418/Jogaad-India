@@ -4,6 +4,8 @@ import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
 import { writeLogToS3 } from "@/utils/s3Logger";
 import Booking from "@/models/Booking";
+import { sendRefundCompletedEmail } from "@/email/user/refundcomplete";
+import { sendRefundInitiatedEmail } from "@/email/user/refundinitiated";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
@@ -54,8 +56,8 @@ export async function POST(request: NextRequest) {
     if (empdata) {
       addLog(`Employee record updated for email: ${p.email}`);
     }
-    const bookingdata =await Booking.findOne({orderid:p.order_id});
-    if(bookingdata.isActive===false||bookingdata.intialpaymentStatus==="pending"||bookingdata.status!=="confirmed"){
+    const bookingdata = await Booking.findOne({ orderid: p.order_id });
+    if (bookingdata.isActive === false || bookingdata.intialpaymentStatus === "pending" || bookingdata.status !== "confirmed") {
       await Booking.findOneAndUpdate(
         { orderid: p.order_id },
         {
@@ -67,7 +69,7 @@ export async function POST(request: NextRequest) {
       );
       addLog(`Booking record updated for orderid: ${p.order_id}`);
     }
-    else{
+    else {
       //add update of complete payment
     }
   }
@@ -84,8 +86,8 @@ export async function POST(request: NextRequest) {
         paymentStatus: "failed",
       }
     );
-    const bookingdata =await Booking.findOne({orderid:p.order_id});
-    if(bookingdata.isActive===false||bookingdata.intialpaymentStatus==="pending"||bookingdata.status!=="confirmed"){
+    const bookingdata = await Booking.findOne({ orderid: p.order_id });
+    if (bookingdata.isActive === false || bookingdata.intialpaymentStatus === "pending" || bookingdata.status !== "confirmed") {
       await Booking.findOneAndUpdate(
         { orderid: p.order_id },
         {
@@ -95,43 +97,60 @@ export async function POST(request: NextRequest) {
       );
       addLog(`Booking record updated for orderid: ${p.order_id}`);
     }
-    else{
+    else {
       //add update of complete payment
     }
   }
-   if (event === "refund.created") {
+  if (event === "refund.created") {
     const r = data.payload.refund.entity;
     addLog(`Refund created: ${JSON.stringify(r)}`);
 
-    await Booking.findOneAndUpdate(
+    const booking = await Booking.findOneAndUpdate(
       { paymentid: r.payment_id },
       {
         refundStatus: "initiated",
         refundid: r.id,
-        refundAmount: Math.floor((r.amount)/100) || 0,
+        refundAmount: Math.floor((r.amount) / 100) || 0,
         refundDate: new Date(),
-        status:"refunded",
+        status: "refunded",
       }
-    );
+    ).populate("userid").populate("categoryid");
+    if (booking) {
+      sendRefundInitiatedEmail({
+        name: booking.userid.name,
+        email: booking.userid.email,
+        serviceName: booking.categoryid.name,
+        orderId: booking.orderid,
+      })
+    }
+
     addLog(`Booking refund initiated for payment: ${r.payment_id}`);
   }
   if (event === "refund.processed") {
     const r = data.payload.refund.entity;
     addLog(`Refund processed: ${JSON.stringify(r)}`);
 
-    await Booking.findOneAndUpdate(
+    const booking = await Booking.findOneAndUpdate(
       { paymentid: r.payment_id },
       {
         refundStatus: "processed",
         refundid: r.id,
-        refundAmount:Math.floor((r.amount)/100) || 0,
+        refundAmount: Math.floor((r.amount) / 100) || 0,
         refundDate: new Date(),
-        status:"refunded",
+        status: "refunded",
       }
-    );
+    ).populate("categoryid").populate("userid");
+    if( booking ) {
+      sendRefundCompletedEmail({
+        name: booking.userid.name,
+        email: booking.userid.email,
+        serviceName: booking.categoryid.name,
+        orderId: booking.orderid,
+      })
+    }
     addLog(`Booking refund processed for payment: ${r.payment_id}`);
   }
-   if (event === "refund.failed") {
+  if (event === "refund.failed") {
     const r = data.payload.refund.entity;
     addLog(`Refund failed: ${JSON.stringify(r)}`);
 
@@ -155,5 +174,5 @@ export async function POST(request: NextRequest) {
 
 
 export const GET = () => {
-    return NextResponse.json({ message: "Razorpay Webhook Endpoint V2" });
+  return NextResponse.json({ message: "Razorpay Webhook Endpoint V2" });
 }
