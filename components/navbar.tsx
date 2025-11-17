@@ -13,7 +13,7 @@ import {
 import { logoutUser } from "@/actions/logout";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { FiUser, FiLogOut, FiHome } from "react-icons/fi";
+import { FiLogOut, FiHome } from "react-icons/fi";
 import { toast } from "sonner";
 import { useAuth, getUserInitials } from "@/utils/auth";
 import Image from "next/image";
@@ -46,25 +46,26 @@ export function NavbarDemo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   
-  // Memoize admin check and routes
-  const { isAdmin, profileRoute, profileLabel } = useMemo(() => {
-    const admin = user?.type === 'admin' || user?.isSuperAdmin === true;
-    const employee = user?.type === 'employee';
-    let route = '/profile';
-    let label = 'Profile';
+  // Memoize role-based routes
+  const { dashboardRoute, profileRoute } = useMemo(() => {
+    const userType = user?.type;
+    let dashboard = '/user/dashboard';
+    let profile = '/user/profile';
     
-    if (admin) {
-      route = '/admin/dashboard';
-      label = 'Dashboard';
-    } else if (employee) {
-      route = '/employee/dashboard';
-      label = 'Dashboard';
+    if (userType === 'admin' || user?.isSuperAdmin === true) {
+      dashboard = '/admin/dashboard';
+      profile = '/admin/profile';
+    } else if (userType === 'employee') {
+      dashboard = '/employee/dashboard';
+      profile = '/employee/profile';
+    } else if (userType === 'field-exec') {
+      dashboard = '/field-executive/dashboard';
+      profile = '/field-executive/profile';
     }
     
     return {
-      isAdmin: admin,
-      profileRoute: route,
-      profileLabel: label,
+      dashboardRoute: dashboard,
+      profileRoute: profile,
     };
   }, [user?.type, user?.isSuperAdmin]);
   
@@ -138,12 +139,12 @@ export function NavbarDemo() {
                     <button
                       onClick={() => {
                         setShowDropdown(false);
-                        router.push(profileRoute);
+                        router.push(dashboardRoute);
                       }}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                     >
                       <FiHome className="w-4 h-4" />
-                      {profileLabel}
+                      Dashboard
                     </button>
                     <button
                       onClick={handleLogout}
@@ -216,12 +217,12 @@ export function NavbarDemo() {
                   <NavbarButton
                     onClick={() => {
                       closeMobileMenu();
-                      router.push(profileRoute);
+                      router.push(dashboardRoute);
                     }}
                     variant="secondary"
                     className="w-full"
                   >
-                    {profileLabel}
+                    Dashboard
                   </NavbarButton>
                   <NavbarButton
                     onClick={() => {

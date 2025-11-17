@@ -10,12 +10,13 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const isAdminRoute = pathname?.startsWith("/admin");
   const isEmployeeRoute = pathname?.startsWith("/employee");
   const isFieldExecRoute = pathname?.startsWith("/field-executive");
+  const isUserRoute = pathname?.startsWith("/user");
 
   return (
     <>
-      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && <NavbarDemo />}
+      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && !isUserRoute && <NavbarDemo />}
       {children}
-      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && <Footer />}
+      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && !isUserRoute && <Footer />}
     </>
   );
 }

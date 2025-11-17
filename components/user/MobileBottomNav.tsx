@@ -9,7 +9,7 @@ interface MobileBottomNavProps {
   links: Array<{
     label: string;
     href: string;
-    icon: React.ReactElement;
+    icon: React.ReactElement<any>;
   }>;
   currentPath: string;
 }
@@ -46,12 +46,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   ? "bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] shadow-lg shadow-[#2B9EB3]/30" 
                   : "bg-neutral-800/50"
               )}>
-                <span className={cn(
-                  "h-5 w-5 flex-shrink-0 transition-all duration-300",
-                  isActive ? "text-white" : "text-neutral-400"
-                )}>
-                  {link.icon}
-                </span>
+                {React.cloneElement(link.icon, {
+                  className: cn(
+                    "h-5 w-5 flex-shrink-0 transition-all duration-300",
+                    isActive ? "text-white" : "text-neutral-400"
+                  )
+                })}
               </div>
               <span className={cn(
                 "text-[11px] font-semibold transition-all duration-300 tracking-tight",

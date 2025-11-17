@@ -18,10 +18,7 @@ export interface UserData {
   updatedAt: string;
 }
 
-/**
- * Hook to fetch and manage user data
- * Follows SRP - Single responsibility of managing user data state
- */
+
 export const useUserData = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,11 +28,16 @@ export const useUserData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Fetching user data...");
         const response = await getUserData();
         
+        console.log("User data response:", response);
+        
         if (response.success && response.data) {
+          console.log("Setting user data:", response.data);
           setUserData(response.data);
         } else {
+          console.error("Failed to fetch user data:", response.message);
           setError(response.message || "Failed to fetch profile data");
           toast.error(response.message || "Failed to fetch profile data");
           
@@ -47,6 +49,7 @@ export const useUserData = () => {
           }
         }
       } catch (err) {
+        console.error("Exception in fetchData:", err);
         const errorMsg = "Failed to load profile data";
         setError(errorMsg);
         toast.error(errorMsg);
@@ -61,10 +64,6 @@ export const useUserData = () => {
   return { userData, loading, error };
 };
 
-/**
- * Hook to handle user logout
- * Follows SRP - Single responsibility of handling logout
- */
 export const useUserLogout = () => {
   const router = useRouter();
 
@@ -81,10 +80,7 @@ export const useUserLogout = () => {
   return { handleLogout };
 };
 
-/**
- * Hook to manage sidebar state
- * Follows SRP - Single responsibility of managing sidebar state
- */
+
 export const useUserSidebar = () => {
   const [open, setOpen] = useState(false);
 

@@ -8,8 +8,11 @@ export async function GET(request: NextRequest) {
     const cookiesStore = await cookies();
     const token = cookiesStore.get("token")?.value || "";
     
-    // Verify token
+    console.log("Profile API - Token exists:", !!token);
+    
     const isTokenValid = await verifyUserToken(token);
+    
+    console.log("Profile API - Token valid:", isTokenValid.success, "Type:", isTokenValid.type);
     
     if (!isTokenValid.success || isTokenValid.type !== "user") {
       return NextResponse.json(
@@ -18,7 +21,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    console.log("Profile API - Fetching user for email:", isTokenValid.email);
     const userData = await getUserByEmail(isTokenValid.email);
+    
+    console.log("Profile API - getUserByEmail result:", userData.success);
     
     if (!userData.success) {
       return NextResponse.json(
@@ -27,7 +33,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { ...userInfo } = userData.data;
+    // Convert mongoose document to plain object
+    const userInfo = userData.data.toObject ? userData.data.toObject() : userData.data;
+    
+    console.log("Profile API - Returning user data successfully");
     
     return NextResponse.json({
       message: "User profile fetched successfully",
