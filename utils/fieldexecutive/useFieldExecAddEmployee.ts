@@ -377,31 +377,86 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       clearMessages();
 
       // Validate required fields
-      if (!formData.name || !formData.email || !formData.phone || !formData.address) {
-        setError('Please fill in all required fields');
+      // Comprehensive validation before submission
+      if (!formData.name || formData.name.trim().length < 2) {
+        setError('Please provide a valid name (minimum 2 characters)');
+        toast.error('Please provide a valid name');
         setLoading(false);
         return false;
       }
 
-      if (!formData.categoryid) {
-        setError('Please select a service category');
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        setError('Please provide a valid email address');
+        toast.error('Please provide a valid email address');
         setLoading(false);
         return false;
       }
 
-      if (formData.categoryid === 'others' && !formData.customDescription) {
-        setError('Please describe your service');
+      if (!formData.phone || formData.phone.length < 10) {
+        setError('Please provide a valid phone number (minimum 10 digits)');
+        toast.error('Please provide a valid phone number');
         setLoading(false);
         return false;
       }
 
-      // Validate price for non-others categories
-      if (formData.categoryid !== 'others' && !validatePrice(formData.payrate)) {
+      if (!formData.address || formData.address.trim().length < 10) {
+        setError('Please provide a complete address (minimum 10 characters)');
+        toast.error('Please provide a complete address');
         setLoading(false);
         return false;
+      }
+
+      if (!formData.pincode || formData.pincode.length !== 6 || !/^\d{6}$/.test(formData.pincode)) {
+        setError('Please provide a valid 6-digit pincode');
+        toast.error('Please provide a valid 6-digit pincode');
+        setLoading(false);
+        return false;
+      }
+
+      if (!formData.categoryid || formData.categoryid === '') {
+        setError('Please select a service category or choose "Others" for custom service');
+        toast.error('Service category is required');
+        setLoading(false);
+        return false;
+      }
+
+      if (formData.categoryid === 'others') {
+        if (!formData.customDescription || formData.customDescription.trim().length < 20) {
+          setError('Please provide a detailed service description (minimum 20 characters)');
+          toast.error('Service description must be at least 20 characters');
+          setLoading(false);
+          return false;
+        }
+      } else {
+        // Validate price for regular categories
+        if (!formData.payrate || formData.payrate <= 0) {
+          setError('Please enter a valid service rate');
+          toast.error('Service rate is required');
+          setLoading(false);
+          return false;
+        }
+        
+        if (!validatePrice(formData.payrate)) {
+          toast.error(priceError || 'Invalid price range');
+          setLoading(false);
+          return false;
+        }
       }
 
       abortControllerRef.current = new AbortController();
+
+      // Prepare payload - remove categoryid if it's empty or 'others'
+      const payload: any = { ...formData };
+      
+      // Remove categoryid if it's empty or 'others' to avoid MongoDB cast error
+      if (!payload.categoryid || payload.categoryid === '' || payload.categoryid === 'others') {
+        delete payload.categoryid;
+      }
+      
+      // Remove customDescription if categoryid is present (not a custom service)
+      if (payload.categoryid && payload.customDescription) {
+        delete payload.customDescription;
+      }
 
       // Call field executive add employee API
       const response = await fetch('/api/v1/field-e/addemployee', {
@@ -409,11 +464,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          // Map 'others' to empty string for backend compatibility if needed
-          categoryid: formData.categoryid === 'others' ? '' : formData.categoryid,
-        }),
+        body: JSON.stringify(payload),
         signal: abortControllerRef.current.signal,
       });
 
@@ -493,17 +544,27 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       case 'personal':
         return !!(
           formData.name &&
+          formData.name.trim().length >= 2 &&
           formData.email &&
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
           formData.phone &&
+          formData.phone.length >= 10 &&
           formData.address &&
+          formData.address.trim().length >= 10 &&
           formData.pincode &&
-          formData.pincode.length === 6
+          formData.pincode.length === 6 &&
+          /^\d{6}$/.test(formData.pincode)
         );
       case 'service':
-        if (!formData.categoryid) return false;
+        // Must have a category selected
+        if (!formData.categoryid || formData.categoryid === '') return false;
+        
+        // For custom service (others), must have description
         if (formData.categoryid === 'others') {
-          return !!formData.customDescription;
+          return !!(formData.customDescription && formData.customDescription.trim().length >= 20);
         }
+        
+        // For regular categories, must have valid payrate
         return formData.payrate > 0 && !priceError;
       case 'optional':
         return true;

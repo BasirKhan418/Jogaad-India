@@ -2,17 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Toaster } from "sonner";
-import { 
-  IconMail, 
-  IconLock, 
-  IconEye, 
-  IconEyeOff, 
-  IconArrowLeft,
-  IconLoader2,
-  IconShield
-} from "@tabler/icons-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { Mail, ArrowRight, ArrowLeft, RotateCcw, Shield, CheckCircle2 } from "lucide-react";
 import { useAdminSignin } from "@/utils/admin/useAdminSignin";
 
 export default function AdminSigninPage() {
@@ -65,8 +60,7 @@ export default function AdminSigninPage() {
   }, [email, otp, step, validateForm]);
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Background Image */}
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       <div 
         className="absolute inset-0 z-0"
         style={{
@@ -76,19 +70,20 @@ export default function AdminSigninPage() {
           backgroundRepeat: 'no-repeat',
         }}
       />
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/40 to-white/30 backdrop-blur-sm z-10" />
       
-      {/* Dot Pattern Overlay */}
-      <div className="absolute inset-0 z-10 opacity-[0.03]" style={{
+      {/* Enhanced Background Overlay with better gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/40 to-slate-50/30 backdrop-blur-sm z-10" />
+      
+      {/* Improved Gradient Orbs with better positioning and animation */}
+      <div className="absolute top-10 -left-32 w-80 h-80 bg-gradient-to-br from-[#2B9EB3]/25 to-[#0A3D62]/15 rounded-full blur-3xl z-10 animate-pulse"></div>
+      <div className="absolute bottom-10 -right-32 w-96 h-96 bg-gradient-to-tl from-[#F9A825]/25 to-[#2B9EB3]/15 rounded-full blur-3xl z-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-gradient-to-r from-[#0A3D62]/15 to-[#F9A825]/15 rounded-full blur-3xl z-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      
+      {/* Enhanced background pattern with better visibility */}
+      <div className="absolute inset-0 z-10 opacity-[0.02]" style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(10, 61, 98) 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
+        backgroundSize: '50px 50px'
       }} />
-
-      {/* Floating Brand Colors */}
-      <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-[#F9A825]/20 to-[#2B9EB3]/20 rounded-full blur-2xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-40 h-40 bg-gradient-to-r from-[#2B9EB3]/15 to-[#0A3D62]/15 rounded-full blur-3xl animate-pulse delay-1000" />
       
       <Toaster 
         position="top-center"
@@ -97,216 +92,243 @@ export default function AdminSigninPage() {
         duration={4000}
       />
       
-      <div className="relative z-20 min-h-screen flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
-        >
-          {/* Header */}
-          <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] rounded-full mb-6 shadow-lg"
-            >
-              <IconShield className="w-10 h-10 text-white" />
-            </motion.div>
-            <h1 className="text-4xl font-bold text-[#0A3D62] mb-3">Jogaad Admin</h1>
-            <p className="text-[#0A3D62]/70 text-lg">
-              {step === 'email' ? 'Secure Admin Access Portal' : 'Verify your identity'}
-            </p>
-          </div>
-
-          {/* Main Card */}
-          <motion.div
-            layout
-            className="bg-white/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/40 ring-1 ring-[#F9A825]/10"
-          >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <AnimatePresence mode="wait">
-                {/* Email Step */}
-                {step === 'email' && (
-                  <motion.div
-                    key="email-step"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-4"
-                  >
-                    <div>
-                      <label 
-                        htmlFor="email" 
-                        className="block text-sm font-semibold text-[#0A3D62] mb-3"
-                      >
-                        Admin Email Address
-                      </label>
-                      <div className="relative">
-                        <IconMail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#2B9EB3]" />
-                        <input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className={`w-full pl-12 pr-4 py-4 bg-white/70 border-2 rounded-2xl text-[#0A3D62] placeholder-[#0A3D62]/50 focus:outline-none focus:ring-2 focus:ring-[#F9A825] focus:border-[#F9A825] transition-all ${
-                            validationErrors.email 
-                              ? 'border-red-400 focus:ring-red-400 focus:border-red-400' 
-                              : 'border-white/40 hover:border-[#2B9EB3]/50'
-                          }`}
-                          placeholder="admin@jogaad.com"
-                          required
-                          disabled={loading}
-                        />
-                      </div>
-                      {validationErrors.email && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-2 text-sm text-red-500 font-medium"
-                        >
-                          {validationErrors.email}
-                        </motion.p>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* OTP Step */}
-                {step === 'otp' && (
-                  <motion.div
-                    key="otp-step"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-4"
-                  >
-                    {/* Email Display */}
-                    <div className="p-4 bg-gradient-to-r from-[#F9A825]/20 to-[#2B9EB3]/20 rounded-xl border border-[#F9A825]/30">
-                      <p className="text-sm text-[#0A3D62] font-medium">
-                        OTP sent to: <span className="font-bold">{email}</span>
-                      </p>
-                    </div>
-
-                    <div>
-                      <label 
-                        htmlFor="otp" 
-                        className="block text-sm font-semibold text-[#0A3D62] mb-3"
-                      >
-                        Enter 6-Digit OTP
-                      </label>
-                      <div className="relative">
-                        <IconLock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#2B9EB3]" />
-                        <input
-                          id="otp"
-                          type={showOtp ? "text" : "password"}
-                          value={otp}
-                          onChange={(e) => setOtp(e.target.value)}
-                          className={`w-full pl-12 pr-14 py-4 bg-white/70 border-2 rounded-2xl text-[#0A3D62] placeholder-[#0A3D62]/50 focus:outline-none focus:ring-2 focus:ring-[#F9A825] focus:border-[#F9A825] transition-all ${
-                            validationErrors.otp 
-                              ? 'border-red-400 focus:ring-red-400 focus:border-red-400' 
-                              : 'border-white/40 hover:border-[#2B9EB3]/50'
-                          }`}
-                          placeholder="123456"
-                          maxLength={6}
-                          required
-                          disabled={loading}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowOtp(!showOtp)}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#2B9EB3] hover:text-[#F9A825] transition-colors"
-                        >
-                          {showOtp ? <IconEyeOff className="w-5 h-5" /> : <IconEye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                      {validationErrors.otp && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-2 text-sm text-red-500 font-medium"
-                        >
-                          {validationErrors.otp}
-                        </motion.p>
-                      )}
-                    </div>
-
-                    {/* Back Button */}
-                    <button
-                      type="button"
-                      onClick={goBackToEmail}
-                      disabled={loading}
-                      className="flex items-center space-x-2 text-[#2B9EB3] hover:text-[#F9A825] transition-colors disabled:opacity-50 font-medium"
-                    >
-                      <IconArrowLeft className="w-4 h-4" />
-                      <span className="text-sm">Change email address</span>
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Error Message */}
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-50 border border-red-200 rounded-xl"
-                >
-                  <p className="text-sm text-red-600 font-medium">{error}</p>
-                </motion.div>
-              )}
-
-              {/* Success Message */}
-              {success && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-green-50 border border-green-200 rounded-xl"
-                >
-                  <p className="text-sm text-green-600 font-medium">{success}</p>
-                </motion.div>
-              )}
-
-              {/* Submit Button */}
-              <motion.button
-                type="submit"
-                disabled={loading}
-                whileHover={{ scale: loading ? 1 : 1.02 }}
-                whileTap={{ scale: loading ? 1 : 0.98 }}
-                className="w-full bg-gradient-to-r from-[#F9A825] via-[#2B9EB3] to-[#0A3D62] text-white py-4 px-6 rounded-2xl font-semibold text-lg hover:shadow-lg hover:shadow-[#F9A825]/25 focus:outline-none focus:ring-2 focus:ring-[#F9A825] focus:ring-offset-2 focus:ring-offset-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center space-x-2">
-                    <IconLoader2 className="w-5 h-5 animate-spin" />
-                    <span>
-                      {step === 'email' ? 'Sending OTP...' : 'Verifying...'}
-                    </span>
-                  </span>
-                ) : (
-                  step === 'email' ? 'Send OTP Code' : 'Verify & Access Dashboard'
-                )}
-              </motion.button>
-            </form>
-
-            {/* Additional Info */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-[#0A3D62]/60">
-                Secure admin access • Protected by OTP verification
+      {/* Main Card with improved styling */}
+      <div className="relative z-20 mx-auto w-full max-w-md">
+        {/* Card with enhanced shadow and border */}
+        <div className="bg-white/85 backdrop-blur-lg rounded-3xl p-8 border border-white/60 shadow-2xl shadow-[#0A3D62]/10 relative overflow-hidden">
+          {/* Subtle inner glow effect */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 via-transparent to-[#2B9EB3]/5 pointer-events-none"></div>
+          
+          <div className="relative z-10">
+            {/* Logo Section */}
+            <div className="flex justify-center mb-6">
+              <div className="relative group">
+                <Image
+                  src="/logo.png"
+                  alt="Jogaad India Logo"
+                  width={120}
+                  height={60}
+                  className="h-10 w-auto object-contain relative z-10 transition-transform duration-300 group-hover:scale-105"
+                  priority
+                />
+              </div>
+            </div>
+            
+            {/* Enhanced Header Section */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-3">
+                Admin Portal
+              </h1>
+              <p className="text-gray-600 text-base leading-relaxed">
+                {step === "email" 
+                  ? "Secure admin access • Protected by OTP verification" 
+                  : "We've sent a verification code to your email"}
               </p>
             </div>
-          </motion.div>
 
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-[#0A3D62]/50">
-              © 2025 Jogaad India. All rights reserved.
-            </p>
+            {/* Enhanced Error/Success Messages */}
+            {error && (
+              <div className="mb-6 p-4 rounded-xl bg-red-50/80 border border-red-200/60 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
+                </div>
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#2B9EB3]" />
+                  <p className="text-sm text-[#0A3D62] font-medium">{success}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Enhanced Form Sections */}
+            {step === "email" ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <LabelInputContainer>
+                  <Label htmlFor="email" className="text-[#0A3D62] font-semibold flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    Admin Email Address
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="email"
+                      placeholder="admin@jogaad.com"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="h-12 pl-4 pr-4 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 backdrop-blur-sm transition-all duration-300 text-[#0A3D62] placeholder:text-gray-400"
+                    />
+                  </div>
+                  {validationErrors.email && (
+                    <p className="text-xs text-red-500 font-medium">{validationErrors.email}</p>
+                  )}
+                </LabelInputContainer>
+
+                <EnhancedButton
+                  type="submit"
+                  disabled={loading}
+                  loading={loading}
+                  icon={<ArrowRight className="w-4 h-4" />}
+                >
+                  {loading ? "Sending OTP..." : "Send Verification Code"}
+                </EnhancedButton>
+
+                {/* Enhanced Divider */}
+                <div className="relative my-8">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200/60"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-4 bg-white/60 text-gray-500 rounded-full">Admin Access Only</span>
+                  </div>
+                </div>
+
+                <p className="text-center text-xs text-gray-500">
+                  Secure admin authentication • OTP verification required
+                </p>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Enhanced Email Display */}
+                <div className="p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-[#2B9EB3]/20">
+                      <Mail className="w-4 h-4 text-[#2B9EB3]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[#0A3D62]">Verification code sent to:</p>
+                      <p className="text-sm text-[#2B9EB3] font-semibold">{email}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <LabelInputContainer>
+                  <Label htmlFor="otp" className="text-[#0A3D62] font-semibold flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    Verification Code
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="otp"
+                      placeholder="Enter 6-digit code"
+                      type="text"
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                      required
+                      className="h-12 pl-4 pr-4 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 backdrop-blur-sm transition-all duration-300 text-center text-lg font-mono tracking-widest text-[#0A3D62]"
+                    />
+                  </div>
+                  {validationErrors.otp && (
+                    <p className="text-xs text-red-500 font-medium">{validationErrors.otp}</p>
+                  )}
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Enter the 6-digit code from your email
+                  </p>
+                </LabelInputContainer>
+
+                <EnhancedButton
+                  type="submit"
+                  disabled={loading || otp.length !== 6}
+                  loading={loading}
+                  icon={<CheckCircle2 className="w-4 h-4" />}
+                >
+                  {loading ? "Verifying..." : "Verify & Access Dashboard"}
+                </EnhancedButton>
+
+                {/* Enhanced Action Buttons */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200/40">
+                  <button
+                    type="button"
+                    onClick={goBackToEmail}
+                    className="flex items-center gap-2 text-sm text-[#2B9EB3] hover:text-[#0A3D62] font-semibold transition-colors duration-200 group"
+                  >
+                    <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
+                    Change email
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={sendOtp}
+                    disabled={loading}
+                    className="flex items-center gap-2 text-sm text-[#2B9EB3] hover:text-[#0A3D62] font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <RotateCcw className="w-3 h-3 transition-transform group-hover:rotate-180" />
+                    Resend code
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
 }
+
+// Enhanced Button Component
+const EnhancedButton = ({ 
+  children, 
+  loading = false, 
+  icon, 
+  className = "", 
+  ...props 
+}: {
+  children: React.ReactNode;
+  loading?: boolean;
+  icon?: React.ReactNode;
+  className?: string;
+  [key: string]: any;
+}) => {
+  return (
+    <button
+      className={cn(
+        "group/btn relative flex items-center justify-center gap-2 h-12 w-full rounded-xl",
+        "bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] font-semibold text-white",
+        "shadow-lg hover:shadow-xl hover:shadow-[#2B9EB3]/25 transition-all duration-300",
+        "transform hover:scale-[1.02] active:scale-[0.98]",
+        "disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg",
+        className
+      )}
+      {...props}
+    >
+      <span className="flex items-center gap-2 relative z-10">
+        {loading ? (
+          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+        ) : icon}
+        {children}
+      </span>
+      <EnhancedBottomGradient />
+    </button>
+  );
+};
+
+// Enhanced Bottom Gradient Effect
+const EnhancedBottomGradient = () => {
+  return (
+    <>
+      <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-[#F9A825] to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
+      <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-[#2B9EB3] to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
+    </>
+  );
+};
+
+// Enhanced Label Input Container
+const LabelInputContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn("flex w-full flex-col space-y-3", className)}>
+      {children}
+    </div>
+  );
+};

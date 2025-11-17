@@ -46,6 +46,58 @@ export default function EmployeeSignupPage() {
     isFormValid
   } = useEmployeeSignup();
 
+  // Validation state for inline errors
+  const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+  
+  const handleBlur = (fieldName: string) => {
+    setTouched(prev => ({ ...prev, [fieldName]: true }));
+  };
+
+  // Field validation helpers
+  const getFieldError = (fieldName: string): string | null => {
+    if (!touched[fieldName]) return null;
+    
+    switch (fieldName) {
+      case 'name':
+        if (!formData.name) return 'Name is required';
+        if (formData.name.trim().length < 2) return 'Name must be at least 2 characters';
+        return null;
+      case 'email':
+        if (!formData.email) return 'Email is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Invalid email format';
+        return null;
+      case 'phone':
+        if (!formData.phone) return 'Phone number is required';
+        if (formData.phone.length < 10) return 'Phone must be at least 10 digits';
+        return null;
+      case 'pincode':
+        if (!formData.pincode) return 'Pincode is required';
+        if (formData.pincode.length !== 6) return 'Pincode must be exactly 6 digits';
+        if (!/^\d{6}$/.test(formData.pincode)) return 'Pincode must contain only numbers';
+        return null;
+      case 'address':
+        if (!formData.address) return 'Address is required';
+        if (formData.address.trim().length < 10) return 'Address must be at least 10 characters';
+        return null;
+      case 'categoryid':
+        if (!formData.categoryid || formData.categoryid === '') return 'Please select a service category';
+        return null;
+      case 'customDescription':
+        if (formData.categoryid === 'others') {
+          if (!formData.customDescription) return 'Service description is required';
+          if (formData.customDescription.trim().length < 20) return 'Description must be at least 20 characters';
+        }
+        return null;
+      case 'payrate':
+        if (formData.categoryid && formData.categoryid !== 'others') {
+          if (!formData.payrate || formData.payrate <= 0) return 'Service rate is required';
+        }
+        return null;
+      default:
+        return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (step === 'optional') {
@@ -202,9 +254,19 @@ export default function EmployeeSignupPage() {
                       type="text"
                       value={formData.name}
                       onChange={handleInputChange}
+                      onBlur={() => handleBlur('name')}
                       required
-                      className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
+                      className={cn(
+                        "h-10 sm:h-11 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm",
+                        getFieldError('name') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                      )}
                     />
+                    {getFieldError('name') && (
+                      <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                        {getFieldError('name')}
+                      </p>
+                    )}
                   </LabelInputContainer>
 
                   <LabelInputContainer>
@@ -218,9 +280,19 @@ export default function EmployeeSignupPage() {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
+                      onBlur={() => handleBlur('email')}
                       required
-                      className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
+                      className={cn(
+                        "h-10 sm:h-11 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm",
+                        getFieldError('email') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                      )}
                     />
+                    {getFieldError('email') && (
+                      <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                        {getFieldError('email')}
+                      </p>
+                    )}
                   </LabelInputContainer>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -235,10 +307,20 @@ export default function EmployeeSignupPage() {
                         type="tel"
                         value={formData.phone}
                         onChange={handleInputChange}
+                        onBlur={() => handleBlur('phone')}
                         required
                         maxLength={10}
-                        className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
+                        className={cn(
+                          "h-10 sm:h-11 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm",
+                          getFieldError('phone') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                        )}
                       />
+                      {getFieldError('phone') && (
+                        <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                          <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                          {getFieldError('phone')}
+                        </p>
+                      )}
                     </LabelInputContainer>
 
                     <LabelInputContainer>
@@ -253,11 +335,21 @@ export default function EmployeeSignupPage() {
                         type="text"
                         value={formData.pincode}
                         onChange={handleInputChange}
+                        onBlur={() => handleBlur('pincode')}
                         required
                         maxLength={6}
                         pattern="[0-9]{6}"
-                        className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm font-mono tracking-wider"
+                        className={cn(
+                          "h-10 sm:h-11 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm font-mono tracking-wider",
+                          getFieldError('pincode') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                        )}
                       />
+                      {getFieldError('pincode') && (
+                        <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                          <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                          {getFieldError('pincode')}
+                        </p>
+                      )}
                     </LabelInputContainer>
                   </div>
 
@@ -271,10 +363,20 @@ export default function EmployeeSignupPage() {
                       placeholder="House/Flat No., Street, Area, Landmark..."
                       value={formData.address}
                       onChange={handleInputChange}
+                      onBlur={() => handleBlur('address')}
                       required
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm resize-none"
+                      className={cn(
+                        "w-full px-4 py-3 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm resize-none",
+                        getFieldError('address') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                      )}
                     />
+                    {getFieldError('address') && (
+                      <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                        {getFieldError('address')}
+                      </p>
+                    )}
                   </LabelInputContainer>
                 </div>
               )}
@@ -290,9 +392,16 @@ export default function EmployeeSignupPage() {
                     <select
                       id="categoryid"
                       value={formData.categoryid}
-                      onChange={(e) => handleCategorySelect(e.target.value)}
+                      onChange={(e) => {
+                        handleCategorySelect(e.target.value);
+                        handleBlur('categoryid');
+                      }}
+                      onBlur={() => handleBlur('categoryid')}
                       required
-                      className="h-10 sm:h-11 px-4 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
+                      className={cn(
+                        "h-10 sm:h-11 px-4 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm",
+                        getFieldError('categoryid') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                      )}
                     >
                       <option value="">Select a service category</option>
                       {categories.map((category) => (
@@ -302,6 +411,12 @@ export default function EmployeeSignupPage() {
                       ))}
                       <option value="others" className="font-semibold">Others (Describe your service)</option>
                     </select>
+                    {getFieldError('categoryid') && (
+                      <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                        {getFieldError('categoryid')}
+                      </p>
+                    )}
                   </LabelInputContainer>
 
                   {formData.categoryid === 'others' && (
@@ -312,14 +427,34 @@ export default function EmployeeSignupPage() {
                       </Label>
                       <textarea
                         id="customDescription"
-                        placeholder="Please describe your service in detail..."
+                        placeholder="Please describe your service in detail (minimum 20 characters)..."
                         value={formData.customDescription || ''}
                         onChange={handleInputChange}
+                        onBlur={() => handleBlur('customDescription')}
                         required
+                        minLength={20}
                         rows={3}
-                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm resize-none"
+                        className={cn(
+                          "w-full px-4 py-3 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm resize-none",
+                          getFieldError('customDescription') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                        )}
                       />
-                      <p className="text-xs text-gray-500 mt-1">Describe what service you provide since it's not in our categories</p>
+                      <div className="flex items-center justify-between mt-1">
+                        {getFieldError('customDescription') ? (
+                          <p className="text-xs text-red-600 flex items-center gap-1">
+                            <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                            {getFieldError('customDescription')}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-gray-500">Describe what service you provide since it's not in our categories</p>
+                        )}
+                        <p className={cn(
+                          "text-xs",
+                          (formData.customDescription || '').length < 20 ? "text-red-500 font-medium" : "text-gray-400"
+                        )}>
+                          {(formData.customDescription || '').length}/20 min
+                        </p>
+                      </div>
                     </LabelInputContainer>
                   )}
 
@@ -361,13 +496,20 @@ export default function EmployeeSignupPage() {
                       type="number"
                       value={formData.payrate || ''}
                       onChange={handleInputChange}
+                      onBlur={() => handleBlur('payrate')}
                       required
                       min={selectedCategory?.categoryMinPrice || 0}
                       max={selectedCategory?.categoryMaxPrice || 100000}
-                      className="h-10 sm:h-11 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm"
+                      className={cn(
+                        "h-10 sm:h-11 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm",
+                        (priceError || getFieldError('payrate')) ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                      )}
                     />
-                    {priceError && (
-                      <p className="text-xs text-red-600 mt-1">{priceError}</p>
+                    {(priceError || getFieldError('payrate')) && (
+                      <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                        {priceError || getFieldError('payrate')}
+                      </p>
                     )}
                   </LabelInputContainer>
                 </div>
@@ -467,7 +609,18 @@ export default function EmployeeSignupPage() {
               )}
 
               {/* Navigation Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col gap-3 pt-4 sm:pt-6 border-t border-slate-200">
+                {!isStepValid && (
+                  <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                    <p className="text-xs sm:text-sm text-amber-800 font-medium">
+                      {step === 'personal' && '⚠️ Please fill in all required personal information correctly'}
+                      {step === 'service' && !formData.categoryid && '⚠️ Please select a service category'}
+                      {step === 'service' && formData.categoryid === 'others' && (!formData.customDescription || formData.customDescription.length < 20) && '⚠️ Please provide detailed service description (min 20 characters)'}
+                      {step === 'service' && formData.categoryid && formData.categoryid !== 'others' && (!formData.payrate || formData.payrate <= 0 || priceError) && '⚠️ Please enter a valid service rate within the allowed range'}
+                    </p>
+                  </div>
+                )}
+                <div className="flex gap-3">
                 {step !== 'personal' && (
                   <button
                     type="button"
@@ -491,6 +644,7 @@ export default function EmployeeSignupPage() {
                       ? "Create Account" 
                       : "Continue"}
                 </EnhancedButton>
+                </div>
               </div>
 
               {/* Sign in link */}

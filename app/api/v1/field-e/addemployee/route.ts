@@ -44,14 +44,14 @@ export async function POST(request: Request) {
                     return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
                 }
                 
-                if (data.categoryid && data.categoryid !== '') {
+                if (data.categoryid && data.categoryid.trim() !== '') {
                     const categoryData = await getCategoryById(data.categoryid);
                     console.log("CATEGORY DATA", categoryData);
                     if (!categoryData.success) {
                         return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
                     }
                     if (data.payrate! < categoryData.category!.categoryMinPrice || data.payrate! > categoryData.category!.categoryMaxPrice) {
-                        return NextResponse.json({ message: `Payrate must be between ${categoryData.category!.categoryMinPrice} and ${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
+                        return NextResponse.json({ message: `Payrate must be between ₹${categoryData.category!.categoryMinPrice} and ₹${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
                     }
                 }
 
@@ -76,7 +76,12 @@ export async function POST(request: Request) {
         }
         const validate = EmployeeZodSchema.safeParse(data);
         if (!validate.success) {
-            return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
+            const errors = validate.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+            return NextResponse.json({ 
+                message: `Validation failed: ${errors}`, 
+                success: false,
+                errors: validate.error.issues 
+            }, { status: 400 });
         }
         
         const getFeesdata = await getFees();
@@ -85,18 +90,25 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: "Error fetching fees", success: false }, { status: 500 });
         }
         
-        // Skip category validation for custom services (empty categoryid)
-        if (data.categoryid && data.categoryid !== '') {
+        // Validate category and payrate only if categoryid is provided
+        if (data.categoryid && data.categoryid.trim() !== '') {
             const categoryData = await getCategoryById(data.categoryid);
             console.log("CATEGORY DATA", categoryData);
             if (!categoryData.success) {
                 return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
             }
             if (data.payrate! < categoryData.category!.categoryMinPrice || data.payrate! > categoryData.category!.categoryMaxPrice) {
-                return NextResponse.json({ message: `Payrate must be between ${categoryData.category!.categoryMinPrice} and ${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
+                return NextResponse.json({ message: `Payrate must be between ₹${categoryData.category!.categoryMinPrice} and ₹${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
             }
         }
-        const response = await createEmployee({...data,feid:fieldExecData.data?._id});
+        
+        // Clean data before creating employee - remove empty categoryid
+        const cleanedData: any = { ...data, feid: fieldExecData.data?._id };
+        if (!cleanedData.categoryid || cleanedData.categoryid.trim() === '') {
+            delete cleanedData.categoryid;
+        }
+        
+        const response = await createEmployee(cleanedData);
         const amount = getFeesdata.data.employeeOneTimeFee * 100; //amount in paise
         const receipt = `emp_reg_${response.employee?._id}`;
         const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
@@ -127,21 +139,33 @@ export const PUT = async (request: Request) => {
         }
         const validate = EmployeeZodSchema.safeParse(data);
         if (!validate.success) {
-            return NextResponse.json({ message: "Invalid data", success: false }, { status: 400 });
+            const errors = validate.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+            return NextResponse.json({ 
+                message: `Validation failed: ${errors}`, 
+                success: false,
+                errors: validate.error.issues 
+            }, { status: 400 });
         }
         
-        // Skip category validation for custom services (empty categoryid)
-        if (data.categoryid && data.categoryid !== '') {
+        // Validate category and payrate only if categoryid is provided
+        if (data.categoryid && data.categoryid.trim() !== '') {
             const categoryData = await getCategoryById(data.categoryid);
             console.log("CATEGORY DATA", categoryData);
             if (!categoryData.success) {
                 return NextResponse.json({ message: "Error fetching category data", success: false }, { status: 500 });
             }
             if (data.payrate! < categoryData.category!.categoryMinPrice || data.payrate! > categoryData.category!.categoryMaxPrice) {
-                return NextResponse.json({ message: `Payrate must be between ${categoryData.category!.categoryMinPrice} and ${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
+                return NextResponse.json({ message: `Payrate must be between ₹${categoryData.category!.categoryMinPrice} and ₹${categoryData.category!.categoryMaxPrice}`, success: false }, { status: 400 });
             }
         }
-        const response = await updateEmployeeByEmail(data.email, data);
+        
+        // Clean data before updating - remove empty categoryid
+        const cleanedData: any = { ...data };
+        if (!cleanedData.categoryid || cleanedData.categoryid.trim() === '') {
+            delete cleanedData.categoryid;
+        }
+        
+        const response = await updateEmployeeByEmail(data.email, cleanedData);
         return NextResponse.json(response);
 
     }
