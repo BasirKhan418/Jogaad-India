@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-type BookingStatus = "pending" | "confirmed" | "in-progress" | "completed" | "cancelled"|"refunded";
+type BookingStatus = "pending" | "confirmed" | "in-progress" |"started"| "completed" | "cancelled"|"refunded";
 const BookingSchema = new mongoose.Schema({
 userid: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 categoryid: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },

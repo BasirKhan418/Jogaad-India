@@ -20,8 +20,12 @@ export const POST = async (request: NextRequest) => {
             return NextResponse.json({ message: "ID is required to cancel the booking", success: false }, { status: 400 });
         }
         const bookingdata = await getBookingById(id);
+        
         if (!bookingdata.success) {
             return NextResponse.json({ message: "Booking not found", success: false }, { status: 404 });
+        }
+        if(bookingdata.data.status=="started"){
+            return NextResponse.json({ message: "Cannot cancel a booking that has already started", success: false }, { status: 400 });
         }
         const fineData = await isFineImposedForBooking(id);
         if (!fineData.success) {
