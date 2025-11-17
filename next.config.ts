@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    unoptimized: process.env.NODE_ENV === 'production' ? false : true,
   },
   reactStrictMode: true,
   compiler: {

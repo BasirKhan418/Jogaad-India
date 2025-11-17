@@ -5,7 +5,8 @@ import { FieldExecutiveType } from "@/validator/fieldexecutive/field.validator";
 import { sendFieldExecutiveWelcomeEmail } from "@/email/field-executive/welcome";
 import { sendFieldExecutiveOtp } from "@/email/field-executive/sendotp";
 import jwt from "jsonwebtoken";
-//create field executive
+
+// Create field executive
 export const createFieldExecutive = async (data: FieldExecutiveType) => {
 try{
     await ConnectDb();
@@ -13,16 +14,17 @@ try{
     if(dataExists){
         return {message:"Field Executive with this email already exists",success:false};
     }
-    const newFieldExecutive = new FieldExecutive(data);
+    const newFieldExecutive = new FieldExecutive({...data, isActive: true});
     await newFieldExecutive.save();
     await sendFieldExecutiveWelcomeEmail({name:data.name,email:data.email});
-    return {message:"Field Executive created successfully",success:true};
+    return {message:"Field Executive created successfully",data:newFieldExecutive,success:true};
 }
 catch(error){
+    console.error("Error creating field executive:", error);
     return {message:"Internal Server Error",success:false};
 }
 }
-//get all field executives
+// Get all field executives
 export const getAllFieldExecutives = async () => {
     try{
         await ConnectDb();
@@ -30,44 +32,68 @@ export const getAllFieldExecutives = async () => {
         return {message:"Field Executives fetched successfully",data:fieldExecutives,success:true};
     }
     catch(error){
+        console.error("Error fetching field executives:", error);
         return {message:"Internal Server Error",success:false};
     }
 }
-//update field executive
-export const updateFieldExecutive = async (id:string,updateData:Partial<FieldExecutiveType>) => {
+
+// Update field executive
+export const updateFieldExecutive = async (id:string, updateData:Partial<FieldExecutiveType>) => {
     try{
         await ConnectDb();
-        const updatedFieldExecutive = await FieldExecutive.findByIdAndUpdate(id,updateData,{new:true});
+        const updatedFieldExecutive = await FieldExecutive.findByIdAndUpdate(
+            id,
+            updateData,
+            {new: true, runValidators: true}
+        );
         if(!updatedFieldExecutive){
             return {message:"Field Executive not found",success:false};
         }
         return {message:"Field Executive updated successfully",data:updatedFieldExecutive,success:true};
     }
     catch(error){
+        console.error("Error updating field executive:", error);
         return {message:"Internal Server Error",success:false};
     }
 }
-//login field executive
+
+// Get field executive by ID
+export const getFieldExecutiveById = async (id: string) => {
+    try{
+        await ConnectDb();
+        const fieldExecutive = await FieldExecutive.findById(id);
+        if(!fieldExecutive){
+            return {message:"Field Executive not found",success:false};
+        }
+        return {message:"Field Executive fetched successfully",data:fieldExecutive,success:true};
+    }
+    catch(error){
+        console.error("Error fetching field executive:", error);
+        return {message:"Internal Server Error",success:false};
+    }
+}
+// Login field executive
 export const loginFieldExecutive = async (email:string) => {
     try{
         const redisClient =  setConnectionRedis();
         await ConnectDb();
         const fieldExecutive = await FieldExecutive.findOne({email,isActive:true});
         if(!fieldExecutive){
-            return {message:"Field Executive not found",success:false};
+            return {message:"Field Executive not found or inactive",success:false};
         }
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await redisClient.set(`field-exec-otp-${email}`,otp,"EX",300);
         await sendFieldExecutiveOtp({email, otp});
         return {message:"OTP sent successfully",success:true};
-
     }
     catch(error){
+        console.error("Error logging in field executive:", error);
         return {message:"Internal Server Error",success:false};
     }
 }
-//verify field executive otp 
-export const verifyFieldExecutiveOtp = async (email:string,otp:string) => {
+
+// Verify field executive otp 
+export const verifyFieldExecutiveOtp = async (email:string, otp:string) => {
     try{
         await ConnectDb();
         const redisClient =  setConnectionRedis();
@@ -75,10 +101,12 @@ export const verifyFieldExecutiveOtp = async (email:string,otp:string) => {
         if(storedOtp!==otp){
             return {message:"Invalid OTP",success:false};
         }
+        await redisClient.del(`field-exec-otp-${email}`);
         const token = jwt.sign({email,type:"field-exec"},process.env.JWT_SECRET||"secretkey",{expiresIn:"7d"});
         return {message:"OTP verified successfully",token,success:true};
     }
     catch(error){
+        console.error("Error verifying OTP:", error);
         return {message:"Internal Server Error",success:false};
     }
 }

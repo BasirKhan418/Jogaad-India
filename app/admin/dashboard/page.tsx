@@ -22,6 +22,7 @@ import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useAdminNavigation, NavigationLink } from "@/utils/admin/useAdminNavigation";
 import { useAdminData, useAdminLogout, useAdminSidebar } from "@/utils/admin/useAdminHooks";
+import { useDashboardStats } from "@/utils/admin/useDashboardStats";
 
 interface DashboardSectionProps {
   title: string;
@@ -191,6 +192,8 @@ const LogoIcon = () => {
 
 // Dashboard component
 const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
+  const { stats, loading: statsLoading, error: statsError, refetch } = useDashboardStats();
+
   return (
     <div className="flex flex-1 overflow-hidden">
       <div className="flex h-full w-full flex-1 flex-col gap-4 rounded-tl-2xl border border-neutral-200 bg-white p-4 md:p-10 dark:border-neutral-700 dark:bg-neutral-900 overflow-y-auto">
@@ -205,35 +208,171 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <DashboardStatCard title="Total Users" value="0" />
-          <DashboardStatCard title="Categories" value="0" />
-          <DashboardStatCard title="Total Revenue" value="₹0" />
-          <DashboardStatCard title="Active Services" value="0" />
+          <DashboardStatCard 
+            title="Total Employees" 
+            value={statsLoading ? "..." : (stats?.employees.total.toString() || "0")}
+            subtitle={statsLoading ? "Loading..." : `${stats?.employees.active || 0} active`}
+            icon={<IconUsers className="h-6 w-6" />}
+            gradient="from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20"
+          />
+          <DashboardStatCard 
+            title="Field Executives" 
+            value={statsLoading ? "..." : (stats?.fieldExecutives.total.toString() || "0")}
+            subtitle={statsLoading ? "Loading..." : `${stats?.fieldExecutives.active || 0} active`}
+            icon={<IconCategory className="h-6 w-6" />}
+            gradient="from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20"
+          />
+          <DashboardStatCard 
+            title="Categories" 
+            value={statsLoading ? "..." : (stats?.categories.total.toString() || "0")}
+            subtitle={statsLoading ? "Loading..." : `${stats?.categories.service || 0} service types`}
+            icon={<IconChartBar className="h-6 w-6" />}
+            gradient="from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20"
+          />
+          <DashboardStatCard 
+            title="Employee Fee" 
+            value={statsLoading ? "..." : `₹${stats?.fees.employeeFee || 0}`}
+            subtitle={statsLoading ? "Loading..." : "Current rate"}
+            icon={<IconCurrencyDollar className="h-6 w-6" />}
+            gradient="from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20"
+          />
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-          <DashboardContentCard title="Recent Activity">
-            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-              No recent activity to display.
-            </p>
-          </DashboardContentCard>
-          <DashboardContentCard title="Quick Actions">
-            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-              Select an action from the sidebar to get started.
-            </p>
-          </DashboardContentCard>
-        </div>
+        {/* Detailed Stats */}
+        {!statsLoading && stats && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            {/* Employee Overview */}
+            <DashboardContentCard title="Employee Overview">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Total Employees</span>
+                  <span className="font-semibold text-neutral-800 dark:text-neutral-100">{stats.employees.total}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Active</span>
+                  <span className="font-semibold text-green-600">{stats.employees.active}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Inactive</span>
+                  <span className="font-semibold text-red-600">{stats.employees.inactive}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Paid</span>
+                  <span className="font-semibold text-blue-600">{stats.employees.paid}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Pending Payment</span>
+                  <span className="font-semibold text-orange-600">{stats.employees.pending}</span>
+                </div>
+              </div>
+            </DashboardContentCard>
+
+            {/* Field Executive Overview */}
+            <DashboardContentCard title="Field Executive Overview">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Total Field Executives</span>
+                  <span className="font-semibold text-neutral-800 dark:text-neutral-100">{stats.fieldExecutives.total}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Active</span>
+                  <span className="font-semibold text-green-600">{stats.fieldExecutives.active}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">Inactive</span>
+                  <span className="font-semibold text-red-600">{stats.fieldExecutives.inactive}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
+                  <span className="text-neutral-600 dark:text-neutral-400">Categories</span>
+                  <span className="font-semibold text-neutral-800 dark:text-neutral-100">{stats.categories.total}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-600 dark:text-neutral-400">User Fee</span>
+                  <span className="font-semibold text-neutral-800 dark:text-neutral-100">₹{stats.fees.userFee}</span>
+                </div>
+              </div>
+            </DashboardContentCard>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {statsLoading && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <DashboardContentCard title="Loading...">
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex justify-between items-center">
+                    <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse w-24"></div>
+                    <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse w-12"></div>
+                  </div>
+                ))}
+              </div>
+            </DashboardContentCard>
+            <DashboardContentCard title="Loading...">
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex justify-between items-center">
+                    <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse w-32"></div>
+                    <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse w-8"></div>
+                  </div>
+                ))}
+              </div>
+            </DashboardContentCard>
+          </div>
+        )}
+
+        {/* Error State */}
+        {statsError && (
+          <div className="mt-6">
+            <DashboardContentCard title="Error">
+              <div className="text-center py-8">
+                <p className="text-red-600 dark:text-red-400 mb-4">{statsError}</p>
+                <button
+                  onClick={refetch}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            </DashboardContentCard>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const DashboardStatCard = ({ title, value }: { title: string; value: string }) => {
+const DashboardStatCard = ({ 
+  title, 
+  value, 
+  subtitle, 
+  icon, 
+  gradient 
+}: { 
+  title: string; 
+  value: string; 
+  subtitle?: string;
+  icon?: React.ReactNode;
+  gradient?: string;
+}) => {
   return (
-    <div className="rounded-lg bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 p-6 border border-neutral-200 dark:border-neutral-700">
-      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">{title}</p>
+    <div className={cn(
+      "rounded-lg p-6 border border-neutral-200 dark:border-neutral-700",
+      "bg-gradient-to-br",
+      gradient || "from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900"
+    )}>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">{title}</p>
+        {icon && (
+          <div className="text-neutral-500 dark:text-neutral-400">
+            {icon}
+          </div>
+        )}
+      </div>
       <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{value}</p>
+      {subtitle && (
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{subtitle}</p>
+      )}
     </div>
   );
 };

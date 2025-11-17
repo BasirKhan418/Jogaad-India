@@ -3,21 +3,47 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export const Preloader = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const pathname = usePathname();
+
+  // Check if this is an employee or admin route
+  const isEmployeeRoute = pathname?.startsWith("/employee");
+  const isAdminRoute = pathname?.startsWith("/admin");
 
   useEffect(() => {
+    // Only show preloader on initial page load, not on route changes
+    if (!isInitialLoad) {
+      setIsLoading(false);
+      return;
+    }
+
     const LOADING_DURATION = 2500;
 
     const hideTimeout = setTimeout(() => {
       setIsLoading(false);
+      setIsInitialLoad(false);
     }, LOADING_DURATION);
 
     return () => {
       clearTimeout(hideTimeout);
     };
-  }, []);
+  }, [isInitialLoad]);
+
+  // Hide preloader on route change (client-side navigation)
+  useEffect(() => {
+    if (!isInitialLoad) {
+      setIsLoading(false);
+    }
+  }, [pathname, isInitialLoad]);
+
+  // Don't show preloader on employee or admin routes at all
+  if (isEmployeeRoute || isAdminRoute) {
+    return null;
+  }
 
   return (
     <AnimatePresence mode="wait">
