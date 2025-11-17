@@ -99,6 +99,51 @@ export async function POST(request: NextRequest) {
       //add update of complete payment
     }
   }
+   if (event === "refund.created") {
+    const r = data.payload.refund.entity;
+    addLog(`Refund created: ${JSON.stringify(r)}`);
+
+    await Booking.findOneAndUpdate(
+      { paymentid: r.payment_id },
+      {
+        refundStatus: "initiated",
+        refundid: r.id,
+        refundAmount: Math.floor((r.amount)/100) || 0,
+        refundDate: new Date(),
+        status:"refunded",
+      }
+    );
+    addLog(`Booking refund initiated for payment: ${r.payment_id}`);
+  }
+  if (event === "refund.processed") {
+    const r = data.payload.refund.entity;
+    addLog(`Refund processed: ${JSON.stringify(r)}`);
+
+    await Booking.findOneAndUpdate(
+      { paymentid: r.payment_id },
+      {
+        refundStatus: "processed",
+        refundid: r.id,
+        refundAmount:Math.floor((r.amount)/100) || 0,
+        refundDate: new Date(),
+        status:"refunded",
+      }
+    );
+    addLog(`Booking refund processed for payment: ${r.payment_id}`);
+  }
+   if (event === "refund.failed") {
+    const r = data.payload.refund.entity;
+    addLog(`Refund failed: ${JSON.stringify(r)}`);
+
+    await Booking.findOneAndUpdate(
+      { paymentid: r.payment_id },
+      {
+        refundStatus: "failed",
+        refundDate: new Date(),
+      }
+    );
+    addLog(`Booking refund failed for payment: ${r.payment_id}`);
+  }
 
   addLog("Webhook processed successfully");
 
