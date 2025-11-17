@@ -84,6 +84,20 @@ export async function POST(request: NextRequest) {
         paymentStatus: "failed",
       }
     );
+    const bookingdata =await Booking.findOne({orderid:p.order_id});
+    if(bookingdata.isActive===false||bookingdata.intialpaymentStatus==="pending"||bookingdata.status!=="confirmed"){
+      await Booking.findOneAndUpdate(
+        { orderid: p.order_id },
+        {
+          intialpaymentStatus: "failed",
+          status: "pending",
+        }
+      );
+      addLog(`Booking record updated for orderid: ${p.order_id}`);
+    }
+    else{
+      //add update of complete payment
+    }
   }
 
   addLog("Webhook processed successfully");
