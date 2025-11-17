@@ -4,7 +4,7 @@ import Booking from "@/models/Booking";
 export const fetchAllBookings = async () => {
     try{
         await ConnectDb();
-        const bookings = await Booking.find();
+        const bookings = await Booking.find().populate("categoryid").populate("userid").populate("employeeid");
         return {message:"Bookings fetched successfully",success:true,data:bookings};
     }
     catch(error){
@@ -14,7 +14,7 @@ export const fetchAllBookings = async () => {
 export const fetchBookingsByStatus = async (status: string) => {
     try{
         await ConnectDb();
-        const bookings = await Booking.find({status});
+        const bookings = await Booking.find({status}).populate("categoryid").populate("userid").populate("employeeid");
         return {message:"Bookings fetched successfully",success:true,data:bookings};
     }
     catch(error){
