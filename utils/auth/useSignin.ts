@@ -120,7 +120,7 @@ export const useSignin = (): UseSigninReturn => {
     );
     
     if (success) {
-      window.location.href = '/';
+      window.location.href = '/user/dashboard';
     }
     
     return success;

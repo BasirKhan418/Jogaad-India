@@ -29,6 +29,21 @@ export const verifyUserByEmail = async (email: string) => {
         return {message:"Error verifying user",err,success:false};
     }
 }
+
+//get user by email
+export const getUserByEmail = async (email: string) => {
+    try{
+        await ConnectDb();
+        const user = await User.findOne({email}).select('-__v');
+        if(user){
+            return {message:"User found successfully",data:user,success:true};
+        }
+        return {message:"User not found",success:false};
+    }
+    catch(err){
+        return {message:"Error fetching user",err,success:false};
+    }
+}
 //update user by email
 export const updateUserByEmail = async (email: string, updateData: any) => {
     try{
