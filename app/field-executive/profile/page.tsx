@@ -228,7 +228,7 @@ export default function FieldExecProfile() {
                     href: "/field-executive/profile",
                     icon: (
                       <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] flex items-center justify-center overflow-hidden relative">
-                        {(imagePreview || fieldExecData.img) && (imagePreview || fieldExecData.img).trim() !== "" ? (
+                        {(imagePreview || fieldExecData.img) && (imagePreview || fieldExecData.img)?.trim() !== "" ? (
                           <img
                             src={imagePreview || fieldExecData.img}
                             alt={fieldExecData.name}
