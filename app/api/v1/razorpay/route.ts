@@ -2,15 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
-import { writeLog } from "@/utils/logger";
+import { writeLogToS3 } from "@/utils/s3Logger";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
-  writeLog("Webhook received");
-  writeLog(`Raw body: ${body}`);
 
+  // Basic logs
+  writeLogToS3("Webhook received");
+  writeLogToS3(`Raw body: ${body}`);
+
+  // Verify Signature
   const signature = request.headers.get("x-razorpay-signature")!;
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
 
@@ -20,19 +23,22 @@ export async function POST(request: NextRequest) {
     .digest("hex");
 
   if (expectedSignature !== signature) {
-    writeLog("Invalid webhook signature");
+    writeLogToS3("❌ Invalid webhook signature");
     return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
   }
 
+  // Parse data
   const data = JSON.parse(body);
   const event = data.event;
+  writeLogToS3(`Event received: ${event}`);
 
   await ConnectDb();
 
+  // Success Case
   if (event === "payment.captured") {
     const p = data.payload.payment.entity;
 
-    writeLog(`Payment captured: ${JSON.stringify(p)}`);
+    writeLogToS3(`Payment captured: ${JSON.stringify(p)}`);
 
     await Employee.findOneAndUpdate(
       { email: p.email },
@@ -46,10 +52,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Failure Case
   if (event === "payment.failed") {
     const p = data.payload.payment.entity;
 
-    writeLog(`Payment failed: ${JSON.stringify(p)}`);
+    writeLogToS3(`Payment failed: ${JSON.stringify(p)}`);
 
     await Employee.findOneAndUpdate(
       { email: p.email },
@@ -61,6 +68,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  writeLog("Webhook processed successfully");
+  writeLogToS3("Webhook processed successfully");
+
   return NextResponse.json({ status: "ok" });
 }
