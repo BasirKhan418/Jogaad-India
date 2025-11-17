@@ -75,3 +75,14 @@ export const markFine = async (id: string) => {
         return { message: "Internal Server Error", success: false };
     }
 }
+
+export const getAllBookingsForUser = async (userid: string) => {
+    try{
+        await ConnectDb();
+        const bookings = await Booking.find({ userid });
+        return { message: "Bookings retrieved successfully", success: true, data: bookings };
+    }
+    catch(error){
+        return { message: "Internal Server Error", success: false };
+    }
+}

@@ -20,5 +20,6 @@ refundStatus: { type: String, required: false ,default:"not_requested"},
 refundAmount: { type: Number, required: false ,default:0},
 refundDate: { type: Date, required: false },
 refundid: { type: String, required: false },
+renderPaymentButton: { type: Boolean, default: false },
 }, { timestamps: true })
 export default mongoose.models?.Booking || mongoose.model('Booking', BookingSchema);
