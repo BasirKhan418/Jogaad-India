@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Analytics Data Interface
- */
+
 export interface AnalyticsData {
   assignTarget: number;
   currentTarget: number;
 }
 
-/**
- * Analytics Hook Response
- */
+
 interface UseAnalyticsReturn {
   analytics: AnalyticsData | null;
   loading: boolean;
@@ -18,10 +14,6 @@ interface UseAnalyticsReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Custom hook to fetch field executive analytics
- * Follows SRP - Single responsibility of fetching analytics data
- */
 export const useFieldExecAnalytics = (): UseAnalyticsReturn => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);

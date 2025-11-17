@@ -98,10 +98,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  /**
-   * Verify payment on backend after Razorpay success
-   * Redirects to dashboard after successful payment
-   */
+
   const verifyPayment = useCallback(async (razorpayResponse: any, orderId: string, email: string) => {
     try {
       setLoading(true);
@@ -136,10 +133,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
     }
   }, []);
 
-  /**
-   * Initialize Razorpay payment
-   * Opens Razorpay checkout modal for payment processing
-   */
+ 
   const initiateRazorpayPayment = useCallback((order: any, email: string) => {
     // Check if Razorpay is loaded
     if (typeof window === 'undefined' || !(window as any).Razorpay) {
@@ -164,7 +158,6 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         color: '#2B9EB3'
       },
       handler: function (response: any) {
-        // Payment successful - verify on backend
         verifyPayment(response, order.id, email);
       },
       modal: {
