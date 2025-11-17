@@ -22,10 +22,18 @@ export const useFeesData = () => {
         setFeesData(null);
       }
     } catch (error: any) {
-      if (error.name !== 'AbortError') {
-        setError('Failed to load fees');
-        console.error('Error loading fees:', error);
+      // Ignore abort errors (expected during component unmount or refetch)
+      if (
+        error.name === 'AbortError' || 
+        (error instanceof DOMException && error.name === 'AbortError') ||
+        error.message?.includes('abort') ||
+        error.message?.includes('unmount') ||
+        (typeof error === 'string' && (error.toLowerCase().includes('abort') || error.toLowerCase().includes('unmount')))
+      ) {
+        return;
       }
+      setError('Failed to load fees');
+      console.error('Error loading fees:', error);
     } finally {
       setLoading(false);
     }
@@ -33,7 +41,7 @@ export const useFeesData = () => {
 
   // Create or update fees
   const saveFees = useCallback(
-    async (userFee: number, employeeFee: number): Promise<boolean> => {
+    async (userFee: number, employeeFee: number, fineFee: number): Promise<boolean> => {
       try {
         setSaving(true);
         setError(null);
@@ -45,12 +53,14 @@ export const useFeesData = () => {
           result = await updateFees(feesData._id, {
             userOneTimeFee: userFee,
             employeeOneTimeFee: employeeFee,
+            fineFees: fineFee,
           });
         } else {
           // Create new fees
           result = await createFees({
             userOneTimeFee: userFee,
             employeeOneTimeFee: employeeFee,
+            fineFees: fineFee,
           });
         }
 
@@ -80,14 +90,14 @@ export const useFeesData = () => {
   const refetch = useCallback(() => {
     const controller = new AbortController();
     loadFees(controller.signal);
-    return () => controller.abort();
+    return () => controller.abort('Refetch cancelled');
   }, [loadFees]);
 
   // Initial load
   useEffect(() => {
     const controller = new AbortController();
     loadFees(controller.signal);
-    return () => controller.abort();
+    return () => controller.abort('Component unmounted');
   }, [loadFees]);
 
   return {

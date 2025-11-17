@@ -27,7 +27,7 @@ export const useAuth = (): UseAuthReturn => {
     return () => {
       isMountedRef.current = false;
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        abortControllerRef.current.abort('Component unmounted');
       }
     };
   }, []);
@@ -48,7 +48,7 @@ export const useAuth = (): UseAuthReturn => {
     }
 
     if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+      abortControllerRef.current.abort('New request started');
     }
     
     abortControllerRef.current = new AbortController();

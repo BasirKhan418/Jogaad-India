@@ -73,7 +73,18 @@ export const fetchUserAuth = async (useCache = true, signal?: AbortSignal): Prom
         message: data.message || 'Authentication failed'
       };
     }
-  } catch (error) {
+  } catch (error: any) {
+    // Don't log or clear cache on abort errors - check multiple conditions
+    if (
+      error.name === 'AbortError' || 
+      (error instanceof DOMException && error.name === 'AbortError') ||
+      (signal && signal.aborted) ||
+      error.message?.includes('abort') ||
+      error.message?.includes('unmount') ||
+      (typeof error === 'string' && (error.toLowerCase().includes('abort') || error.toLowerCase().includes('unmount')))
+    ) {
+      throw error;
+    }
     console.error('Auth fetch error:', error);
     authCache.clear(); 
     return {

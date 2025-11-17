@@ -81,7 +81,7 @@ export default function ProfilePage() {
     fetchUserData();
     
     return () => {
-      abortController.abort();
+      abortController.abort('Component unmounted');
     };
   }, [router]); // Remove resetProfileData to prevent infinite re-renders
 

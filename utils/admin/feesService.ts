@@ -4,6 +4,7 @@ export interface FeesData {
   _id?: string;
   userOneTimeFee: number;
   employeeOneTimeFee: number;
+  fineFees: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -31,7 +32,15 @@ export const fetchFees = async (signal?: AbortSignal): Promise<FeesResponse> => 
     const data = await response.json();
     return data;
   } catch (error: any) {
-    if (error.name === 'AbortError') {
+    // Check if request was aborted - multiple ways to detect this
+    if (
+      error.name === 'AbortError' || 
+      (error instanceof DOMException && error.name === 'AbortError') ||
+      (signal && signal.aborted) ||
+      error.message?.includes('abort') ||
+      error.message?.includes('unmount') ||
+      (typeof error === 'string' && (error.toLowerCase().includes('abort') || error.toLowerCase().includes('unmount')))
+    ) {
       throw error;
     }
     console.error('Error fetching fees:', error);

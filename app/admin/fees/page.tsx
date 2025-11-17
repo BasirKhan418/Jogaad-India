@@ -24,9 +24,8 @@ import {
 } from "@tabler/icons-react";
 import { AdminData } from "@/utils/admin/adminAuthService";
 import { getUserInitials } from "@/utils/auth";
-import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import { useAdminNavigation } from "@/utils/admin/useAdminNavigation";
-import { useAdminData, useAdminLogout, useAdminSidebar } from "@/utils/admin/useAdminHooks";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
 import { useFeesData } from "@/utils/admin/useFeesData";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -36,8 +35,6 @@ export default function FeesPage() {
   const router = useRouter();
   const { adminData, loading, error } = useAdminData();
   const { handleLogout } = useAdminLogout();
-  const { open, setOpen } = useAdminSidebar();
-  const { links, logoutLink } = useAdminNavigation();
 
   if (loading) {
     return (
@@ -72,88 +69,19 @@ export default function FeesPage() {
       "rounded-md flex flex-col md:flex-row bg-white w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
       "h-screen"
     )}>
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
-            </div>
-          </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: adminData.name || "Admin",
-                href: "/admin/profile",
-                icon: (
-                  <div className="h-7 w-7 flex-shrink-0 rounded-full bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] text-white flex items-center justify-center text-xs font-semibold">
-                    {getUserInitials(adminData.name || "Admin")}
-                  </div>
-                ),
-              }}
-            />
-            <div className="border-t border-neutral-200 dark:border-neutral-700 my-2"></div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-start gap-2 group/sidebar py-2 w-full"
-            >
-              {logoutLink.icon}
-              <motion.span
-                animate={{
-                  display: open ? "inline-block" : "none",
-                  opacity: open ? 1 : 0,
-                }}
-                className="text-sm text-neutral-700 dark:text-neutral-200"
-              >
-                Logout
-              </motion.span>
-            </button>
-          </div>
-        </SidebarBody>
-      </Sidebar>
+      <AdminSidebar adminData={adminData} handleLogout={handleLogout} />
       
       <FeesContent adminData={adminData} />
     </div>
   );
 }
 
-const Logo = () => {
-  return (
-    <a
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-neutral-800 dark:text-neutral-200 py-1 relative z-20"
-    >
-      <img 
-        src="/logo.png" 
-        alt="Jogaad India Logo" 
-        className="h-8 w-auto"
-      />
-    </a>
-  );
-};
-
-const LogoIcon = () => {
-  return (
-    <a
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-neutral-800 dark:text-neutral-200 py-1 relative z-20"
-    >
-      <img 
-        src="/logo.png" 
-        alt="Jogaad India" 
-        className="h-8 w-8 object-contain"
-      />
-    </a>
-  );
-};
-
 // Fees Content Component
 const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
   const { feesData, loading, saving, error, saveFees, refetch } = useFeesData();
   const [userFee, setUserFee] = useState<number>(0);
   const [employeeFee, setEmployeeFee] = useState<number>(0);
+  const [fineFee, setFineFee] = useState<number>(0);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Update form when fees data is loaded
@@ -161,6 +89,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
     if (feesData) {
       setUserFee(feesData.userOneTimeFee);
       setEmployeeFee(feesData.employeeOneTimeFee);
+      setFineFee(feesData.fineFees);
       setHasChanges(false);
     }
   }, [feesData]);
@@ -170,23 +99,24 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
     if (feesData) {
       const changed = 
         userFee !== feesData.userOneTimeFee || 
-        employeeFee !== feesData.employeeOneTimeFee;
+        employeeFee !== feesData.employeeOneTimeFee ||
+        fineFee !== feesData.fineFees;
       setHasChanges(changed);
     } else {
       // If no fees exist yet, any non-zero value is a change
-      setHasChanges(userFee > 0 || employeeFee > 0);
+      setHasChanges(userFee > 0 || employeeFee > 0 || fineFee > 0);
     }
-  }, [userFee, employeeFee, feesData]);
+  }, [userFee, employeeFee, fineFee, feesData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (userFee < 0 || employeeFee < 0) {
+    if (userFee < 0 || employeeFee < 0 || fineFee < 0) {
       toast.error("Fees cannot be negative");
       return;
     }
 
-    const success = await saveFees(userFee, employeeFee);
+    const success = await saveFees(userFee, employeeFee, fineFee);
     if (success) {
       setHasChanges(false);
     }
@@ -196,9 +126,11 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
     if (feesData) {
       setUserFee(feesData.userOneTimeFee);
       setEmployeeFee(feesData.employeeOneTimeFee);
+      setFineFee(feesData.fineFees);
     } else {
       setUserFee(0);
       setEmployeeFee(0);
+      setFineFee(0);
     }
     setHasChanges(false);
   };
@@ -241,7 +173,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* User Fee Card */}
           <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 border border-blue-200 dark:border-blue-700">
             <div className="flex items-center justify-between mb-4">
@@ -269,6 +201,20 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
               One-time registration fee for employees
             </div>
           </div>
+
+          {/* Fine Fees Card */}
+          <div className="rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-6 border border-orange-200 dark:border-orange-700">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">Fine Fees</div>
+              <IconCash className="h-8 w-8 text-orange-500" />
+            </div>
+            <div className="text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">
+              ₹{feesData?.fineFees?.toLocaleString() || '0'}
+            </div>
+            <div className="text-xs text-neutral-500 dark:text-neutral-500">
+              Penalty fee for violations or late payments
+            </div>
+          </div>
         </div>
 
         {/* Fees Configuration Form */}
@@ -280,7 +226,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
             </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* User One-Time Fee */}
                 <LabelInputContainer>
                   <Label htmlFor="userFee" className="text-sm text-neutral-600 dark:text-neutral-400 font-medium flex items-center gap-2">
@@ -322,6 +268,28 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
                   />
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                     Fee charged when a new employee joins the platform
+                  </p>
+                </LabelInputContainer>
+
+                {/* Fine Fees */}
+                <LabelInputContainer>
+                  <Label htmlFor="fineFee" className="text-sm text-neutral-600 dark:text-neutral-400 font-medium flex items-center gap-2">
+                    <IconCash className="h-4 w-4 text-orange-500" />
+                    Fine Fees (₹) *
+                  </Label>
+                  <Input
+                    id="fineFee"
+                    placeholder="0"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={fineFee}
+                    onChange={(e) => setFineFee(parseFloat(e.target.value) || 0)}
+                    required
+                    className="h-11 rounded-lg border-2 border-neutral-200 dark:border-neutral-600 focus:border-[#2B9EB3] focus:ring-0 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-100"
+                  />
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    Penalty fee for violations or late payments
                   </p>
                 </LabelInputContainer>
                 </div>
@@ -393,11 +361,15 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
           <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
-              <span>These fees are charged only once during registration for new users and employees.</span>
+              <span>User and employee fees are charged only once during registration for new accounts.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
-              <span>Changes will take effect immediately for new registrations.</span>
+              <span>Fine fees are penalty charges applied for policy violations or late payments.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#2B9EB3] mt-1">•</span>
+              <span>Changes will take effect immediately for new registrations and future fines.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
@@ -405,7 +377,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
-              <span>Setting a fee to ₹0 makes registration free for that user type.</span>
+              <span>Setting a fee to ₹0 makes that fee type inactive (free).</span>
             </li>
           </ul>
         </div>

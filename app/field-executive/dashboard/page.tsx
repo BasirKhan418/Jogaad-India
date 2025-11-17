@@ -102,7 +102,6 @@ export default function FieldExecutiveDashboard() {
     <div className={cn("flex w-full flex-1 flex-col overflow-hidden md:flex-row", "h-screen")}>
       <Toaster position="top-right" richColors />
       
-      {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar open={open} setOpen={setOpen}>
           <SidebarBody className="justify-between gap-10">
@@ -115,7 +114,6 @@ export default function FieldExecutiveDashboard() {
               </div>
             </div>
             
-            {/* User Section */}
             <div>
               <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
                 {fieldExecData && (
@@ -175,14 +173,11 @@ export default function FieldExecutiveDashboard() {
             <p className="text-slate-600">Here's your field activity overview</p>
           </div>
 
-          {/* Analytics Section */}
           <div className="mb-8">
             <FieldExecAnalyticsCard />
           </div>
 
-          {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {/* Area Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

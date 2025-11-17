@@ -19,9 +19,8 @@ import {
 } from "@tabler/icons-react";
 import { AdminData } from "@/utils/admin/adminAuthService";
 import { getUserInitials } from "@/utils/auth";
-import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import { useAdminNavigation, NavigationLink } from "@/utils/admin/useAdminNavigation";
-import { useAdminData, useAdminLogout, useAdminSidebar } from "@/utils/admin/useAdminHooks";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
 import { useDashboardStats } from "@/utils/admin/useDashboardStats";
 
 interface DashboardSectionProps {
@@ -33,8 +32,6 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { adminData, loading, error } = useAdminData();
   const { handleLogout } = useAdminLogout();
-  const { open, setOpen } = useAdminSidebar();
-  const { links, logoutLink } = useAdminNavigation();
 
   if (loading) {
     return (
@@ -95,65 +92,7 @@ export default function AdminDashboard() {
     <div className={cn("flex w-full flex-1 flex-col overflow-hidden md:flex-row", "h-screen")}>
       <Toaster position="top-right" richColors />
       
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
-            </div>
-          </div>
-          
-          {/* User Section */}
-          <div>
-            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
-              {adminData && (
-                <SidebarLink
-                  link={{
-                    label: adminData.name || adminData.email,
-                    href: "/admin/profile",
-                    icon: (
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] flex items-center justify-center overflow-hidden relative">
-                        {adminData.img && adminData.img.trim() !== "" ? (
-                          <img
-                            src={adminData.img}
-                            alt={adminData.name}
-                            className="h-7 w-7 rounded-full object-cover absolute inset-0"
-                            onError={(e) => {
-                              // Hide the image on error so initials show
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        ) : null}
-                        <span className="text-white font-bold text-xs leading-none select-none" style={{ fontSize: '10px', color: 'white' }}>
-                          {getUserInitials(adminData.name || adminData.email || "AD")}
-                        </span>
-                      </div>
-                    ),
-                  }}
-                />
-              )}
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 w-full py-2 px-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors mt-2"
-              >
-                <IconLogout className="h-5 w-5 text-neutral-700 dark:text-neutral-200 shrink-0" />
-                <motion.span
-                  animate={{
-                    display: open ? "inline-block" : "none",
-                    opacity: open ? 1 : 0,
-                  }}
-                  className="text-sm text-neutral-700 dark:text-neutral-200"
-                >
-                  Logout
-                </motion.span>
-              </button>
-            </div>
-          </div>
-        </SidebarBody>
-      </Sidebar>
+      <AdminSidebar adminData={adminData} handleLogout={handleLogout} />
       
       <Dashboard adminData={adminData} />
     </div>

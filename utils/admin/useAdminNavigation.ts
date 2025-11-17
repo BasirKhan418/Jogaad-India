@@ -34,13 +34,6 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       }),
     },
     {
-      label: "Users",
-      href: "#users",
-      icon: React.createElement(IconUsers, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
       label: "Employees",
       href: "/admin/employees",
       icon: React.createElement(IconUserPlus, {
@@ -76,23 +69,9 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       }),
     },
     {
-      label: "Analytics",
-      href: "#analytics",
-      icon: React.createElement(IconChartBar, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
       label: "Profile",
       href: "/admin/profile",
       icon: React.createElement(IconUser, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
-      label: "Settings",
-      href: "#settings",
-      icon: React.createElement(IconSettings, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },

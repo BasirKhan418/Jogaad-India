@@ -36,9 +36,8 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import { useAdminNavigation } from "@/utils/admin/useAdminNavigation";
-import { useAdminData, useAdminLogout, useAdminSidebar } from "@/utils/admin/useAdminHooks";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
 import { useEmployeeCreation } from "@/utils/employee/useEmployeeCreation";
 import { getUserInitials } from "@/utils/auth";
 import Image from "next/image";
@@ -47,8 +46,6 @@ export default function AdminEmployeeCreationPage() {
   const router = useRouter();
   const { adminData, loading: adminLoading, error: adminError } = useAdminData();
   const { handleLogout } = useAdminLogout();
-  const { open, setOpen } = useAdminSidebar();
-  const { links, logoutLink } = useAdminNavigation();
 
   const {
     loading,
@@ -144,34 +141,7 @@ export default function AdminEmployeeCreationPage() {
     <div className={cn("flex w-full flex-1 flex-col overflow-hidden md:flex-row", "h-screen")}>
       <Toaster position="top-right" richColors />
       
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10 bg-white border-r border-neutral-200">
-          <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
-            </div>
-          </div>
-          <div>
-            <div onClick={handleLogout}>
-              <SidebarLink link={logoutLink} />
-            </div>
-            <SidebarLink
-              link={{
-                label: adminData?.name || "Admin",
-                href: "/admin/profile",
-                icon: (
-                  <div className="h-7 w-7 flex items-center justify-center rounded-full bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white text-xs font-bold">
-                    {getUserInitials(adminData?.name || "Admin")}
-                  </div>
-                ),
-              }}
-            />
-          </div>
-        </SidebarBody>
-      </Sidebar>
+      <AdminSidebar adminData={adminData} handleLogout={handleLogout} />
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
@@ -573,25 +543,6 @@ export default function AdminEmployeeCreationPage() {
 }
 
 // Components
-const Logo = () => {
-  return (
-    <div className="font-bold text-2xl text-[#0A3D62] flex items-center gap-2">
-      <div className="h-8 w-8 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] rounded-lg flex items-center justify-center">
-        <span className="text-white text-sm">J</span>
-      </div>
-      <span>Jogaad India</span>
-    </div>
-  );
-};
-
-const LogoIcon = () => {
-  return (
-    <div className="h-8 w-8 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] rounded-lg flex items-center justify-center">
-      <span className="text-white text-sm font-bold">J</span>
-    </div>
-  );
-};
-
 const LabelInputContainer = ({
   children,
   className,
