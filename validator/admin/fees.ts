@@ -14,6 +14,11 @@ export const FeesSchemaZod = z.object({
     })
     .min(0, "Employee one-time fee cannot be negative")
     .default(0),
+    fineFees:z.number({
+      message: "Fine fees is required",
+    })
+    .min(0, "Fine fees cannot be negative")
+    .default(0),
 });
 
 export type FeesInput = z.infer<typeof FeesSchemaZod>;
