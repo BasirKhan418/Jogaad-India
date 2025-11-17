@@ -9,11 +9,13 @@ export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
   const body = await request.text();
 
-  // Basic logs
-  writeLogToS3("Webhook received");
-  writeLogToS3(`Raw body: ${body}`);
+  // Buffer logs in memory
+  let logs: string[] = [];
+  const addLog = (msg: string) => logs.push(msg);
 
-  // Verify Signature
+  addLog("Webhook received");
+  addLog(`Raw body: ${body}`);
+
   const signature = request.headers.get("x-razorpay-signature")!;
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
 
@@ -23,22 +25,21 @@ export async function POST(request: NextRequest) {
     .digest("hex");
 
   if (expectedSignature !== signature) {
-    writeLogToS3("❌ Invalid webhook signature");
+    addLog("❌ Invalid webhook signature");
+    await writeLogToS3(logs.join("\n"));
     return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
   }
 
-  // Parse data
   const data = JSON.parse(body);
   const event = data.event;
-  writeLogToS3(`Event received: ${event}`);
+
+  addLog(`Event received: ${event}`);
 
   await ConnectDb();
 
-  // Success Case
   if (event === "payment.captured") {
     const p = data.payload.payment.entity;
-
-    writeLogToS3(`Payment captured: ${JSON.stringify(p)}`);
+    addLog(`Payment captured: ${JSON.stringify(p)}`);
 
     await Employee.findOneAndUpdate(
       { email: p.email },
@@ -52,11 +53,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Failure Case
   if (event === "payment.failed") {
     const p = data.payload.payment.entity;
-
-    writeLogToS3(`Payment failed: ${JSON.stringify(p)}`);
+    addLog(`Payment failed: ${JSON.stringify(p)}`);
 
     await Employee.findOneAndUpdate(
       { email: p.email },
@@ -68,7 +67,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  writeLogToS3("Webhook processed successfully");
+  addLog("Webhook processed successfully");
+
+  // Write all logs in ONE SAFE write
+  await writeLogToS3(logs.join("\n"));
 
   return NextResponse.json({ status: "ok" });
+}
+
+
+export const GET = () => {
+    return NextResponse.json({ message: "Razorpay Webhook Endpoint V2" });
 }
