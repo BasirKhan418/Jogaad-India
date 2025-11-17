@@ -4,8 +4,10 @@ export const BookingStatusEnum = z.enum([
   "pending",
   "confirmed",
   "in-progress",
+  "started",
   "completed",
-  "cancelled"
+  "cancelled",
+  "refunded"
 ]);
 
 export const BookingSchemaZod = z.object({

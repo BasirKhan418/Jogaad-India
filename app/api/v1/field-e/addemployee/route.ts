@@ -159,7 +159,6 @@ export const PUT = async (request: Request) => {
             }
         }
         
-        // Clean data before updating - remove empty categoryid
         const cleanedData: any = { ...data };
         if (!cleanedData.categoryid || cleanedData.categoryid.trim() === '') {
             delete cleanedData.categoryid;

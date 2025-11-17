@@ -35,11 +35,12 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 }) => {
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200 hover:shadow-xl transition-all duration-300"
+      whileHover={{ y: -5, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 hover:shadow-xl hover:border-[#2B9EB3]/30 transition-all duration-300"
     >
       {/* Category Image */}
-      <div className="relative h-48 w-full bg-gradient-to-br from-[#2B9EB3]/10 to-[#0A3D62]/10">
+      <div className="relative h-40 md:h-48 w-full bg-gradient-to-br from-[#2B9EB3]/10 to-[#0A3D62]/10">
         {category.img ? (
           <Image
             src={category.img}
@@ -54,9 +55,9 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <div className="w-20 h-20 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] rounded-full flex items-center justify-center">
               <svg
-                className="w-10 h-10 text-white"
+                className="w-8 h-8 md:w-10 md:h-10 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -73,8 +74,8 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
         )}
 
         {/* Category Type Badge */}
-        <div className="absolute top-3 right-3">
-          <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-[#0A3D62] flex items-center gap-1">
+        <div className="absolute top-2 md:top-3 right-2 md:right-3">
+          <span className="bg-white/90 backdrop-blur-sm px-2 md:px-3 py-1 rounded-full text-xs font-semibold text-[#0A3D62] flex items-center gap-1 shadow-sm">
             <Tag className="w-3 h-3" />
             {category.categoryType}
           </span>
@@ -82,24 +83,24 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       </div>
 
       {/* Category Content */}
-      <div className="p-5">
+      <div className="p-3 md:p-4">
         {/* Title */}
-        <h3 className="text-xl font-bold text-[#0A3D62] mb-2 line-clamp-1">
+        <h3 className="text-lg md:text-xl font-bold text-[#0A3D62] mb-1 md:mb-2 line-clamp-1">
           {category.categoryName}
         </h3>
 
         {/* Description */}
-        <p className="text-slate-600 text-sm mb-4 line-clamp-2 min-h-[40px]">
+        <p className="text-slate-600 text-xs md:text-sm mb-3 md:mb-4 line-clamp-2 min-h-[32px] md:min-h-[40px]">
           {category.categoryDescription || "Professional service available"}
         </p>
 
         {/* Price Info */}
-        <div className="mb-4">
+        <div className="mb-3 md:mb-4">
           {category.recommendationPrice > 0 && (
             <div className="flex items-center gap-2 mb-2">
-              <div className="bg-gradient-to-r from-[#2B9EB3]/10 to-[#0A3D62]/10 px-3 py-2 rounded-lg flex items-center gap-1">
-                <IndianRupee className="w-4 h-4 text-[#0A3D62]" />
-                <span className="text-lg font-bold text-[#0A3D62]">
+              <div className="bg-gradient-to-r from-[#2B9EB3]/10 to-[#0A3D62]/10 border border-[#2B9EB3]/20 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg flex items-center gap-1">
+                <IndianRupee className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0A3D62]" />
+                <span className="text-base md:text-lg font-bold text-[#0A3D62]">
                   {category.recommendationPrice}
                 </span>
                 {category.categoryUnit && (
@@ -113,18 +114,25 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 
           {/* Price Range */}
           {category.categoryMinPrice > 0 && category.categoryMaxPrice > 0 && (
-            <p className="text-xs text-slate-500">
-              Price range: ₹{category.categoryMinPrice} - ₹
-              {category.categoryMaxPrice}
-            </p>
+            <div className="flex items-center gap-1 text-xs text-slate-500">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              <span>
+                Range: ₹{category.categoryMinPrice} - ₹{category.categoryMaxPrice}
+              </span>
+            </div>
           )}
         </div>
 
         {/* Book Now Button */}
         <Button
           onClick={onBookNow}
-          className="w-full bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] hover:from-[#0A3D62] hover:to-[#2B9EB3] text-white font-semibold py-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+          className="w-full bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] hover:from-[#0A3D62] hover:to-[#2B9EB3] text-white font-semibold py-2 md:py-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-xl text-sm md:text-base"
         >
+          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
           Book Now
         </Button>
       </div>

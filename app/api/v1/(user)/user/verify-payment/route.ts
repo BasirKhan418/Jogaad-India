@@ -3,6 +3,8 @@ import ConnectDb from "@/middleware/connectDb";
 import Booking from "@/models/Booking";
 import crypto from "crypto";
 import { sendBookingConfirmationEmail } from "@/email/user/sendWelcome";
+
+
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json();
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest) {
 
         await ConnectDb();
 
-        // Verify signature
+        // Verify Razorpay signature
         const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
         if (!razorpaySecret) {
             return NextResponse.json({
@@ -43,30 +45,39 @@ export async function POST(request: NextRequest) {
             }, { status: 400 });
         }
 
-        // Update employee account
+        // Update booking with payment details
         const booking = await Booking.findOneAndUpdate(
-            { orderid: razorpay_order_id }, {
-            intialpaymentStatus: "paid",
-            status: "confirmed",
-            paymentid: razorpay_payment_id,
-            isActive: true,
+            { orderid: razorpay_order_id },
+            {
+                intialPaymentStatus: "paid",
+                status: "confirmed",
+                paymentid: razorpay_payment_id,
+                isActive: true,
+            },
+            { new: true }
+        ).populate("categoryid").populate("userid");
 
-        }, { new: true }).populate("categoryid");
         if (!booking) {
             return NextResponse.json({
                 message: "Booking not found",
                 success: false
             }, { status: 404 });
         }
-        //send confirm email to user
-        sendBookingConfirmationEmail({
-            name: booking.name,
-            email: booking.email,
-            serviceName: booking.categoryid.name
-        });
+
+        // Send confirmation email to user
+        try {
+            await sendBookingConfirmationEmail({
+                name: booking.userid.name,
+                email: booking.userid.email,
+                serviceName: booking.categoryid.categoryName
+            });
+        } catch (emailError) {
+            console.error("Error sending confirmation email:", emailError);
+            // Don't fail the request if email fails
+        }
 
         return NextResponse.json({
-            message: "Payment verified successfully. Your account is now active!",
+            message: "Payment verified successfully. Your booking is now confirmed!",
             success: true,
             booking: booking
         }, { status: 200 });

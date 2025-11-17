@@ -79,7 +79,10 @@ export const markFine = async (id: string) => {
 export const getAllBookingsForUser = async (userid: string) => {
     try{
         await ConnectDb();
-        const bookings = await Booking.find({ userid });
+        const bookings = await Booking.find({ userid })
+            .populate('categoryid')
+            .populate('employeeid')
+            .sort({ createdAt: -1 });
         return { message: "Bookings retrieved successfully", success: true, data: bookings };
     }
     catch(error){

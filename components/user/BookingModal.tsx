@@ -40,12 +40,7 @@ interface BookingModalProps {
   onUserDataUpdate: (userData: UserData) => void;
 }
 
-/**
- * BookingModal Component
- * Handles address validation and booking creation
- * Follows SRP - Manages modal state and booking flow
- * Follows DRY - Reusable validation and API calls
- */
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   category,
   userData,
@@ -66,10 +61,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   // Check if address is already present
   const hasAddress = userData?.address && userData?.pincode;
 
-  /**
-   * Handle address update
-   * Follows DRY - Single function for updating address
-   */
+ 
   const handleAddressUpdate = async () => {
     // Validate address
     const validation = validateAddress(
@@ -118,10 +110,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
   };
 
-  /**
-   * Handle booking creation
-   * Follows DRY - Single function for creating booking
-   */
+
   const handleCreateBooking = async () => {
     try {
       setLoading(true);
@@ -135,6 +124,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         return;
       }
 
+      // Check if booking is at least 24 hours in advance
+      const hoursDifference = (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+      if (hoursDifference < 24) {
+        toast.error("Booking must be made at least 24 hours in advance");
+        setLoading(false);
+        return;
+      }
+
+      // Convert bookingDate to ISO string with timezone offset
+      const bookingDateISO = new Date(bookingDate).toISOString();
+
       const response = await fetch("/api/v1/user/createbooking", {
         method: "POST",
         headers: {
@@ -143,7 +143,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         credentials: "include",
         body: JSON.stringify({
           categoryid: category._id,
-          bookingDate: bookingDate,
+          bookingDate: bookingDateISO,
           status: "pending",
         }),
       });
@@ -151,12 +151,34 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || "Failed to create booking");
+        // Handle specific error cases
+        if (data.requiresAddress) {
+          toast.error("Please add your address and pincode in your profile before booking");
+        } else {
+          toast.error(data.message || "Failed to create booking");
+        }
+        setLoading(false);
+        return;
+      }
+
+      // Display booking information to user
+      if (data.info) {
+        const { initialAmount, hasFine, fineAmount, baseAmount, notice } = data.info;
+        
+        if (hasFine) {
+          toast.info(
+            `Initial fee: ₹${initialAmount} (Base: ₹${baseAmount} + Fine: ₹${fineAmount})`,
+            { duration: 5000 }
+          );
+        }
+
+        // Show important notice
+        toast.info(notice, { duration: 7000 });
       }
 
       // Initialize Razorpay payment
       if (data.order && data.booking) {
-        await initializeRazorpay(data.order, data.booking);
+        await initializeRazorpay(data.order, data.booking, data.info);
       } else {
         throw new Error("Invalid booking data received");
       }
@@ -167,11 +189,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
   };
 
-  /**
-   * Initialize Razorpay payment
-   * Follows SRP - Handles payment initialization only
-   */
-  const initializeRazorpay = async (order: any, booking: any) => {
+
+  const initializeRazorpay = async (order: any, booking: any, info?: any) => {
     // Check if Razorpay is loaded
     if (!(window as any).Razorpay) {
       toast.error("Payment service not available. Please refresh the page.");
@@ -179,15 +198,25 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return;
     }
 
+    // Prepare description with initial amount info
+    let description = `Initial fee for ${category.categoryName}`;
+    if (info?.initialAmount) {
+      description = `Initial fee: ₹${info.initialAmount} for ${category.categoryName}`;
+    }
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
       amount: order.amount,
       currency: order.currency,
       name: "Jogaad India",
-      description: `Booking for ${category.categoryName}`,
+      description: description,
       order_id: order.id,
       handler: function (response: any) {
         toast.success("Payment successful! Booking confirmed.");
+        toast.info(
+          "A service engineer will visit your location soon to assess the work. Final payment will be calculated after service completion.",
+          { duration: 6000 }
+        );
         setLoading(false);
         onSuccess();
       },
@@ -196,13 +225,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         email: userData?.email || "",
         contact: userData?.phone || "",
       },
+      notes: {
+        bookingId: booking._id,
+        categoryName: category.categoryName,
+        address: userData?.address || "",
+      },
       theme: {
         color: "#2B9EB3",
       },
       modal: {
         ondismiss: function () {
           setLoading(false);
-          toast.info("Payment cancelled");
+          toast.info("Payment cancelled. Please complete payment to confirm booking.");
         },
       },
     };
@@ -211,10 +245,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     razorpay.open();
   };
 
-  /**
-   * Handle next step
-   * Validates and moves to next step or creates booking
-   */
+ 
   const handleNext = () => {
     if (hasAddress) {
       // If address already exists, directly create booking
@@ -438,6 +469,35 @@ const BookingForm: React.FC<{
             </div>
           )}
         </div>
+      </div>
+
+      {/* Payment Process Information */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="font-semibold text-blue-800 mb-2 text-sm">
+          📋 Booking & Payment Process
+        </h3>
+        <ul className="space-y-2 text-xs text-blue-700">
+          <li className="flex items-start gap-2">
+            <span className="text-blue-600 font-bold">1.</span>
+            <span>Pay initial booking fee to confirm your service request</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-600 font-bold">2.</span>
+            <span>Service engineer will visit your location at scheduled time</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-600 font-bold">3.</span>
+            <span>Engineer assesses work and provides final quote</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-600 font-bold">4.</span>
+            <span>Pay remaining amount based on actual {category.categoryType.toLowerCase()} required</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-600 font-bold">5.</span>
+            <span>Service completed and payment finalized</span>
+          </li>
+        </ul>
       </div>
     </div>
   </>

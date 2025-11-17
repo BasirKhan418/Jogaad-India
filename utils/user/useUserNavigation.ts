@@ -25,9 +25,9 @@ export const useUserNavigation = () => {
       }),
     },
     {
-      label: "New Booking",
+      label: "Services",
       href: "/user/bookings/new",
-      icon: React.createElement(IconPlus, {
+      icon: React.createElement(IconShoppingBag, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },
@@ -35,13 +35,6 @@ export const useUserNavigation = () => {
       label: "My Bookings",
       href: "/user/bookings",
       icon: React.createElement(IconCalendar, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
-      label: "Services",
-      href: "/services",
-      icon: React.createElement(IconShoppingBag, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },

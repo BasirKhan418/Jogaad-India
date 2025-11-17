@@ -11,6 +11,7 @@ import {
   CheckCircle,
   ShieldAlert,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { UserData } from "@/utils/user/useUserHooks";
 
 
@@ -96,8 +97,3 @@ export const UserStatsCard: React.FC<UserStatsCardProps> = ({ userData }) => {
     </div>
   );
 };
-
-
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
-}

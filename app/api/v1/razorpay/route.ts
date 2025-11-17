@@ -57,11 +57,11 @@ export async function POST(request: NextRequest) {
       addLog(`Employee record updated for email: ${p.email}`);
     }
     const bookingdata = await Booking.findOne({ orderid: p.order_id });
-    if (bookingdata.isActive === false || bookingdata.intialpaymentStatus === "pending" || bookingdata.status !== "confirmed") {
+    if (bookingdata && (bookingdata.isActive === false || bookingdata.intialPaymentStatus === "pending" || bookingdata.status !== "confirmed")) {
       await Booking.findOneAndUpdate(
         { orderid: p.order_id },
         {
-          intialpaymentStatus: "paid",
+          intialPaymentStatus: "paid",
           status: "confirmed",
           paymentid: p.id,
           isActive: true,
@@ -87,11 +87,11 @@ export async function POST(request: NextRequest) {
       }
     );
     const bookingdata = await Booking.findOne({ orderid: p.order_id });
-    if (bookingdata.isActive === false || bookingdata.intialpaymentStatus === "pending" || bookingdata.status !== "confirmed") {
+    if (bookingdata && (bookingdata.isActive === false || bookingdata.intialPaymentStatus === "pending" || bookingdata.status !== "confirmed")) {
       await Booking.findOneAndUpdate(
         { orderid: p.order_id },
         {
-          intialpaymentStatus: "failed",
+          intialPaymentStatus: "failed",
           status: "pending",
         }
       );
