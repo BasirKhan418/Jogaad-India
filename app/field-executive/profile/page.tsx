@@ -155,7 +155,7 @@ export default function FieldExecProfile() {
         />
         <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-white/40 backdrop-blur-sm z-10" />
         <div className="relative z-20 text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-[#10B981] to-[#059669] rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] rounded-full flex items-center justify-center mx-auto mb-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
           </div>
           <p className="text-[#0A3D62] font-semibold">Loading profile...</p>
@@ -192,7 +192,7 @@ export default function FieldExecProfile() {
           <p className="text-[#0A3D62]/70 mb-4">{fetchError}</p>
           <button
             onClick={() => router.push("/field-executive/login")}
-            className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-shadow"
+            className="bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-shadow"
           >
             Go to Login
           </button>
@@ -227,7 +227,7 @@ export default function FieldExecProfile() {
                     label: fieldExecData.name || fieldExecData.email,
                     href: "/field-executive/profile",
                     icon: (
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] flex items-center justify-center overflow-hidden relative">
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center overflow-hidden relative">
                         {(imagePreview || fieldExecData.img) && (imagePreview || fieldExecData.img)?.trim() !== "" ? (
                           <img
                             src={imagePreview || fieldExecData.img}
@@ -270,12 +270,12 @@ export default function FieldExecProfile() {
       <div className="flex flex-1  overflow-hidden">
         <div className="flex h-full w-full flex-1 flex-col rounded-none md:rounded-tl-2xl border-0 md:border border-neutral-200 bg-gradient-to-br from-white via-neutral-50 to-neutral-100 dark:border-neutral-700 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-800 overflow-y-auto pb-24 md:pb-0">
           {/* Hero Section with adequate height */}
-          <div className="relative z-0 mt-20 bg-gradient-to-r from-[#10B981] to-[#059669] h-32 sm:h-36 md:h-40">
+          <div className="relative z-0 mt-20 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] h-32 sm:h-36 md:h-40">
             <div className="absolute inset-0 bg-black/10"></div>
             <div className="absolute -bottom-12 sm:-bottom-14 md:-bottom-16 left-1/2 transform -translate-x-1/2 z-20">
               <div className="relative">
                 <div className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full bg-white dark:bg-neutral-800 p-1.5 shadow-2xl">
-                  <div className="h-full w-full rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center text-white font-bold text-2xl md:text-3xl overflow-hidden relative">
+                  <div className="h-full w-full rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-bold text-2xl md:text-3xl overflow-hidden relative">
                     {(imagePreview || formData.img) && (
                       <img
                         src={imagePreview || formData.img}
@@ -598,7 +598,7 @@ export default function FieldExecProfile() {
                   <Button
                     type="submit"
                     disabled={isSaving}
-                    className="bg-gradient-to-r from-[#10B981] to-[#059669] text-white hover:shadow-xl hover:scale-105 transition-all h-11 md:h-12 px-6 md:px-8 text-sm md:text-base font-semibold"
+                    className="bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] text-white hover:shadow-xl hover:scale-105 transition-all h-11 md:h-12 px-6 md:px-8 text-sm md:text-base font-semibold"
                   >
                     {isSaving ? (
                       <>
@@ -666,13 +666,13 @@ const MobileBottomNav = ({ links, currentPath }: { links: any[], currentPath: st
             >
               {/* Active indicator */}
               {isActive && (
-                <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-[#10B981] to-[#059669] rounded-full" />
+                <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] rounded-full" />
               )}
               
               <div className={cn(
                 "flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 relative",
                 isActive 
-                  ? "bg-gradient-to-br from-[#10B981] to-[#059669] shadow-lg shadow-[#10B981]/30" 
+                  ? "bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] shadow-lg shadow-[#2B9EB3]/30" 
                   : "bg-neutral-800/50"
               )}>
                 {React.cloneElement(link.icon, {

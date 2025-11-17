@@ -40,6 +40,7 @@ import { useFieldExecutiveCreation } from "@/utils/fieldexecutive/useFieldExecut
 import { useFieldExecutiveUpdate } from "@/utils/fieldexecutive/useFieldExecutiveUpdate";
 import { useFieldExecutiveData, FieldExecutive } from "@/utils/fieldexecutive/useFieldExecutiveData";
 import { getUserInitials } from "@/utils/auth";
+import { FieldExecAnalyticsModal } from "@/components/admin/FieldExecAnalyticsModal";
 import Image from "next/image";
 
 export default function FieldExecutivesPage() {
@@ -210,6 +211,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
   const [viewFieldExecutive, setViewFieldExecutive] = React.useState<FieldExecutive | null>(null);
   const [editFieldExecutive, setEditFieldExecutive] = React.useState<FieldExecutive | null>(null);
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
+  const [analyticsFieldExec, setAnalyticsFieldExec] = React.useState<FieldExecutive | null>(null);
 
   const handleCreateSuccess = () => {
     refetch();
@@ -344,6 +346,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
                   onEdit={() => setEditFieldExecutive(fieldExec)}
                   onDelete={() => setDeleteConfirm(fieldExec._id)}
                   onToggleStatus={() => handleStatusToggle(fieldExec._id, fieldExec.isActive)}
+                  onViewAnalytics={() => setAnalyticsFieldExec(fieldExec)}
                   isDeleting={deleting === fieldExec._id}
                   isToggling={toggling === fieldExec._id}
                 />
@@ -381,6 +384,15 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
             onConfirm={() => confirmDelete(deleteConfirm)}
             onCancel={() => setDeleteConfirm(null)}
             isDeleting={deleting === deleteConfirm}
+          />
+        )}
+
+        {analyticsFieldExec && (
+          <FieldExecAnalyticsModal
+            isOpen={true}
+            onClose={() => setAnalyticsFieldExec(null)}
+            fieldExecEmail={analyticsFieldExec.email}
+            fieldExecName={analyticsFieldExec.name}
           />
         )}
       </div>
@@ -430,6 +442,7 @@ const FieldExecutiveCard = React.memo(({
   onEdit, 
   onDelete,
   onToggleStatus,
+  onViewAnalytics,
   isDeleting, 
   isToggling 
 }: { 
@@ -438,6 +451,7 @@ const FieldExecutiveCard = React.memo(({
   onEdit: () => void; 
   onDelete: () => void;
   onToggleStatus: () => void;
+  onViewAnalytics: () => void;
   isDeleting: boolean; 
   isToggling: boolean;
 }) => {
@@ -503,7 +517,7 @@ const FieldExecutiveCard = React.memo(({
       </div>
 
       <div className="flex justify-between gap-2">
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-wrap">
           <button
             onClick={onView}
             className="flex items-center justify-center w-8 h-8 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-colors"
@@ -517,6 +531,13 @@ const FieldExecutiveCard = React.memo(({
             title="Edit"
           >
             <IconEdit className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+          </button>
+          <button
+            onClick={onViewAnalytics}
+            className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#2B9EB3] dark:border-[#2B9EB3] bg-[#2B9EB3]/10 dark:bg-[#2B9EB3]/20 hover:bg-[#2B9EB3]/20 dark:hover:bg-[#2B9EB3]/30 transition-colors"
+            title="View Analytics"
+          >
+            <Target className="w-4 h-4 text-[#2B9EB3]" />
           </button>
           <button
             onClick={onToggleStatus}

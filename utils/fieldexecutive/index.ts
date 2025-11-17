@@ -3,3 +3,6 @@ export * from './fieldExecutiveApiService';
 export * from './useFieldExecutiveCreation';
 export * from './useFieldExecutiveUpdate';
 export { useFieldExecutiveData, type FieldExecutive, type FieldExecutiveStats } from './useFieldExecutiveData';
+export * from './useFieldExecAnalytics';
+export * from './useFieldExecRecentData';
+export * from './timeUtils';

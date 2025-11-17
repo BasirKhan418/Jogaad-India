@@ -25,6 +25,11 @@ import {
   Users,
   Building2
 } from "lucide-react";
+import { FieldExecAnalyticsCard } from "@/components/field-executive/FieldExecAnalyticsCard";
+import { FieldExecRecentEmployees } from "@/components/field-executive/FieldExecRecentEmployees";
+import { useFieldExecAnalytics } from "@/utils/fieldexecutive/useFieldExecAnalytics";
+import { TargetsModal } from "@/components/field-executive/TargetsModal";
+import { EmployeesModal } from "@/components/field-executive/EmployeesModal";
 
 /**
  * Field Executive Dashboard
@@ -34,9 +39,13 @@ import {
 export default function FieldExecutiveDashboard() {
   const router = useRouter();
   const { fieldExecData, loading, error } = useFieldExecData();
+  const { analytics } = useFieldExecAnalytics();
   const { handleLogout } = useFieldExecLogout();
   const { open, setOpen } = useFieldExecSidebar();
   const { links } = useFieldExecNavigation();
+  
+  const [targetsModalOpen, setTargetsModalOpen] = React.useState(false);
+  const [employeesModalOpen, setEmployeesModalOpen] = React.useState(false);
 
   if (loading) {
     return (
@@ -104,9 +113,54 @@ export default function FieldExecutiveDashboard() {
             <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
               {open ? <Logo /> : <LogoIcon />}
               <div className="mt-8 flex flex-col gap-2">
-                {links.map((link, idx) => (
-                  <SidebarLink key={idx} link={link} />
-                ))}
+                {links.map((link, idx) => {
+                  // Handle modal links
+                  if (link.href === "/field-executive/targets") {
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setTargetsModalOpen(true)}
+                        className="flex items-center gap-2 w-full py-2 px-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors text-left"
+                      >
+                        {link.icon}
+                        <motion.span
+                          animate={{
+                            display: open ? "inline-block" : "none",
+                            opacity: open ? 1 : 0,
+                          }}
+                          className="text-sm text-neutral-700 dark:text-neutral-200"
+                        >
+                          {link.label}
+                        </motion.span>
+                      </button>
+                    );
+                  }
+                  if (link.href === "/field-executive/employees") {
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setEmployeesModalOpen(true)}
+                        className="flex items-center gap-2 w-full py-2 px-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors text-left"
+                      >
+                        {link.icon}
+                        <motion.span
+                          animate={{
+                            display: open ? "inline-block" : "none",
+                            opacity: open ? 1 : 0,
+                          }}
+                          className="text-sm text-neutral-700 dark:text-neutral-200"
+                        >
+                          {link.label}
+                        </motion.span>
+                      </button>
+                    );
+                  }
+                  if (link.href === "/field-executive/areas") {
+                    // Skip areas link for now
+                    return null;
+                  }
+                  return <SidebarLink key={idx} link={link} />;
+                })}
               </div>
             </div>
             
@@ -170,37 +224,18 @@ export default function FieldExecutiveDashboard() {
             <p className="text-slate-600">Here's your field activity overview</p>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {/* Target Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-[#2B9EB3]/10 to-[#0A3D62]/10 rounded-xl">
-                  <Target className="w-6 h-6 text-[#2B9EB3]" />
-                </div>
-                <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                  Active
-                </span>
-              </div>
-              <h3 className="text-slate-600 text-sm font-medium mb-1">Current Target</h3>
-              <p className="text-3xl font-bold text-[#0A3D62]">{fieldExecData?.target || 0}</p>
-              <p className="text-xs text-slate-500 mt-2">
-                {fieldExecData?.targetDate 
-                  ? `Due: ${new Date(fieldExecData.targetDate).toLocaleDateString()}`
-                  : 'No deadline set'}
-              </p>
-            </motion.div>
+          {/* Analytics Section */}
+          <div className="mb-8">
+            <FieldExecAnalyticsCard />
+          </div>
 
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {/* Area Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
               className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex items-center justify-between mb-4">
@@ -217,7 +252,7 @@ export default function FieldExecutiveDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.2 }}
               className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex items-center justify-between mb-4">
@@ -234,11 +269,11 @@ export default function FieldExecutiveDashboard() {
               </p>
             </motion.div>
 
-            {/* Activity Card */}
+            {/* Activity Card - Dynamic from Analytics API */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.3 }}
               className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex items-center justify-between mb-4">
@@ -247,9 +282,14 @@ export default function FieldExecutiveDashboard() {
                 </div>
               </div>
               <h3 className="text-slate-600 text-sm font-medium mb-1">Employees Added</h3>
-              <p className="text-3xl font-bold text-[#0A3D62]">0</p>
+              <p className="text-3xl font-bold text-[#0A3D62]">{analytics?.currentTarget || 0}</p>
               <p className="text-xs text-slate-500 mt-2">This month</p>
             </motion.div>
+          </div>
+
+          {/* Recent Employees Section */}
+          <div className="mb-8">
+            <FieldExecRecentEmployees />
           </div>
 
           {/* Quick Actions */}
@@ -269,9 +309,9 @@ export default function FieldExecutiveDashboard() {
                 </div>
               </Link>
               
-              <Link
-                href="/field-executive/targets"
-                className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#F9A825]/5 to-[#2B9EB3]/5 rounded-xl hover:shadow-md transition-shadow border border-[#F9A825]/20"
+              <button
+                onClick={() => setTargetsModalOpen(true)}
+                className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#F9A825]/5 to-[#2B9EB3]/5 rounded-xl hover:shadow-md transition-shadow border border-[#F9A825]/20 text-left"
               >
                 <div className="p-2 bg-[#F9A825] rounded-lg">
                   <Target className="w-5 h-5 text-white" />
@@ -280,11 +320,11 @@ export default function FieldExecutiveDashboard() {
                   <p className="font-semibold text-[#0A3D62]">View Targets</p>
                   <p className="text-xs text-slate-600">Check your goals</p>
                 </div>
-              </Link>
+              </button>
               
-              <Link
-                href="/field-executive/employees"
-                className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-500/5 to-green-600/5 rounded-xl hover:shadow-md transition-shadow border border-green-500/20"
+              <button
+                onClick={() => setEmployeesModalOpen(true)}
+                className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-500/5 to-green-600/5 rounded-xl hover:shadow-md transition-shadow border border-green-500/20 text-left"
               >
                 <div className="p-2 bg-green-600 rounded-lg">
                   <Building2 className="w-5 h-5 text-white" />
@@ -293,9 +333,20 @@ export default function FieldExecutiveDashboard() {
                   <p className="font-semibold text-[#0A3D62]">Manage Employees</p>
                   <p className="text-xs text-slate-600">View employee list</p>
                 </div>
-              </Link>
+              </button>
             </div>
           </div>
+
+          {/* Modals */}
+          <TargetsModal 
+            open={targetsModalOpen} 
+            onOpenChange={setTargetsModalOpen}
+            fieldExecData={fieldExecData}
+          />
+          <EmployeesModal 
+            open={employeesModalOpen} 
+            onOpenChange={setEmployeesModalOpen}
+          />
 
           {/* Profile Info */}
           <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
@@ -346,7 +397,12 @@ export default function FieldExecutiveDashboard() {
       </div>
 
       {/* Mobile Bottom Navigation - Hidden on desktop */}
-      <MobileBottomNav links={links} currentPath="/field-executive/dashboard" />
+      <MobileBottomNav 
+        links={links} 
+        currentPath="/field-executive/dashboard"
+        onTargetsClick={() => setTargetsModalOpen(true)}
+        onEmployeesClick={() => setEmployeesModalOpen(true)}
+      />
     </div>
   );
 }
@@ -383,12 +439,72 @@ export const LogoIcon = () => {
 };
 
 /* Mobile Bottom Navigation Component */
-const MobileBottomNav = ({ links, currentPath }: { links: any[], currentPath: string }) => {
+const MobileBottomNav = ({ 
+  links, 
+  currentPath,
+  onTargetsClick,
+  onEmployeesClick
+}: { 
+  links: any[], 
+  currentPath: string,
+  onTargetsClick: () => void,
+  onEmployeesClick: () => void
+}) => {
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-neutral-800 shadow-[0_-4px_24px_rgba(0,0,0,0.3)] pb-safe">
       <nav className="flex items-center justify-around px-4 py-2">
         {links.map((link, idx) => {
           const isActive = currentPath === link.href;
+          
+          // Handle modal links
+          if (link.href === "/field-executive/targets") {
+            return (
+              <button
+                key={idx}
+                onClick={onTargetsClick}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1.5 px-2 py-2 rounded-xl transition-all duration-300 min-w-[70px] relative",
+                  "hover:bg-neutral-800/50"
+                )}
+              >
+                <div className="flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 relative bg-neutral-800/50">
+                  {React.cloneElement(link.icon, {
+                    className: "h-5 w-5 flex-shrink-0 transition-all duration-300 text-neutral-400"
+                  })}
+                </div>
+                <span className="text-[11px] font-semibold transition-all duration-300 tracking-tight text-neutral-400">
+                  {link.label}
+                </span>
+              </button>
+            );
+          }
+          
+          if (link.href === "/field-executive/employees") {
+            return (
+              <button
+                key={idx}
+                onClick={onEmployeesClick}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1.5 px-2 py-2 rounded-xl transition-all duration-300 min-w-[70px] relative",
+                  "hover:bg-neutral-800/50"
+                )}
+              >
+                <div className="flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 relative bg-neutral-800/50">
+                  {React.cloneElement(link.icon, {
+                    className: "h-5 w-5 flex-shrink-0 transition-all duration-300 text-neutral-400"
+                  })}
+                </div>
+                <span className="text-[11px] font-semibold transition-all duration-300 tracking-tight text-neutral-400">
+                  {link.label}
+                </span>
+              </button>
+            );
+          }
+          
+          if (link.href === "/field-executive/areas") {
+            return null; // Skip areas link
+          }
+          
           return (
             <Link
               key={idx}
