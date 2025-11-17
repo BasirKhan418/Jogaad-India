@@ -26,6 +26,8 @@ async function rawBody(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const bodyBuffer = await rawBody(request);
+  console.log("Received Razorpay Webhook");
+  console.log("Raw Body Buffer:", bodyBuffer);
   const signature = request.headers.get("x-razorpay-signature")!;
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
 
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   const data = JSON.parse(bodyBuffer.toString());
   const event = data.event;
-
+console.log("Razorpay Webhook Event:", event);
   await ConnectDb();
 
   if (event === "payment.captured") {
@@ -76,5 +78,5 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json({ message: "Razorpay Webhook Endpoint working fine" });
+  return NextResponse.json({ message: "Razorpay Webhook Endpoint working fine v2" });
 }
