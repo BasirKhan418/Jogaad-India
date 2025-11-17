@@ -574,9 +574,6 @@ const RecentBookings = ({ bookings, loading }: { bookings: any[]; loading: boole
   );
 };
 
-/**
- * Quick Actions Component - Follows SRP
- */
 const QuickActions = () => (
   <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 mb-8">
     <h2 className="text-xl font-bold text-[#0A3D62] mb-4">Quick Actions</h2>

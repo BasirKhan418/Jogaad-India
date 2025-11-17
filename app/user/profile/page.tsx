@@ -29,10 +29,7 @@ import { getUserInitials } from "@/utils/auth";
 import { MobileBottomNav } from "@/components/user/MobileBottomNav";
 import Link from "next/link";
 
-/**
- * User Profile Page Component
- * Follows DRY and SRP principles - Similar structure to employee profile
- */
+
 export default function UserProfile() {
   const router = useRouter();
   const { userData, loading, error: fetchError } = useUserData();
@@ -175,8 +172,7 @@ export default function UserProfile() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex h-full w-full flex-1 flex-col rounded-none md:rounded-tl-2xl border-0 md:border border-neutral-200 bg-gradient-to-br from-white via-neutral-50 to-neutral-100 dark:border-neutral-700 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-800 overflow-y-auto pb-24 md:pb-0">
-          {/* Hero Section */}
-          <div className="relative z-0 mt-20 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] h-32 sm:h-36 md:h-40">
+          <div className="relative z-0 mt-20 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] h-38 sm:h-36 md:h-40">
             <div className="absolute inset-0 bg-black/10"></div>
             <div className="absolute -bottom-12 sm:-bottom-14 md:-bottom-16 left-1/2 transform -translate-x-1/2 z-20">
               <ProfileImageSection 
@@ -238,10 +234,7 @@ export default function UserProfile() {
   );
 }
 
-/**
- * Component: Loading Screen
- * Follows SRP
- */
+
 const LoadingScreen = () => (
   <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center">
     <div
@@ -306,10 +299,7 @@ const ErrorScreen = ({ error }: { error: string }) => {
   );
 };
 
-/**
- * Component: User Avatar
- * Follows DRY - Reusable avatar component
- */
+
 const UserAvatar = ({ userData, formData, imagePreview }: any) => (
   <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center overflow-hidden relative">
     {(imagePreview || formData?.img || userData?.img) && (
@@ -328,10 +318,7 @@ const UserAvatar = ({ userData, formData, imagePreview }: any) => (
   </div>
 );
 
-/**
- * Component: Profile Image Section
- * Follows SRP
- */
+
 const ProfileImageSection = ({ imagePreview, formData, uploadingImage, fileInputRef, handleFileChange }: any) => (
   <div className="relative">
     <div className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full bg-white dark:bg-neutral-800 p-1.5 shadow-2xl">
@@ -375,10 +362,7 @@ const ProfileImageSection = ({ imagePreview, formData, uploadingImage, fileInput
   </div>
 );
 
-/**
- * Component: Status Messages
- * Follows DRY
- */
+
 const StatusMessages = ({ updateError, success }: { updateError: string; success: string }) => (
   <>
     {updateError && (
@@ -417,10 +401,6 @@ const StatusMessages = ({ updateError, success }: { updateError: string; success
   </>
 );
 
-/**
- * Component: Personal Information Card
- * Follows SRP
- */
 const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -549,10 +529,6 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
   </motion.div>
 );
 
-/**
- * Component: Action Buttons
- * Follows SRP
- */
 const ActionButtons = ({ isSaving, updateLoading, isFormValid }: any) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -586,7 +562,6 @@ const ActionButtons = ({ isSaving, updateLoading, isFormValid }: any) => (
   </motion.div>
 );
 
-/* Logo Components */
 export const Logo = () => (
   <Link
     href="/user/dashboard"
