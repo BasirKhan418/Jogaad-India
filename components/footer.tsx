@@ -132,6 +132,12 @@ export const Footer: React.FC = () => {
               >
                 Employee Login
               </Link>
+              <Link 
+                href="/field-executive/login"
+                className="block w-full px-4 py-2 text-xs font-medium text-center text-white bg-gradient-to-r from-[#10B981] to-[#059669] rounded-lg hover:from-[#059669] hover:to-[#10B981] transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Field Executive Login
+              </Link>
             </div>
           </div>
         </div>

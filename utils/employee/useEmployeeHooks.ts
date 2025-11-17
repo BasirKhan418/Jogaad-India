@@ -112,7 +112,7 @@ export const useEmployeeLogout = () => {
         // Clear employee data cache on logout
         employeeCache.clear();
         toast.success('Logged out successfully');
-        router.push('/employee/login');
+        router.push('/');
       } else {
         toast.error('Failed to logout');
       }

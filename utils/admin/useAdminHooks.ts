@@ -64,16 +64,16 @@ export const useAdminLogout = () => {
       const result = await logoutAdmin();
       if (result.success) {
         toast.success('Logged out successfully');
-        router.push('/admin/signin');
+        router.push('/');
       } else {
         console.error('Logout failed:', result.message);
         toast.error('Logout failed');
-        router.push('/admin/signin');
+        router.push('/');
       }
     } catch (error: any) {
       console.error('Logout error:', error);
       toast.error('An error occurred during logout');
-      router.push('/admin/signin');
+      router.push('/');
     }
   };
 
