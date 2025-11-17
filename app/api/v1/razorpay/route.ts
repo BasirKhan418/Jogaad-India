@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
+import { writeLog } from "@/utils/logger";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
-  console.log("webhook received");
-  console.log("Raw body:", body);
+  writeLog("Webhook received");
+  writeLog(`Raw body: ${body}`);
 
-  // Razorpay signature from header
   const signature = request.headers.get("x-razorpay-signature")!;
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
 
@@ -20,10 +20,8 @@ export async function POST(request: NextRequest) {
     .digest("hex");
 
   if (expectedSignature !== signature) {
-    return NextResponse.json(
-      { error: "Invalid webhook signature" },
-      { status: 400 }
-    );
+    writeLog("Invalid webhook signature");
+    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
   }
 
   const data = JSON.parse(body);
@@ -33,7 +31,8 @@ export async function POST(request: NextRequest) {
 
   if (event === "payment.captured") {
     const p = data.payload.payment.entity;
-    console.log("Payment captured:", p);
+
+    writeLog(`Payment captured: ${JSON.stringify(p)}`);
 
     await Employee.findOneAndUpdate(
       { email: p.email },
@@ -49,7 +48,8 @@ export async function POST(request: NextRequest) {
 
   if (event === "payment.failed") {
     const p = data.payload.payment.entity;
-    console.log("Payment failed:", p);
+
+    writeLog(`Payment failed: ${JSON.stringify(p)}`);
 
     await Employee.findOneAndUpdate(
       { email: p.email },
@@ -61,11 +61,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  writeLog("Webhook processed successfully");
   return NextResponse.json({ status: "ok" });
-}
-
-export async function GET() {
-  return NextResponse.json({
-    message: "Webhook endpoint working v2",
-  });
 }
