@@ -8,6 +8,7 @@ import { sendEmployeeActivationEmail } from "@/email/employee/welcome";
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json();
+        console.log("Payment verification request received:", data);
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, email } = data;
 
         // Validate required fields

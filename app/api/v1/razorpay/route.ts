@@ -3,11 +3,9 @@ import crypto from "crypto";
 import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
 
-// IMPORTANT: required for raw body support
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  // ⭐ Get raw body directly
   const body = await request.text();
   console.log("webhook received");
   console.log("Raw body:", body);
@@ -15,8 +13,7 @@ export async function POST(request: NextRequest) {
   // Razorpay signature from header
   const signature = request.headers.get("x-razorpay-signature")!;
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
-
-  // ⭐ Verify webhook signature
+  
   const expectedSignature = crypto
     .createHmac("sha256", secret)
     .update(body)
