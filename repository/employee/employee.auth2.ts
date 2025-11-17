@@ -9,7 +9,6 @@ export const SendOtpEmployee=async(email:string)=>{
         const redisClient = setConnectionRedis();
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         
-        // Check if employee account exists
         const employee = await Employee.findOne({email});
         
         // Case 1: No account found - user needs to create account
@@ -24,7 +23,7 @@ export const SendOtpEmployee=async(email:string)=>{
         // Case 2: Account exists but payment not completed
         if(!employee.isPaid){
             return {
-                message:"Your account is pending payment. Please complete payment to activate.",
+                message:"Payment pending. Redirecting to payment page...",
                 success:false,
                 requiresPayment: true,
                 redirect: "/employee/create"

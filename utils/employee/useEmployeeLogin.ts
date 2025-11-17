@@ -123,17 +123,17 @@ export const useEmployeeLogin = (): UseEmployeeLoginReturn => {
         // Handle special redirect cases
         if (result.redirect) {
           if (result.requiresPayment) {
-            // Account exists but needs payment
-            toast.warning(errorMsg);
+            // Account exists but needs payment - redirect immediately
+            toast.info(errorMsg);
             setTimeout(() => {
               window.location.href = result.redirect!;
-            }, 2000);
+            }, 500);
           } else {
             // No account found - redirect to signup
             toast.info(errorMsg);
             setTimeout(() => {
               window.location.href = result.redirect!;
-            }, 2000);
+            }, 1500);
           }
         } else {
           toast.error(errorMsg);

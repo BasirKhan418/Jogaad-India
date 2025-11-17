@@ -9,6 +9,8 @@ export const FieldExecutiveSchemaZod = z.object({
   isActive: z.boolean().optional(), 
   phone: z.string().min(10, "Phone must be at least 10 digits"),
   img: z.string().optional(),
+  target: z.number().optional(),
+  targetDate: z.date().optional(),
 });
 export type FieldExecutiveType = z.infer<typeof FieldExecutiveSchemaZod>;
 export const FieldExecutiveLoginSchema = z.object({
