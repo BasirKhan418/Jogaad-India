@@ -101,6 +101,43 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   /**
+   * Verify payment on backend after Razorpay success
+   */
+  const verifyPayment = useCallback(async (razorpayResponse: any, orderId: string) => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/v1/verify-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          razorpay_order_id: razorpayResponse.razorpay_order_id,
+          razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+          razorpay_signature: razorpayResponse.razorpay_signature,
+          email: formData.email
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('Payment verified! Your account is now active.');
+        setSuccess('Payment successful! Redirecting to login...');
+        setTimeout(() => {
+          router.push('/employee/login');
+        }, 2000);
+      } else {
+        toast.error(result.message || 'Payment verification failed. Please contact support.');
+      }
+    } catch (error) {
+      toast.error('Failed to verify payment. Please contact support.');
+    } finally {
+      setLoading(false);
+    }
+  }, [formData.email, router]);
+
+  /**
    * Initialize Razorpay payment
    * Opens Razorpay checkout modal for payment processing
    */
@@ -140,43 +177,6 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     const razorpayInstance = new (window as any).Razorpay(options);
     razorpayInstance.open();
   }, [formData.name, formData.phone, verifyPayment]);
-
-  /**
-   * Verify payment on backend after Razorpay success
-   */
-  const verifyPayment = useCallback(async (razorpayResponse: any, orderId: string) => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/v1/verify-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          razorpay_order_id: razorpayResponse.razorpay_order_id,
-          razorpay_payment_id: razorpayResponse.razorpay_payment_id,
-          razorpay_signature: razorpayResponse.razorpay_signature,
-          email: formData.email
-        })
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        toast.success('Payment verified! Your account is now active.');
-        setSuccess('Payment successful! Redirecting to login...');
-        setTimeout(() => {
-          router.push('/employee/login');
-        }, 2000);
-      } else {
-        toast.error(result.message || 'Payment verification failed. Please contact support.');
-      }
-    } catch (error) {
-      toast.error('Failed to verify payment. Please contact support.');
-    } finally {
-      setLoading(false);
-    }
-  }, [formData.email, router]);
 
   // Load Razorpay script on mount
   useEffect(() => {
