@@ -1,27 +1,35 @@
 import { NextResponse } from "next/server";
-import { fetchLogFromS3 } from "@/utils/s3Logger";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import { cookies } from "next/headers";
+import { fetchTodayPaymentLogs } from "@/utils/admin/paymentLogService";
 
 export async function GET() {
-    const now = new Date();
-    const cookesStore = await cookies();
-    const userToken = cookesStore.get("token")?.value || "";
-    const isVerified = await verifyUserToken(userToken);
-    
-    if (!isVerified || isVerified.type !== "admin") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    try {
+        const cookiesStore = await cookies();
+        const userToken = cookiesStore.get("token")?.value || "";
+        const isVerified = await verifyUserToken(userToken);
+        
+        if (!isVerified.success || isVerified.type !== "admin") {
+            return NextResponse.json({ 
+                message: "Unauthorized", 
+                success: false 
+            }, { status: 401 });
+        }
+
+        const result = await fetchTodayPaymentLogs();
+
+        return NextResponse.json({
+            message: "Payment logs fetched successfully",
+            success: true,
+            date: result.date,
+            logs: result.logs,
+            stats: result.stats
+        }, { status: 200 });
+    } catch (error) {
+        console.error("Error fetching today's payment logs:", error);
+        return NextResponse.json({
+            message: error instanceof Error ? error.message : "Failed to fetch payment logs",
+            success: false
+        }, { status: 500 });
     }
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-
-    const date = `${yyyy}-${mm}-${dd}`;
-
-    const logs = await fetchLogFromS3(date);
-
-    return NextResponse.json({
-        date,
-        logs: logs || "No logs found for today."
-    });
 }

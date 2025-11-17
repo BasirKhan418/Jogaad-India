@@ -9,7 +9,8 @@ import {
   IconSettings,
   IconLogout,
   IconUserPlus,
-  IconUsersGroup
+  IconUsersGroup,
+  IconFileText
 } from "@tabler/icons-react";
 
 export interface NavigationLink {
@@ -64,6 +65,13 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       label: "Fees",
       href: "/admin/fees",
       icon: React.createElement(IconCurrencyDollar, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
+      label: "Payment Logs",
+      href: "/admin/payment-logs",
+      icon: React.createElement(IconFileText, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },
