@@ -31,11 +31,7 @@ import { useFieldExecAnalytics } from "@/utils/fieldexecutive/useFieldExecAnalyt
 import { TargetsModal } from "@/components/field-executive/TargetsModal";
 import { EmployeesModal } from "@/components/field-executive/EmployeesModal";
 
-/**
- * Field Executive Dashboard
- * Main dashboard for field executives with overview cards and navigation
- * Follows DRY and SRP principles
- */
+
 export default function FieldExecutiveDashboard() {
   const router = useRouter();
   const { fieldExecData, loading, error } = useFieldExecData();
@@ -113,54 +109,9 @@ export default function FieldExecutiveDashboard() {
             <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
               {open ? <Logo /> : <LogoIcon />}
               <div className="mt-8 flex flex-col gap-2">
-                {links.map((link, idx) => {
-                  // Handle modal links
-                  if (link.href === "/field-executive/targets") {
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => setTargetsModalOpen(true)}
-                        className="flex items-center gap-2 w-full py-2 px-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors text-left"
-                      >
-                        {link.icon}
-                        <motion.span
-                          animate={{
-                            display: open ? "inline-block" : "none",
-                            opacity: open ? 1 : 0,
-                          }}
-                          className="text-sm text-neutral-700 dark:text-neutral-200"
-                        >
-                          {link.label}
-                        </motion.span>
-                      </button>
-                    );
-                  }
-                  if (link.href === "/field-executive/employees") {
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => setEmployeesModalOpen(true)}
-                        className="flex items-center gap-2 w-full py-2 px-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors text-left"
-                      >
-                        {link.icon}
-                        <motion.span
-                          animate={{
-                            display: open ? "inline-block" : "none",
-                            opacity: open ? 1 : 0,
-                          }}
-                          className="text-sm text-neutral-700 dark:text-neutral-200"
-                        >
-                          {link.label}
-                        </motion.span>
-                      </button>
-                    );
-                  }
-                  if (link.href === "/field-executive/areas") {
-                    // Skip areas link for now
-                    return null;
-                  }
-                  return <SidebarLink key={idx} link={link} />;
-                })}
+                {links.map((link, idx) => (
+                  <SidebarLink key={idx} link={link} />
+                ))}
               </div>
             </div>
             
@@ -400,8 +351,6 @@ export default function FieldExecutiveDashboard() {
       <MobileBottomNav 
         links={links} 
         currentPath="/field-executive/dashboard"
-        onTargetsClick={() => setTargetsModalOpen(true)}
-        onEmployeesClick={() => setEmployeesModalOpen(true)}
       />
     </div>
   );
@@ -441,69 +390,16 @@ export const LogoIcon = () => {
 /* Mobile Bottom Navigation Component */
 const MobileBottomNav = ({ 
   links, 
-  currentPath,
-  onTargetsClick,
-  onEmployeesClick
+  currentPath
 }: { 
   links: any[], 
-  currentPath: string,
-  onTargetsClick: () => void,
-  onEmployeesClick: () => void
+  currentPath: string
 }) => {
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-neutral-800 shadow-[0_-4px_24px_rgba(0,0,0,0.3)] pb-safe">
       <nav className="flex items-center justify-around px-4 py-2">
         {links.map((link, idx) => {
           const isActive = currentPath === link.href;
-          
-          // Handle modal links
-          if (link.href === "/field-executive/targets") {
-            return (
-              <button
-                key={idx}
-                onClick={onTargetsClick}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1.5 px-2 py-2 rounded-xl transition-all duration-300 min-w-[70px] relative",
-                  "hover:bg-neutral-800/50"
-                )}
-              >
-                <div className="flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 relative bg-neutral-800/50">
-                  {React.cloneElement(link.icon, {
-                    className: "h-5 w-5 flex-shrink-0 transition-all duration-300 text-neutral-400"
-                  })}
-                </div>
-                <span className="text-[11px] font-semibold transition-all duration-300 tracking-tight text-neutral-400">
-                  {link.label}
-                </span>
-              </button>
-            );
-          }
-          
-          if (link.href === "/field-executive/employees") {
-            return (
-              <button
-                key={idx}
-                onClick={onEmployeesClick}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1.5 px-2 py-2 rounded-xl transition-all duration-300 min-w-[70px] relative",
-                  "hover:bg-neutral-800/50"
-                )}
-              >
-                <div className="flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 relative bg-neutral-800/50">
-                  {React.cloneElement(link.icon, {
-                    className: "h-5 w-5 flex-shrink-0 transition-all duration-300 text-neutral-400"
-                  })}
-                </div>
-                <span className="text-[11px] font-semibold transition-all duration-300 tracking-tight text-neutral-400">
-                  {link.label}
-                </span>
-              </button>
-            );
-          }
-          
-          if (link.href === "/field-executive/areas") {
-            return null; // Skip areas link
-          }
           
           return (
             <Link

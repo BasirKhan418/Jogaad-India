@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
-import { Users, Search, Filter } from 'lucide-react';
+import { Users, Search, Filter, Edit } from 'lucide-react';
 import { useFieldExecRecentData } from '@/utils/fieldexecutive/useFieldExecRecentData';
-import { getRelativeTime } from '@/utils/fieldexecutive/timeUtils';
+import { getRelativeTime, isWithin12Hours } from '@/utils/fieldexecutive/timeUtils';
 import type { EmployeeData } from '@/utils/fieldexecutive/useFieldExecRecentData';
+import { useRouter } from 'next/navigation';
 
 interface EmployeesModalProps {
   open: boolean;
@@ -34,7 +35,7 @@ export const EmployeesModal: React.FC<EmployeesModalProps> = ({ open, onOpenChan
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] pb-safe">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogClose onClose={() => onOpenChange(false)} />
         <DialogHeader>
           <DialogTitle>Manage Employees</DialogTitle>
@@ -99,7 +100,7 @@ export const EmployeesModal: React.FC<EmployeesModalProps> = ({ open, onOpenChan
             </div>
 
             {/* Employee List */}
-            <div className="space-y-2 max-h-[300px] sm:max-h-[400px] overflow-y-auto overscroll-contain">
+            <div className="space-y-2 max-h-[250px] sm:max-h-[350px] overflow-y-auto overscroll-contain">
               {filteredEmployees.map((employee, index) => (
                 <EmployeeCard key={employee._id} employee={employee} index={index} />
               ))}
@@ -131,6 +132,12 @@ export const EmployeesModal: React.FC<EmployeesModalProps> = ({ open, onOpenChan
 };
 
 const EmployeeCard: React.FC<{ employee: EmployeeData; index: number }> = ({ employee, index }) => {
+  const router = useRouter();
+
+  const handleEdit = (employeeId: string) => {
+    router.push(`/field-executive/edit-employee?id=${employeeId}`);
+  };
+
   return (
     <div className="flex items-center justify-between p-2.5 sm:p-3 bg-white border border-slate-200 rounded-lg active:shadow-md transition-shadow touch-manipulation">
       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -171,16 +178,29 @@ const EmployeeCard: React.FC<{ employee: EmployeeData; index: number }> = ({ emp
         </div>
       </div>
 
-      {/* Meta Info */}
-      <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2 sm:ml-3">
-        <span className="text-[10px] sm:text-xs text-slate-500 whitespace-nowrap">{getRelativeTime(employee.createdAt)}</span>
-        <span className={`text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap ${
-          employee.paymentStatus === 'paid' ? 'bg-green-50 text-green-700' :
-          employee.paymentStatus === 'pending' ? 'bg-amber-50 text-amber-700' :
-          'bg-red-50 text-red-700'
-        }`}>
-          {employee.paymentStatus.toUpperCase()}
-        </span>
+      {/* Meta Info and Edit Button */}
+      <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 ml-2 sm:ml-3">
+        <div className="flex flex-col items-end gap-1">
+          <span className="text-[10px] sm:text-xs text-slate-500 whitespace-nowrap">{getRelativeTime(employee.createdAt)}</span>
+          <span className={`text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap ${
+            employee.paymentStatus === 'paid' ? 'bg-green-50 text-green-700' :
+            employee.paymentStatus === 'pending' ? 'bg-amber-50 text-amber-700' :
+            'bg-red-50 text-red-700'
+          }`}>
+            {employee.paymentStatus.toUpperCase()}
+          </span>
+        </div>
+        
+        {/* Edit Button - Show only if within 12 hours */}
+        {isWithin12Hours(employee.createdAt) && (
+          <button
+            onClick={() => handleEdit(employee._id)}
+            className="p-1.5 sm:p-2 bg-[#2B9EB3] hover:bg-[#0A3D62] text-white rounded-lg transition-colors"
+            title="Edit employee"
+          >
+            <Edit className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          </button>
+        )}
       </div>
     </div>
   );

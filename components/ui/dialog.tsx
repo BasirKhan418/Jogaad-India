@@ -71,14 +71,12 @@ export const DialogContent: React.FC<DialogContentProps> = ({ children, classNam
       transition={{ type: 'spring', duration: 0.3 }}
       className={cn(
         "fixed z-50",
-        "md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2",
-        "left-0 right-0 bottom-0 md:bottom-auto",
-        "md:rounded-2xl rounded-t-3xl",
+        "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+        "rounded-2xl",
         "bg-white shadow-2xl",
-        "w-full md:w-[90vw] md:max-w-lg",
-        "max-h-[90vh] md:max-h-[85vh] overflow-y-auto",
+        "w-[95vw] sm:w-[90vw] md:w-[85vw]",
+        "max-h-[90vh] overflow-hidden",
         "p-4 sm:p-6",
-        "touch-pan-y",
         className
       )}
       onClick={(e) => e.stopPropagation()}

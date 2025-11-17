@@ -26,24 +26,24 @@ export const FieldExecAnalyticsCard: React.FC = () => {
     : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Assigned Target Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow"
+        className="bg-white rounded-xl p-5 shadow-md border border-slate-200 hover:shadow-lg transition-all"
       >
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-gradient-to-br from-[#2B9EB3]/10 to-[#0A3D62]/10 rounded-xl">
-            <Target className="w-6 h-6 text-[#2B9EB3]" />
+        <div className="flex items-center justify-between mb-3">
+          <div className="p-2.5 bg-gradient-to-br from-[#2B9EB3]/10 to-[#0A3D62]/10 rounded-lg">
+            <Target className="w-5 h-5 text-[#2B9EB3]" />
           </div>
-          <span className="text-xs font-semibold text-[#2B9EB3] bg-[#2B9EB3]/10 px-3 py-1 rounded-full">
+          <span className="text-xs font-semibold text-[#2B9EB3] bg-[#2B9EB3]/10 px-2.5 py-1 rounded-full">
             This Month
           </span>
         </div>
-        <h3 className="text-slate-600 text-sm font-medium mb-1">Assigned Target</h3>
-        <p className="text-4xl font-bold text-[#0A3D62] mb-2">
+        <h3 className="text-slate-600 text-xs font-medium mb-1">Assigned Target</h3>
+        <p className="text-3xl font-bold text-[#0A3D62] mb-2">
           {analytics.assignTarget}
         </p>
         <p className="text-xs text-slate-500">
@@ -56,13 +56,13 @@ export const FieldExecAnalyticsCard: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow"
+        className="bg-white rounded-xl p-5 shadow-md border border-slate-200 hover:shadow-lg transition-all"
       >
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl">
-            <TrendingUp className="w-6 h-6 text-green-600" />
+        <div className="flex items-center justify-between mb-3">
+          <div className="p-2.5 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-lg">
+            <TrendingUp className="w-5 h-5 text-green-600" />
           </div>
-          <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
             progressPercentage >= 100
               ? 'text-green-600 bg-green-50'
               : progressPercentage >= 50
@@ -72,8 +72,8 @@ export const FieldExecAnalyticsCard: React.FC = () => {
             {progressPercentage}%
           </span>
         </div>
-        <h3 className="text-slate-600 text-sm font-medium mb-1">Current Progress</h3>
-        <p className="text-4xl font-bold text-[#0A3D62] mb-2">
+        <h3 className="text-slate-600 text-xs font-medium mb-1">Current Progress</h3>
+        <p className="text-3xl font-bold text-[#0A3D62] mb-2">
           {analytics.currentTarget}
         </p>
         <div className="mt-3">

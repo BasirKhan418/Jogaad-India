@@ -21,7 +21,7 @@ export const TargetsModal: React.FC<TargetsModalProps> = ({ open, onOpenChange, 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl pb-safe">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogClose onClose={() => onOpenChange(false)} />
         <DialogHeader>
           <DialogTitle>Your Targets & Goals</DialogTitle>

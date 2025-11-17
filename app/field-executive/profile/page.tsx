@@ -482,57 +482,6 @@ export default function FieldExecProfile() {
                   </div>
                 </motion.div>
 
-                {/* Target Information Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
-                >
-                  <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20 px-4 md:px-5 py-2.5 md:py-3 border-b border-neutral-200 dark:border-neutral-700">
-                    <h2 className="text-base md:text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-                      <div className="h-6 w-6 md:h-7 md:w-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                        <Target className="h-3 w-3 md:h-3.5 md:w-3.5 text-white" />
-                      </div>
-                      Target Information
-                    </h2>
-                  </div>
-                  <div className="p-4 md:p-5 space-y-3 md:space-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <Target className="h-3.5 w-3.5" />
-                          Current Target
-                        </Label>
-                        <div className="h-10 md:h-11 flex items-center px-3 bg-neutral-100 dark:bg-neutral-900 rounded-md border border-neutral-200 dark:border-neutral-700">
-                          <span className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">
-                            {fieldExecData?.target || 0}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          Target Deadline
-                        </Label>
-                        <div className="h-10 md:h-11 flex items-center px-3 bg-neutral-100 dark:bg-neutral-900 rounded-md border border-neutral-200 dark:border-neutral-700">
-                          <span className="text-sm md:text-base font-semibold text-neutral-800 dark:text-neutral-100">
-                            {fieldExecData?.targetDate 
-                              ? new Date(fieldExecData.targetDate).toLocaleDateString("en-US", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                })
-                              : 'Not set'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
 
                 {/* Account Details Card */}
                 {fieldExecData && (

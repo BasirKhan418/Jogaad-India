@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Edit, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useFieldExecRecentData } from '@/utils/fieldexecutive/useFieldExecRecentData';
 import { isWithin12Hours, getRelativeTime, formatDateTime } from '@/utils/fieldexecutive/timeUtils';
 import type { EmployeeData } from '@/utils/fieldexecutive/useFieldExecRecentData';
@@ -21,24 +22,24 @@ export const FieldExecRecentEmployees: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-xl p-5 shadow-md border border-slate-200">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-[#2B9EB3]/10 rounded-lg">
             <Users className="w-5 h-5 text-[#2B9EB3]" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-[#0A3D62]">Recent Employees</h2>
-            <p className="text-sm text-slate-600">Latest onboarded employees</p>
+            <h2 className="text-lg font-bold text-[#0A3D62]">Recent Employees</h2>
+            <p className="text-xs text-slate-600">Latest onboarded employees</p>
           </div>
         </div>
         {!showAll && employees.length > 0 && (
-          <button
-            onClick={() => setShowAll(true)}
+          <Link
+            href="/field-executive/employees"
             className="text-sm font-semibold text-[#2B9EB3] hover:text-[#0A3D62] transition-colors"
           >
             View All →
-          </button>
+          </Link>
         )}
       </div>
 
@@ -60,8 +61,8 @@ const EmployeeList: React.FC<{ employees: EmployeeData[] }> = ({ employees }) =>
   const router = useRouter();
 
   const handleEdit = (employeeId: string) => {
-    // Navigate to employee edit page (route should be implemented separately)
-    router.push(`/field-executive/employees?edit=${employeeId}`);
+    // Navigate to employee edit page
+    router.push(`/field-executive/edit-employee?id=${employeeId}`);
   };
 
   return (

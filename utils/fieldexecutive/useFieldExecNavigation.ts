@@ -25,13 +25,6 @@ export const useFieldExecNavigation = () => {
       }),
     },
     {
-      label: "Profile",
-      href: "/field-executive/profile",
-      icon: React.createElement(IconUser, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
       label: "Add Employee",
       href: "/field-executive/add-employee",
       icon: React.createElement(IconUserPlus, {
@@ -39,23 +32,16 @@ export const useFieldExecNavigation = () => {
       }),
     },
     {
-      label: "My Targets",
-      href: "/field-executive/targets",
-      icon: React.createElement(IconTarget, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
-      label: "Field Areas",
-      href: "/field-executive/areas",
-      icon: React.createElement(IconMapPin, {
-        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
-      }),
-    },
-    {
       label: "Employees",
       href: "/field-executive/employees",
       icon: React.createElement(IconUsers, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
+      label: "Profile",
+      href: "/field-executive/profile",
+      icon: React.createElement(IconUser, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },
