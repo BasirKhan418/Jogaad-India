@@ -3,7 +3,7 @@ import crypto from "crypto";
 import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
 import { writeLogToS3 } from "@/utils/s3Logger";
-
+import Booking from "@/models/Booking";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     const p = data.payload.payment.entity;
     addLog(`Payment captured: ${JSON.stringify(p)}`);
 
-    await Employee.findOneAndUpdate(
+    const empdata = await Employee.findOneAndUpdate(
       { email: p.email },
       {
         isPaid: true,
@@ -51,6 +51,25 @@ export async function POST(request: NextRequest) {
         orderid: p.order_id,
       }
     );
+    if (empdata) {
+      addLog(`Employee record updated for email: ${p.email}`);
+    }
+    const bookingdata =await Booking.findOne({orderid:p.order_id});
+    if(bookingdata.isActive===false||bookingdata.intialpaymentStatus==="pending"||bookingdata.status!=="confirmed"){
+      await Booking.findOneAndUpdate(
+        { orderid: p.order_id },
+        {
+          intialpaymentStatus: "paid",
+          status: "confirmed",
+          paymentid: p.id,
+          isActive: true,
+        }
+      );
+      addLog(`Booking record updated for orderid: ${p.order_id}`);
+    }
+    else{
+      //add update of complete payment
+    }
   }
 
   if (event === "payment.failed") {
