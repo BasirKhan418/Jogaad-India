@@ -70,7 +70,16 @@ export async function POST(request: NextRequest) {
       addLog(`Booking record updated for orderid: ${p.order_id}`);
     }
     else {
-      //add update of complete payment
+      await Booking.findOneAndUpdate(
+        { orderid: p.order_id },
+        {
+          paymentid: p.id,
+          status: "completed",
+          isActive: true,
+          isDone: true
+        }
+      );
+      addLog(`Booking record paymentid updated for orderid: ${p.order_id}`);
     }
   }
 
@@ -98,7 +107,16 @@ export async function POST(request: NextRequest) {
       addLog(`Booking record updated for orderid: ${p.order_id}`);
     }
     else {
-      //add update of complete payment
+      await Booking.findOneAndUpdate(
+        { orderid: p.order_id },
+        {
+          paymentStatus: "failed",
+          status: "in-progress",
+          isActive: true,
+          isDone: false
+        }
+      );
+      addLog(`Booking record paymentStatus updated for orderid: ${p.order_id}`);
     }
   }
   if (event === "refund.created") {
