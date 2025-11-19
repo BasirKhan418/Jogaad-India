@@ -117,6 +117,16 @@ export default function UserBookingsPage() {
 
       if (data.success) {
         setBookings(data.data || []);
+        
+        // Debug: Log bookings with payment requests
+        if (process.env.NODE_ENV === 'development' && !silent) {
+          const paymentRequests = (data.data || []).filter((b: Booking) => 
+            b.status === 'started' && b.paymentStatus === 'pending' && b.bookingAmount
+          );
+          if (paymentRequests.length > 0) {
+            console.log('📌 Bookings with payment requests:', paymentRequests);
+          }
+        }
       } else {
         if (!silent) {
           toast.error(data.message || "Failed to fetch bookings");
@@ -192,7 +202,7 @@ export default function UserBookingsPage() {
 
   /**
    * Handle Pay Now action
-   * Initializes Razorpay payment for pending bookings
+   * Initializes Razorpay payment for pending bookings or service completion payment
    */
   const handlePayNow = async (booking: Booking) => {
     // Check if Razorpay is loaded
@@ -201,13 +211,20 @@ export default function UserBookingsPage() {
       return;
     }
 
+    // Determine amount based on payment type
+    // If booking has bookingAmount and status is started, it's service completion payment
+    const isServicePayment = booking.status === "started" && booking.bookingAmount;
+    const amount = isServicePayment ? booking.bookingAmount! : booking.intialamount;
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
-      amount: booking.intialamount * 100, // Convert to paise
+      amount: amount * 100, // Convert to paise
       currency: "INR",
       image:"https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png",
       name: "Jogaad India",
-      description: `Payment for ${booking.categoryid.categoryName}`,
+      description: isServicePayment 
+        ? `Service completion payment for ${booking.categoryid.categoryName}`
+        : `Booking payment for ${booking.categoryid.categoryName}`,
       order_id: booking.orderid,
       handler: async function (response: any) {
         // Verify payment with backend
@@ -289,7 +306,7 @@ export default function UserBookingsPage() {
         filtered = filtered.filter(b => 
           b.status === "confirmed" || 
           b.status === "in-progress" || 
-          b.status === "started"
+          b.status === "started" // Started bookings shown here (in progress)
         );
         break;
       case "completed":

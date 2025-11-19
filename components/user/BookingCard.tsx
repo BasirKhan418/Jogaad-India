@@ -306,7 +306,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         )}
 
         {/* Service Payment Request */}
-        {booking.status === "started" && booking.renderPaymentButton && booking.paymentStatus === "pending" && (
+        {booking.status === "started" && booking.paymentStatus === "pending" && booking.bookingAmount && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -315,7 +315,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <IndianRupee className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-green-800 flex-1">
               <p className="font-semibold">Service Provider requested payment</p>
-              <p className="font-bold text-sm md:text-base mt-0.5">Amount: ₹{booking.bookingAmount || 0}</p>
+              <p className="font-bold text-sm md:text-base mt-0.5">Amount: ₹{booking.bookingAmount}</p>
               <p className="text-xs mt-1 opacity-80">Complete payment to finish the service</p>
             </div>
           </motion.div>
@@ -350,13 +350,13 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           )}
 
           {/* Service completion payment */}
-          {booking.status === "started" && booking.renderPaymentButton && booking.paymentStatus === "pending" && (
+          {booking.status === "started" && booking.paymentStatus === "pending" && booking.bookingAmount && (
             <Button
               onClick={() => onPayNow(booking)}
               className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
             >
               <IndianRupee className="w-4 h-4 mr-1" />
-              Pay Now (₹{booking.bookingAmount || 0})
+              Pay Now (₹{booking.bookingAmount})
             </Button>
           )}
 
