@@ -42,6 +42,7 @@ export const getEmployeeAnalytics = async (employeeId: string) => {
   try {
     await ConnectDb();
      const findSchedules = await Schedule.find({ employeeid: employeeId });
+     console.log("Schedules found:", findSchedules.length);
     const bookings = await Booking.find({ employeeid: employeeId });
 
     const stats = calculateEmployeeStats(bookings);
