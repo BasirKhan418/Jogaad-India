@@ -82,11 +82,13 @@ export default function EmployeeBookingsPage() {
       const pendingData = await pendingRes.json();
       
       if (pendingData.success) {
-        // Extract booking from schedule
-        const bookings = pendingData.schedules.map((s: any) => ({
-          ...s.bookingid,
-          scheduleId: s._id // Keep schedule ID if needed
-        }));
+        // Extract booking from schedule and filter out accepted ones
+        const bookings = pendingData.schedules
+          .filter((s: any) => !s.isAccepted) 
+          .map((s: any) => ({
+            ...s.bookingid,
+            scheduleId: s._id
+          }));
         setPendingBookings(bookings);
       }
 
