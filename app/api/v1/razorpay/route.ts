@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
         refundid: r.id,
         refundAmount: Math.floor((r.amount) / 100) || 0,
         refundDate: new Date(),
-        status: "refunded",
+        status: "cancelled",
       }
     ).populate("userid").populate("categoryid");
     if (booking) {
