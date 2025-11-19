@@ -339,9 +339,9 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
           />
         </div>
 
-        {/* Export Employee Payment */}
+       
         <div className="mb-8 p-6 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-700">
-          <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 mb-4">Export Employee Payment</h2>
+          <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 mb-4">Service Provider Payment</h2>
           <div className="flex flex-col md:flex-row gap-4 items-end">
             <div className="flex-1">
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
