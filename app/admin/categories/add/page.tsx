@@ -220,6 +220,11 @@ export default function AddCategoryPage() {
         });
         setImageFile(null);
         setImagePreviewUrl('');
+        
+        // Redirect to categories page after short delay
+        setTimeout(() => {
+          router.push('/admin/categories');
+        }, 1000);
        
       } else {
         toast.error(result.message || 'Failed to create category');

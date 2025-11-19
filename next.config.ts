@@ -25,6 +25,12 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['framer-motion', '@paper-design/shaders-react', 'react-icons'],
   },
+  // Suppress false middleware deprecation warnings
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default nextConfig;

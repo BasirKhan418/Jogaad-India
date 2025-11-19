@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value || '';
     
-    // If token exists, validate it
+    // If token exists, validate it (allow all user types: user, admin, employee)
     if (token) {
       const isTokenValid = await verifyUserToken(token);
       if (!isTokenValid.success) {
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
           { status: 401 }
         );
       }
+      // Accept any valid token type (user, admin, employee)
     }
     // If no token, allow upload (for employee signup process)
     
@@ -50,15 +51,18 @@ export async function POST(request: NextRequest) {
     const fileURL = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFilename}`;
 
     return NextResponse.json({ 
-      uploadURL, 
-      fileURL,
-      filename: uniqueFilename 
+      success: true,
+      data: {
+        uploadURL, 
+        fileURL,
+        filename: uniqueFilename
+      }
     });
 
   } catch (error) {
     console.error('Error generating signed URL:', error);
     return NextResponse.json(
-      { error: 'Failed to generate upload URL' },
+      { success: false, message: 'Failed to generate upload URL', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
