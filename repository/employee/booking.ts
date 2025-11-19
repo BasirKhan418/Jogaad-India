@@ -10,7 +10,7 @@ export const AcceptScheduleForBooking = async (bookingId: string, employeeId: st
             return {message:"Schedule not found",success:false};
         }
         // Update schedule to mark as accepted
-        await Schedule.findByIdAndUpdate(schedule._id, {isAccepted: true}, {new: true});
+        await Schedule.findByIdAndDelete(schedule._id);
         
         // Update booking status
         let booking =await Booking.findByIdAndUpdate(bookingId, {status: "in-progress", employeeid: employeeId}, {new: true});
