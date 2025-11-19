@@ -90,3 +90,22 @@ export const getAllBookingsForUser = async (userid: string) => {
         return { message: "Internal Server Error", success: false };
     }
 }
+
+
+export const rateBooking = async (bookingid: string, rating: number, feedback: string) => {
+    try{
+        await ConnectDb();
+        const booking = await Booking.findByIdAndUpdate(
+            bookingid,
+            { rating, feedback, isRated: true },
+            { new: true }
+        );
+        if(!booking){
+            return { message: "Booking not found", success: false };
+        }
+        return { message: "Booking rated successfully", success: true, data: booking };
+    }
+    catch(error){
+        return { message: "Internal Server Error", success: false };
+    }
+}
