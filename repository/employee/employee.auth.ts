@@ -110,3 +110,17 @@ export const updateOrderidByEmail = async (email: string, orderId: string) => {
         return {message:"Error updating employee order ID",error,success:false};
     }
 }
+
+export const getEmployeeByCategoryId = async (categoryId: string) => {
+    try{
+        await ConnectDb();
+        const employees = await Employee.find({categoryid:categoryId,isActive:true});
+        if(employees){
+            return {message:"Employees retrieved successfully",data:employees,success:true};
+        }
+        return {message:"No employees found for the given category",success:false};
+    }
+    catch(error){
+        return {message:"Error retrieving employees by category",error,success:false};
+    }
+}
