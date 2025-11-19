@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
@@ -19,6 +19,15 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onOpenChange, 
   const [feedback, setFeedback] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setRating(0);
+      setFeedback("");
+      setSubmitting(false);
+    }
+  }, [open]);
+
   const handleSubmit = async () => {
     if (rating === 0) {
       toast.error("Please select a rating");
@@ -27,34 +36,48 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onOpenChange, 
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/v1/user/rating", {
+      const res = await fetch("/api/v1/user/addreview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           bookingid: bookingId,
           rating,
-          feedback
+          review: feedback
         })
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
       const data = await res.json();
       if (data.success) {
         toast.success("Thank you for your feedback!");
+        setRating(0);
+        setFeedback("");
         onSuccess();
         onOpenChange(false);
       } else {
         toast.error(data.message || "Failed to submit rating");
       }
     } catch (error) {
-      console.error("Error submitting rating", error);
-      toast.error("An error occurred");
+      console.error("Error submitting rating:", error);
+      toast.error("Failed to submit rating. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    // Prevent closing while submitting
+    if (!submitting) {
+      onOpenChange(newOpen);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Rate your experience</DialogTitle>

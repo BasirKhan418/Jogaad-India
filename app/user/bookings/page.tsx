@@ -17,6 +17,8 @@ import {
 } from "@/utils/user/useUserHooks";
 import { MobileBottomNav } from "@/components/user/MobileBottomNav";
 import { BookingCard } from "@/components/user/BookingCard";
+import { RatingDialog } from "@/components/user/RatingDialog";
+import { CancelBookingDialog } from "@/components/user/CancelBookingDialog";
 import { 
   Calendar,
   Filter,
@@ -79,6 +81,12 @@ export default function UserBookingsPage() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "amount-high" | "amount-low">("newest");
   const [dateFilter, setDateFilter] = useState("");
 
+  // Modal states
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+
   // Fetch bookings on mount and set up polling
   useEffect(() => {
     fetchBookings();
@@ -131,6 +139,55 @@ export default function UserBookingsPage() {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchBookings();
+  };
+
+  /**
+   * Handle rating modal
+   */
+  const handleRate = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setIsRatingOpen(true);
+  };
+
+  /**
+   * Handle cancel booking modal
+   */
+  const handleCancelBooking = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setIsCancelDialogOpen(true);
+  };
+
+  /**
+   * Confirm and process booking cancellation
+   */
+  const confirmCancel = async () => {
+    if (!selectedBooking) return;
+    
+    setCancelling(true);
+    try {
+      const response = await fetch("/api/v1/user/cancelbooking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ id: selectedBooking._id })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("Booking cancelled successfully");
+        fetchBookings();
+        setIsCancelDialogOpen(false);
+        setSelectedBooking(null);
+      } else {
+        toast.error(data.message || "Failed to cancel booking");
+      }
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      toast.error("Failed to cancel booking");
+    } finally {
+      setCancelling(false);
+    }
   };
 
   /**
@@ -576,6 +633,8 @@ export default function UserBookingsPage() {
                       booking={booking}
                       onPayNow={handlePayNow}
                       onRefresh={fetchBookings}
+                      onRate={handleRate}
+                      onCancel={handleCancelBooking}
                     />
                   </motion.div>
                 ))}
@@ -589,6 +648,25 @@ export default function UserBookingsPage() {
       <div className="md:hidden">
         <MobileBottomNav links={links} currentPath="/user/bookings" />
       </div>
+
+      {/* Rating Modal - Single instance at page level */}
+      <RatingDialog 
+        open={isRatingOpen} 
+        onOpenChange={setIsRatingOpen}
+        bookingId={selectedBooking?._id || ""}
+        onSuccess={() => {
+          fetchBookings();
+          setSelectedBooking(null);
+        }}
+      />
+
+      {/* Cancel Booking Modal - Single instance at page level */}
+      <CancelBookingDialog 
+        open={isCancelDialogOpen} 
+        onOpenChange={setIsCancelDialogOpen}
+        onConfirm={confirmCancel}
+        loading={cancelling}
+      />
     </div>
   );
 }

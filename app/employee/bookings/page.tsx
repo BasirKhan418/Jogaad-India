@@ -164,16 +164,6 @@ export default function EmployeeBookingsPage() {
     } else if (action === "payment") {
       setSelectedBookingId(booking._id);
       setPaymentModalOpen(true);
-    } else if (action === "complete") {
-      setDialogConfig({
-        title: "Complete Job",
-        description: "Mark this job as completed? The customer has already paid. This action will move the booking to history.",
-        action: "complete",
-        bookingId: booking._id,
-        confirmText: "Mark Complete",
-        variant: "default"
-      });
-      setDialogOpen(true);
     }
   };
 
@@ -191,56 +181,12 @@ export default function EmployeeBookingsPage() {
 
       const data = await response.json();
 
-      if (data.success && data.data) {
+      if (data.success) {
+        toast.success("Payment request sent to customer. They will receive notification to complete payment.");
         setPaymentModalOpen(false);
-        
-        // Initialize Razorpay
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-          amount: amount * 100,
-          currency: "INR",
-          name: "Jogaad India",
-          description: "Service Payment",
-          order_id: data.data.orderid,
-          handler: async function (response: any) {
-            try {
-              // Verify payment
-              const verifyRes = await fetch("/api/v1/user/verify-payment/v2", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  email: data.data.userid?.email || ""
-                })
-              });
-              
-              const verifyData = await verifyRes.json();
-              if (verifyData.success) {
-                toast.success("Payment received successfully!");
-                fetchBookings();
-              } else {
-                toast.error("Payment verification failed");
-              }
-            } catch (error) {
-              toast.error("Payment verification error");
-            }
-          },
-          prefill: {
-            name: data.data.userid?.name || "",
-            email: data.data.userid?.email || "",
-            contact: data.data.userid?.phone || ""
-          },
-          theme: {
-            color: "#2B9EB3"
-          }
-        };
-
-        const razorpay = new (window as any).Razorpay(options);
-        razorpay.open();
+        fetchBookings(); // Refresh to show updated status
       } else {
-        toast.error(data.message || "Failed to generate payment");
+        toast.error(data.message || "Failed to generate payment request");
       }
     } catch (error) {
       console.error("Payment error:", error);
@@ -258,8 +204,6 @@ export default function EmployeeBookingsPage() {
         endpoint = "/api/v1/emp/bookings/accept";
       } else if (dialogConfig.action === "start") {
         endpoint = "/api/v1/emp/bookings/start";
-      } else if (dialogConfig.action === "complete") {
-        endpoint = "/api/v1/emp/bookings/complete";
       }
 
       const response = await fetch(endpoint, {
@@ -280,8 +224,6 @@ export default function EmployeeBookingsPage() {
           setActiveTab("in-progress");
         } else if (dialogConfig.action === "start") {
           setActiveTab("started");
-        } else if (dialogConfig.action === "complete") {
-          setActiveTab("prev");
         }
       } else {
         toast.error(data.message || "Action failed");

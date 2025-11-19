@@ -44,14 +44,16 @@ export async function POST(request: NextRequest) {
             }, { status: 400 });
         }
 
-        // Update booking with payment details
+        // Update booking with payment details and auto-complete
         const booking = await Booking.findOneAndUpdate(
             { orderid: razorpay_order_id },
             {
                 paymentStatus: "paid",
                 paymentid: razorpay_payment_id,
-                isActive: true
-                // Don't set status to completed or isDone - employee needs to mark completion
+                status: "completed",
+                isDone: true,
+                isActive: false,
+                renderPaymentButton: false
             },
             { new: true }
         ).populate("categoryid").populate("userid");
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
         
 
         return NextResponse.json({
-            message: "Payment verified successfully!",
+            message: "Payment verified successfully! Service marked as completed.",
             success: true,
             booking: booking
         }, { status: 200 });

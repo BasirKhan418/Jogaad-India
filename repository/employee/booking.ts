@@ -81,12 +81,13 @@ export const TakePaymentForBooking = async (bookingId: string, amount: number) =
         const updatebooking = await Booking.findByIdAndUpdate(bookingId, {
             orderid: paymentResult.order.id, 
             bookingAmount: amount,
-            paymentStatus: "pending"
+            paymentStatus: "pending",
+            renderPaymentButton: true  // Show Pay Now button to user
         }, {new: true})
         .populate('userid')
         .populate('categoryid');
         
-        return {message:"Payment order created and booking updated", success:true, data: updatebooking};
+        return {message:"Payment request sent to customer", success:true, data: updatebooking};
     }
     catch(error){
         console.error("TakePaymentForBooking error:", error);

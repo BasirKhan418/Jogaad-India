@@ -17,8 +17,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BikeAnimation } from "./BikeAnimation";
-import { RatingDialog } from "./RatingDialog";
-import { CancelBookingDialog } from "./CancelBookingDialog";
 
 
 const formatDistanceToNow = (date: Date): string => {
@@ -82,17 +80,18 @@ interface BookingCardProps {
   booking: Booking;
   onPayNow: (booking: Booking) => void;
   onRefresh: () => void;
+  onRate?: (booking: Booking) => void;
+  onCancel?: (booking: Booking) => void;
 }
 
 
 export const BookingCard: React.FC<BookingCardProps> = ({
   booking,
   onPayNow,
-  onRefresh
+  onRefresh,
+  onRate,
+  onCancel
 }) => {
-  const [cancelling, setCancelling] = useState(false);
-  const [isRatingOpen, setIsRatingOpen] = useState(false);
-  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   // Calculate expiry time once using useMemo
   const paymentExpiry = useMemo(() => {
@@ -180,34 +179,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
   // Handle cancel booking
   const handleCancel = () => {
-    setIsCancelDialogOpen(true);
-  };
-
-  const confirmCancel = async () => {
-    setCancelling(true);
-    try {
-      const response = await fetch("/api/v1/user/cancelbooking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ id: booking._id })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success("Booking cancelled successfully");
-        onRefresh();
-        setIsCancelDialogOpen(false);
-      } else {
-        toast.error(data.message || "Failed to cancel booking");
-      }
-    } catch (error) {
-      console.error("Error cancelling booking:", error);
-      toast.error("Failed to cancel booking");
-    } finally {
-      setCancelling(false);
-    }
+    onCancel?.(booking);
   };
 
   return (
@@ -333,6 +305,22 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           </motion.div>
         )}
 
+        {/* Service Payment Request */}
+        {booking.status === "started" && booking.renderPaymentButton && booking.paymentStatus === "pending" && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-lg p-2 md:p-3 flex items-start gap-2"
+          >
+            <IndianRupee className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-green-800 flex-1">
+              <p className="font-semibold">Service Provider requested payment</p>
+              <p className="font-bold text-sm md:text-base mt-0.5">Amount: ₹{booking.bookingAmount || 0}</p>
+              <p className="text-xs mt-1 opacity-80">Complete payment to finish the service</p>
+            </div>
+          </motion.div>
+        )}
+
         {/* Expired Warning */}
         {booking.status === "pending" && isPaymentExpired && (
           <motion.div
@@ -350,13 +338,25 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-2 pt-2">
+          {/* Initial booking payment */}
           {booking.status === "pending" && !isPaymentExpired && (
             <Button
               onClick={() => onPayNow(booking)}
               className="flex-1 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] hover:from-[#0A3D62] hover:to-[#2B9EB3] text-white font-semibold shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
             >
               <IndianRupee className="w-4 h-4 mr-1" />
-              Pay Now
+              Pay Booking Fee
+            </Button>
+          )}
+
+          {/* Service completion payment */}
+          {booking.status === "started" && booking.renderPaymentButton && booking.paymentStatus === "pending" && (
+            <Button
+              onClick={() => onPayNow(booking)}
+              className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
+            >
+              <IndianRupee className="w-4 h-4 mr-1" />
+              Pay Now (₹{booking.bookingAmount || 0})
             </Button>
           )}
 
@@ -365,9 +365,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               onClick={handleCancel}
               variant="outline"
               className="flex-1 border-red-300 text-red-600 hover:bg-red-50 font-semibold text-sm md:text-base"
-              disabled={cancelling}
             >
-              {cancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cancel"}
+              Cancel
             </Button>
           )}
 
@@ -384,7 +383,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               </div>
               {!booking.isRated && (
                 <Button 
-                  onClick={() => setIsRatingOpen(true)}
+                  onClick={() => onRate?.(booking)}
                   variant="outline"
                   className="w-full border-yellow-400 text-yellow-600 hover:bg-yellow-50"
                 >
@@ -432,19 +431,6 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         </div>
       </div>
 
-      <RatingDialog 
-        open={isRatingOpen} 
-        onOpenChange={setIsRatingOpen}
-        bookingId={booking._id}
-        onSuccess={onRefresh}
-      />
-
-      <CancelBookingDialog 
-        open={isCancelDialogOpen} 
-        onOpenChange={setIsCancelDialogOpen}
-        onConfirm={confirmCancel}
-        loading={cancelling}
-      />
     </motion.div>
   );
 };
