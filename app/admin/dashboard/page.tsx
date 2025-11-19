@@ -16,6 +16,7 @@ import {
   IconChartBar,
   IconUser,
   IconSettings,
+  IconCurrencyRupee,
 } from "@tabler/icons-react";
 import { AdminData } from "@/utils/admin/adminAuthService";
 import { getUserInitials } from "@/utils/auth";
@@ -217,7 +218,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
             title="Pending Payments" 
             value={statsLoading ? "..." : (stats?.employees.pending.toString() || "0")}
             subtitle={statsLoading ? "Loading..." : "Employees unpaid"}
-            icon={<IconCurrencyDollar className="h-8 w-8 text-orange-500" />}
+            icon={<IconCurrencyRupee className="h-8 w-8 text-orange-500" />}
             gradient="from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20"
             border="border-orange-200 dark:border-orange-700"
           />
@@ -225,7 +226,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
             title="Employee Fee" 
             value={statsLoading ? "..." : `₹${stats?.fees.employeeFee || 0}`}
             subtitle={statsLoading ? "Loading..." : "Current rate"}
-            icon={<IconCurrencyDollar className="h-8 w-8 text-yellow-500" />}
+            icon={<IconCurrencyRupee className="h-8 w-8 text-yellow-500" />}
             gradient="from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20"
             border="border-yellow-200 dark:border-yellow-700"
           />
@@ -299,7 +300,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
             >
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="p-4 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <IconCurrencyDollar className="h-8 w-8" />
+                  <IconCurrencyRupee className="h-8 w-8" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-orange-800 dark:text-orange-100 mb-2">Manage Fees</h3>

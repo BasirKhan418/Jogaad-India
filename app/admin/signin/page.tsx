@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Toaster } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -84,13 +83,6 @@ export default function AdminSigninPage() {
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(10, 61, 98) 1px, transparent 0)`,
         backgroundSize: '50px 50px'
       }} />
-      
-      <Toaster 
-        position="top-center"
-        richColors
-        closeButton
-        duration={4000}
-      />
       
       {/* Main Card with improved styling */}
       <div className="relative z-20 mx-auto w-full max-w-md">
