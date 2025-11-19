@@ -29,7 +29,8 @@ import {
   AlertCircle,
   Loader2,
   Target,
-  Calendar
+  Calendar,
+  Search
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -125,6 +126,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
   const [analyticsFieldExec, setAnalyticsFieldExec] = React.useState<FieldExecutive | null>(null);
   const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive'>('all');
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const handleCreateSuccess = () => {
     refetch();
@@ -148,19 +150,35 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
   };
 
   const filteredFieldExecutives = React.useMemo(() => {
+    let result = fieldExecutives;
+
+    // Filter by status
     if (filter === 'active') {
-      return fieldExecutives.filter(fe => fe.isActive);
+      result = result.filter(fe => fe.isActive);
     } else if (filter === 'inactive') {
-      return fieldExecutives.filter(fe => !fe.isActive);
+      result = result.filter(fe => !fe.isActive);
     }
-    return fieldExecutives;
-  }, [fieldExecutives, filter]);
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(fe => 
+        fe.name.toLowerCase().includes(query) || 
+        fe.email.toLowerCase().includes(query) ||
+        (fe.phone && fe.phone.includes(query)) ||
+        (fe.block && fe.block.toLowerCase().includes(query))
+      );
+    }
+
+    return result;
+  }, [fieldExecutives, filter, searchQuery]);
 
   const exportToExcel = async (dataToExport: FieldExecutive[], fileName: string) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Employees");
     
     worksheet.columns = [
+      { header: "S.No.", key: "s_no", width: 10 },
       { header: "Name", key: "name", width: 20 },
       { header: "Email", key: "email", width: 30 },
       { header: "Phone", key: "phone", width: 15 },
@@ -172,8 +190,9 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
       { header: "Target Date", key: "targetDate", width: 20 },
     ];
 
-    dataToExport.forEach((item) => {
+    dataToExport.forEach((item, index) => {
       worksheet.addRow({
+        s_no: index + 1,
         name: item.name,
         email: item.email,
         phone: item.phone,
@@ -269,51 +288,66 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
           />
         </div>
 
-        {/* Tabs and Export */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-          <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-            <button
-              onClick={() => setFilter('all')}
-              className={cn(
-                "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                filter === 'all'
-                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
-                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
-              )}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter('active')}
-              className={cn(
-                "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                filter === 'active'
-                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
-                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
-              )}
-            >
-              Active
-            </button>
-            <button
-              onClick={() => setFilter('inactive')}
-              className={cn(
-                "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                filter === 'inactive'
-                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
-                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
-              )}
-            >
-              Inactive
-            </button>
-          </div>
+        {/* Tabs, Search and Export */}
+        <div className="flex flex-col space-y-4 mb-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+              <button
+                onClick={() => setFilter('all')}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'all'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setFilter('active')}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'active'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => setFilter('inactive')}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'inactive'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                Inactive
+              </button>
+            </div>
 
-          <button
-            onClick={() => exportToExcel(filteredFieldExecutives, `employees-${filter}`)}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
-          >
-            <IconCheck className="h-4 w-4" />
-            Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
-          </button>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <div className="relative flex-1 md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <input
+                  type="text"
+                  placeholder="Search executives..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm focus:ring-2 focus:ring-[#2B9EB3] outline-none transition-all"
+                />
+              </div>
+
+              <button
+                onClick={() => exportToExcel(filteredFieldExecutives, `field-executives-${filter}`)}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium whitespace-nowrap"
+              >
+                <IconUsers className="h-4 w-4" />
+                Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Employees List */}

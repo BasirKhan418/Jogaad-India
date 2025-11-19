@@ -33,6 +33,7 @@ import { Category } from "@/utils/admin/categoryService";
 import Image from "next/image";
 import { saveAs } from 'file-saver';
 import ExcelJS from 'exceljs';
+import { Search } from "lucide-react";
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -114,6 +115,7 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
   const [viewCategory, setViewCategory] = React.useState<Category | null>(null);
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive'>('all');
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const onDelete = async (categoryId: string) => {
     const success = await handleDelete(categoryId);
@@ -123,19 +125,34 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
   };
 
   const filteredCategories = React.useMemo(() => {
+    let result = categories;
+
+    // Filter by status
     if (filter === 'active') {
-      return categories.filter(cat => cat.categoryStatus);
+      result = result.filter(cat => cat.categoryStatus);
     } else if (filter === 'inactive') {
-      return categories.filter(cat => !cat.categoryStatus);
+      result = result.filter(cat => !cat.categoryStatus);
     }
-    return categories;
-  }, [categories, filter]);
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(cat => 
+        cat.categoryName.toLowerCase().includes(query) || 
+        (cat.categoryDescription && cat.categoryDescription.toLowerCase().includes(query)) ||
+        cat.categoryType.toLowerCase().includes(query)
+      );
+    }
+
+    return result;
+  }, [categories, filter, searchQuery]);
 
   const exportToExcel = async (dataToExport: Category[], fileName: string) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Categories");
     
     worksheet.columns = [
+      { header: "S.No.", key: "s_no", width: 10 },
       { header: "Category Name", key: "categoryName", width: 25 },
       { header: "Type", key: "categoryType", width: 15 },
       { header: "Description", key: "categoryDescription", width: 30 },
@@ -147,8 +164,9 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
       { header: "Created At", key: "createdAt", width: 20 },
     ];
 
-    dataToExport.forEach((item) => {
+    dataToExport.forEach((item, index) => {
       worksheet.addRow({
+        s_no: index + 1,
         categoryName: item.categoryName,
         categoryType: item.categoryType,
         categoryDescription: item.categoryDescription || 'N/A',
@@ -293,52 +311,67 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
           </div>
         </div>
 
-        {/* Tabs and Export */}
+        {/* Tabs, Search and Export */}
         <div className="mt-4">
-          <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-            <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-              <button
-                onClick={() => setFilter('all')}
-                className={cn(
-                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                  filter === 'all'
-                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
-                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
-                )}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setFilter('active')}
-                className={cn(
-                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                  filter === 'active'
-                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
-                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
-                )}
-              >
-                Active
-              </button>
-              <button
-                onClick={() => setFilter('inactive')}
-                className={cn(
-                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                  filter === 'inactive'
-                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
-                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
-                )}
-              >
-                Inactive
-              </button>
-            </div>
+          <div className="flex flex-col space-y-4 mb-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+                <button
+                  onClick={() => setFilter('all')}
+                  className={cn(
+                    "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                    filter === 'all'
+                      ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                  )}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setFilter('active')}
+                  className={cn(
+                    "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                    filter === 'active'
+                      ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                  )}
+                >
+                  Active
+                </button>
+                <button
+                  onClick={() => setFilter('inactive')}
+                  className={cn(
+                    "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                    filter === 'inactive'
+                      ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                  )}
+                >
+                  Inactive
+                </button>
+              </div>
 
-            <button
-              onClick={() => exportToExcel(filteredCategories, `categories-${filter}`)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
-            >
-              <IconChartBar className="h-4 w-4" />
-              Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
-            </button>
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <div className="relative flex-1 md:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm focus:ring-2 focus:ring-[#2B9EB3] outline-none transition-all"
+                  />
+                </div>
+
+                <button
+                  onClick={() => exportToExcel(filteredCategories, `categories-${filter}`)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium whitespace-nowrap"
+                >
+                  <IconChartBar className="h-4 w-4" />
+                  Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
+                </button>
+              </div>
+            </div>
           </div>
 
           <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">

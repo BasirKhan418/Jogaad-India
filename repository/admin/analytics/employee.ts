@@ -1,6 +1,7 @@
 import ConnectDb from "@/middleware/connectDb";
 import Booking from "@/models/Booking";
 import Employee from "@/models/Employee";
+import Category from "@/models/Category";
 
 export const getallEmployeesAnalytics = async () => {
   try {
@@ -26,7 +27,7 @@ export const getallEmployeesAnalytics = async () => {
 
       return {
         ...emp.toObject(),
-        categoryName: emp.categoryid?.name || null,
+        categoryName: emp.categoryid?.categoryName || null,
         totalEarnings,
         youEarn,
         bookingsCount: empBookings.length,
@@ -82,7 +83,7 @@ export const getallEmployeesAnalyticsByDateRange = async (
 
       return {
         ...emp.toObject(),
-        categoryName: emp.categoryid?.name || null,
+        categoryName: emp.categoryid?.categoryName || null,
         totalEarnings,
         youEarn,
         bookingsCount: empBookings.length,
