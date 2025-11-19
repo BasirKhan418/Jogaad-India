@@ -113,6 +113,39 @@ export default function EmployeeProfile() {
     }
   };
 
+  // Handle availability toggle - immediate update without save button
+  const handleAvailabilityToggle = async () => {
+    const newStatus = !formData.isActive;
+    
+    // Optimistically update UI
+    setFormData(prev => ({ ...prev, isActive: newStatus }));
+    
+    try {
+      const response = await fetch('/api/v1/emp/update-availability', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ isActive: newStatus }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(newStatus ? 'You are now available for bookings' : 'You are now unavailable for bookings');
+      } else {
+        // Revert on failure
+        setFormData(prev => ({ ...prev, isActive: !newStatus }));
+        toast.error(data.message || 'Failed to update availability');
+      }
+    } catch (error) {
+      // Revert on error
+      setFormData(prev => ({ ...prev, isActive: !newStatus }));
+      toast.error('Failed to update availability. Please try again.');
+    }
+  };
+
   // Debug: track pincode field changes live
   React.useEffect(() => {
     if (formData.pincode !== undefined) {
@@ -509,7 +542,7 @@ export default function EmployeeProfile() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, isActive: !prev.isActive }))}
+                        onClick={handleAvailabilityToggle}
                         className={cn(
                           "relative inline-flex h-7 w-12 md:h-8 md:w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2",
                           formData.isActive 

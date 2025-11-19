@@ -8,10 +8,11 @@ const calculateEmployeeStats = (bookings: any[]) => {
   const totalBookings = bookings.length;
   const completedBookings = bookings.filter(b => b.status === "completed");
 
+  // Only count bookingAmount (service payment from "Take Payment" option)
+  // Do not include intialamount as that goes to platform
   const totalEarnings = completedBookings.reduce((sum, b) => {
-    const initial = b.intialamount || 0;
-    const final = b.bookingAmount || 0;
-    return sum + initial + final;
+    const servicePayment = b.bookingAmount || 0;
+    return sum + servicePayment;
   }, 0);
 
   const reviews = completedBookings.filter(b => b.rating !== undefined);
@@ -43,7 +44,9 @@ export const getEmployeeAnalytics = async (employeeId: string) => {
     await ConnectDb();
      const findSchedules = await Schedule.find({ employeeid: employeeId });
      console.log("Schedules found:", findSchedules.length);
-    const bookings = await Booking.find({ employeeid: employeeId });
+    const bookings = await Booking.find({ employeeid: employeeId })
+      .populate('categoryid', 'categoryName categoryType')
+      .populate('userid', 'name email address pincode phone');
 
     const stats = calculateEmployeeStats(bookings);
     const newstats = { ...stats, pendings: findSchedules.length ,totalBookings: stats.totalBookings + findSchedules.length};

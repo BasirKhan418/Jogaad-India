@@ -314,7 +314,7 @@ const JobInsights = ({ stats, loading }: { stats: JobStats; loading: boolean }) 
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         {/* Total Jobs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -393,6 +393,22 @@ const JobInsights = ({ stats, loading }: { stats: JobStats; loading: boolean }) 
           </div>
           <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">Completed</h3>
           <p className="text-2xl md:text-3xl font-bold text-emerald-700">{stats.completed}</p>
+        </motion.div>
+
+        {/* My Earnings */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-2xl p-4 md:p-5 border border-purple-500/20 hover:shadow-lg transition-shadow"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="p-2 bg-purple-500 rounded-xl">
+              <IndianRupee className="w-5 h-5 text-white" />
+            </div>
+          </div>
+          <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">My Earnings</h3>
+          <p className="text-xl md:text-2xl font-bold text-purple-700">₹{stats.totalEarnings.toLocaleString()}</p>
         </motion.div>
       </div>
 
@@ -493,9 +509,15 @@ const RecentBookings = ({ bookings, loading }: { bookings: any[]; loading: boole
                   {booking.status}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Amount:</span>
-                <span className="text-lg font-bold text-[#2B9EB3]">₹{booking.intialamount}</span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-600">Customer:</span>
+                  <span className="font-medium text-slate-700">{booking.userid?.name || "N/A"}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-600">Location:</span>
+                  <span className="font-medium text-slate-700">{booking.userid?.pincode || "N/A"}</span>
+                </div>
               </div>
             </motion.div>
           ))}
