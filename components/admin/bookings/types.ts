@@ -55,5 +55,6 @@ export interface Schedule {
   _id: string;
   bookingid: string;
   employeeid: Employee;
+  isAccepted: boolean;
   createdAt: string;
 }

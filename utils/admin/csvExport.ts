@@ -65,25 +65,50 @@ export function generateCSV<T>(items: T[], fields: CSVField<T>[]): string {
 export function downloadCSV(csvContent: string, filename: string): void {
   try {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
     
-    if (!link.download) {
-      throw new Error("Browser does not support file downloads");
+    // Check for IE/Edge legacy support
+    if (typeof window !== "undefined" && window.navigator && (window.navigator as any).msSaveBlob) {
+      (window.navigator as any).msSaveBlob(blob, filename);
+      return;
     }
-
+    
+    // Create download link
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename);
-    link.style.visibility = "hidden";
     
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Check if download attribute is supported
+    if (typeof link.download !== "undefined") {
+      // Modern browsers with download support
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      link.style.visibility = "hidden";
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // Fallback for older browsers - open in new tab
+      const newWindow = window.open(url, "_blank");
+      if (!newWindow) {
+        // If popup blocked, try data URL method
+        const dataUrl = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+        window.location.href = dataUrl;
+      }
+    }
     
-    URL.revokeObjectURL(url);
+    // Clean up the URL object after a delay
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   } catch (error) {
     console.error("Failed to download CSV:", error);
-    throw new Error("Failed to download CSV file");
+    // Final fallback: copy to clipboard and notify user
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(csvContent);
+        throw new Error("File download not supported. CSV data has been copied to clipboard.");
+      }
+    } catch (clipboardError) {
+      throw new Error("Unable to download file or copy to clipboard. Please try using a modern browser.");
+    }
   }
 }
 

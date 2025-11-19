@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScheduleDialog } from "./ScheduleDialog";
 import { BookingDetailsDialog } from "./BookingDetailsDialog";
+import { ScheduleDetailsModal } from "./ScheduleDetailsModal";
 import { ExportButton } from "./ExportButton";
 import { LoadingState, EmptyState } from "./TableStates";
 import { Booking, Schedule } from "./types";
@@ -21,10 +22,19 @@ export const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, loading,
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [selectedDetailBooking, setSelectedDetailBooking] = useState<Booking | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [scheduleMode, setScheduleMode] = useState<'schedule' | 'reassign'>('schedule');
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+  const [isScheduleDetailsOpen, setIsScheduleDetailsOpen] = useState(false);
 
-  const handleSchedule = (booking: Booking) => {
+  const handleSchedule = (booking: Booking, mode: 'schedule' | 'reassign' = 'schedule') => {
     setSelectedBooking(booking);
+    setScheduleMode(mode);
     setIsScheduleOpen(true);
+  };
+
+  const handleViewScheduleDetails = (schedule: Schedule) => {
+    setSelectedSchedule(schedule);
+    setIsScheduleDetailsOpen(true);
   };
 
   const handleViewDetails = (booking: Booking) => {
@@ -130,15 +140,37 @@ export const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, loading,
                           if (schedule) {
                             return (
                               <div className="flex flex-col items-end gap-1">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 p-1">
                                   {schedule.employeeid?.img && (
                                     <img src={schedule.employeeid.img} alt={schedule.employeeid.name} className="w-6 h-6 rounded-full object-cover" />
                                   )}
-                                  <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{schedule.employeeid?.name}</span>
+                                  <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {schedule.employeeid?.name}
+                                  </span>
                                 </div>
                                 <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                   {Math.floor((new Date().getTime() - new Date(schedule.createdAt).getTime()) / 60000)} mins ago
                                 </span>
+                                <div className="flex gap-2 mt-1">
+                                  <Button 
+                                    size="sm" 
+                                    variant="secondary" 
+                                    className="h-7 text-xs"
+                                    onClick={() => handleViewScheduleDetails(schedule)}
+                                  >
+                                    View Details
+                                  </Button>
+                                  {!schedule.isAccepted && (
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline" 
+                                      className="h-7 text-xs"
+                                      onClick={() => handleSchedule(booking, 'reassign')}
+                                    >
+                                      Reassign
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
                             );
                           }
@@ -163,6 +195,7 @@ export const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, loading,
         open={isScheduleOpen} 
         onOpenChange={setIsScheduleOpen}
         booking={selectedBooking}
+        mode={scheduleMode}
         onSuccess={() => {
           setIsScheduleOpen(false);
           onRefresh();
@@ -173,6 +206,18 @@ export const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, loading,
         open={isDetailsOpen}
         onOpenChange={setIsDetailsOpen}
         booking={selectedDetailBooking}
+      />
+
+      <ScheduleDetailsModal 
+        open={isScheduleDetailsOpen}
+        onOpenChange={setIsScheduleDetailsOpen}
+        schedule={selectedSchedule}
+        onReassign={() => {
+          const booking = bookings.find(b => b._id === selectedSchedule?.bookingid);
+          if (booking) {
+            handleSchedule(booking, 'reassign');
+          }
+        }}
       />
     </>
   );

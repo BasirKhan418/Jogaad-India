@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
 import AdminCreateModal from "@/components/admin/AdminCreateModal";
+import { DeleteAdminModal } from "@/components/admin/DeleteAdminModal";
 import { motion } from "framer-motion";
-import { UserPlus, Shield, Mail, Phone, Calendar, Loader2 } from "lucide-react";
+import { UserPlus, Shield, Mail, Phone, Calendar, Loader2, Trash2, MoreVertical } from "lucide-react";
 import { getUserInitials } from "@/utils/auth";
 
 interface Admin {
@@ -30,6 +31,8 @@ export default function ManageAdminsPage() {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [adminsLoading, setAdminsLoading] = useState(true);
   const [adminsError, setAdminsError] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState<Admin | null>(null);
 
   // Fetch all admins
   const fetchAdmins = async () => {
@@ -63,6 +66,16 @@ export default function ManageAdminsPage() {
 
   const handleModalSuccess = () => {
     fetchAdmins();
+  };
+
+  const handleDeleteAdmin = (admin: Admin) => {
+    setAdminToDelete(admin);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteSuccess = () => {
+    fetchAdmins();
+    setAdminToDelete(null);
   };
 
   if (loading) {
@@ -232,8 +245,28 @@ export default function ManageAdminsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="rounded-xl p-6 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:shadow-lg transition-all duration-300"
+                    className="rounded-xl p-6 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:shadow-lg transition-all duration-300 relative group"
                   >
+                    {/* Delete Button - Only show for other admins */}
+                    {adminData && admin._id !== adminData._id ? (
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleDeleteAdmin(admin)}
+                          className="p-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-700 hover:border-red-300 dark:hover:border-red-600 transition-all duration-200"
+                          title="Delete Admin"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </motion.button>
+                      </div>
+                    ) : (
+                      <div className="absolute top-4 right-4">
+                        <span className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full">
+                          You
+                        </span>
+                      </div>
+                    )}
                     {/* Admin Avatar */}
                     <div className="flex items-start gap-4 mb-4">
                       <div className="relative">
@@ -295,6 +328,19 @@ export default function ManageAdminsPage() {
           </div>
         </div>
       </div>
+
+      <AdminCreateModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleModalSuccess}
+      />
+      
+      <DeleteAdminModal
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        admin={adminToDelete}
+        onSuccess={handleDeleteSuccess}
+      />
     </div>
   );
 }

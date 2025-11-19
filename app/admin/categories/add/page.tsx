@@ -20,7 +20,7 @@ import {
   IconPhoto
 } from "@tabler/icons-react";
 import { AdminData } from "@/utils/admin/adminAuthService";
-import { createCategory } from "@/utils/admin/adminApiService";
+import { createCategory, uploadFile } from "@/utils/admin/adminApiService";
 import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -87,6 +87,9 @@ export default function AddCategoryPage() {
   const { open, setOpen } = useAdminSidebar();
   const { links, logoutLink } = useAdminNavigation();
   const [submitting, setSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
 
   const [formData, setFormData] = useState<CategoryFormData>({
     categoryName: '',
@@ -145,6 +148,27 @@ export default function AddCategoryPage() {
     return true;
   };
 
+  const handleImageUpload = async (file: File): Promise<string | null> => {
+    setImageUploading(true);
+    try {
+      const result = await uploadFile(file);
+      
+      if (result.success && result.data?.fileUrl) {
+        toast.success('Image uploaded successfully!');
+        return result.data.fileUrl;
+      } else {
+        toast.error(result.message || 'Failed to upload image');
+        return null;
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      toast.error('Error uploading image. Please try again.');
+      return null;
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -153,6 +177,18 @@ export default function AddCategoryPage() {
     setSubmitting(true);
     
     try {
+      let imageUrl = formData.img;
+      
+      // Upload image first if a new file is selected
+      if (imageFile) {
+        const uploadedUrl = await handleImageUpload(imageFile);
+        if (!uploadedUrl) {
+          setSubmitting(false);
+          return;
+        }
+        imageUrl = uploadedUrl;
+      }
+      
       // Filter and type-safe the data for API call
       const submitData = {
         categoryName: formData.categoryName,
@@ -163,7 +199,7 @@ export default function AddCategoryPage() {
         categoryMinPrice: formData.categoryMinPrice || undefined,
         categoryMaxPrice: formData.categoryMaxPrice || undefined,
         categoryStatus: formData.categoryStatus,
-        img: formData.img?.trim() || undefined
+        img: imageUrl?.trim() || undefined
       };
 
       const result = await createCategory(submitData);
@@ -182,6 +218,8 @@ export default function AddCategoryPage() {
           categoryStatus: true,
           img: ''
         });
+        setImageFile(null);
+        setImagePreviewUrl('');
        
       } else {
         toast.error(result.message || 'Failed to create category');
@@ -558,15 +596,30 @@ export default function AddCategoryPage() {
                         onChange={(files) => {
                           if (files.length > 0) {
                             const file = files[0];
+                            
+                            // Validate file type and size
+                            if (!file.type.startsWith('image/')) {
+                              toast.error('Please select a valid image file');
+                              return;
+                            }
+                            
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error('Image size should be less than 5MB');
+                              return;
+                            }
+                            
+                            // Create preview URL and store file
                             const previewUrl = URL.createObjectURL(file);
-                            setFormData(prev => ({ ...prev, img: previewUrl }));
-                            toast.success('Image uploaded successfully!');
+                            setImageFile(file);
+                            setImagePreviewUrl(previewUrl);
+                            setFormData(prev => ({ ...prev, img: '' })); // Clear any existing URL
+                            toast.success('Image selected successfully!');
                           }
                         }}
                       />
                     </div>
                     
-                    {formData.img && (
+                    {(imagePreviewUrl || formData.img) && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -575,25 +628,44 @@ export default function AddCategoryPage() {
                         <div className="flex items-center gap-3">
                           <div className="relative">
                             <img
-                              src={formData.img}
+                              src={imagePreviewUrl || formData.img}
                               alt="Category preview"
                               className="w-16 h-16 object-cover rounded-lg border border-neutral-200 dark:border-neutral-600"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).style.display = 'none';
                               }}
                             />
-                            <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-0.5">
-                              <IconCheck className="h-2.5 w-2.5" />
+                            <div className={`absolute -top-1 -right-1 rounded-full p-0.5 ${
+                              imageUploading ? 'bg-yellow-500' : 'bg-green-500'
+                            } text-white`}>
+                              {imageUploading ? (
+                                <svg className="h-2.5 w-2.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                              ) : (
+                                <IconCheck className="h-2.5 w-2.5" />
+                              )}
                             </div>
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Image Preview</p>
-                            <p className="text-xs text-neutral-500 dark:text-neutral-400">Category image uploaded successfully</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                              {imageUploading ? 'Uploading image...' : 
+                               imageFile ? 'Ready to upload' : 'Category image uploaded successfully'}
+                            </p>
                           </div>
                           <button
                             type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, img: '' }))}
-                            className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            onClick={() => {
+                              setFormData(prev => ({ ...prev, img: '' }));
+                              setImageFile(null);
+                              setImagePreviewUrl('');
+                              if (imagePreviewUrl) {
+                                URL.revokeObjectURL(imagePreviewUrl);
+                              }
+                            }}
+                            disabled={imageUploading}
+                            className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <IconX className="h-3.5 w-3.5" />
                           </button>

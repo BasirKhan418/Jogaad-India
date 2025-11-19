@@ -18,10 +18,11 @@ interface ScheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   booking: Booking | null;
+  mode?: 'schedule' | 'reassign';
   onSuccess: () => void;
 }
 
-export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChange, booking, onSuccess }) => {
+export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChange, booking, mode = 'schedule', onSuccess }) => {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
@@ -91,7 +92,7 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChan
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Schedule Booking</DialogTitle>
+          <DialogTitle>{mode === 'reassign' ? 'Reassign Booking' : 'Schedule Booking'}</DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
