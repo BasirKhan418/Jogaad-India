@@ -23,6 +23,7 @@ import { getUserInitials } from "@/utils/auth";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
 import { useDashboardStats } from "@/utils/admin/useDashboardStats";
+import { useAnalytics } from "@/utils/admin/useAnalytics";
 
 interface DashboardSectionProps {
   title: string;
@@ -134,9 +135,12 @@ const LogoIcon = () => {
 const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
   const router = useRouter();
   const { stats, loading: statsLoading, error: statsError, refetch } = useDashboardStats();
+  const { analytics, loading: analyticsLoading, refetch: refetchAnalytics } = useAnalytics();
   const [employees, setEmployees] = React.useState<any[]>([]);
   const [fieldExecutives, setFieldExecutives] = React.useState<any[]>([]);
   const [recentEmployeesLoading, setRecentEmployeesLoading] = React.useState(false);
+  const [startDate, setStartDate] = React.useState<string>("");
+  const [endDate, setEndDate] = React.useState<string>("");
 
   React.useEffect(() => {
     const fetchRecentData = async () => {
@@ -215,21 +219,78 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
             border="border-purple-200 dark:border-purple-700"
           />
           <DashboardStatCard 
-            title="Pending Payments" 
-            value={statsLoading ? "..." : (stats?.employees.pending.toString() || "0")}
-            subtitle={statsLoading ? "Loading..." : "Service Providers unpaid"}
+            title="Booking Payments" 
+            value={analyticsLoading ? "..." : `₹${analytics?.totalEarnings || 0}`}
+            subtitle={analyticsLoading ? "Loading..." : "Total earnings from bookings"}
             icon={<IconCurrencyRupee className="h-8 w-8 text-orange-500" />}
             gradient="from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20"
             border="border-orange-200 dark:border-orange-700"
           />
           <DashboardStatCard 
-            title="Service Provider Fee" 
-            value={statsLoading ? "..." : `₹${stats?.fees.employeeFee || 0}`}
-            subtitle={statsLoading ? "Loading..." : "Current rate"}
+            title="Employee Fees" 
+            value={analyticsLoading ? "..." : `₹${analytics?.employeeFee || 0}`}
+            subtitle={analyticsLoading ? "Loading..." : "Total employee registration fees"}
             icon={<IconCurrencyRupee className="h-8 w-8 text-yellow-500" />}
             gradient="from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20"
             border="border-yellow-200 dark:border-yellow-700"
           />
+        </div>
+
+        {/* Analytics Date Filter */}
+        <div className="mb-8 p-6 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-700">
+          <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 mb-4">Filter Analytics by Date Range</h2>
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex gap-2">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  if (startDate && endDate) {
+                    refetchAnalytics(startDate, endDate);
+                  }
+                }}
+                disabled={!startDate || !endDate || analyticsLoading}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+              >
+                {analyticsLoading ? "Loading..." : "Apply Filter"}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                  refetchAnalytics();
+                }}
+                disabled={analyticsLoading}
+                className="px-6 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+              >
+                Clear
+              </motion.button>
+            </div>
+          </div>
         </div>
 
         {/* Quick Actions */}
@@ -371,16 +432,16 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
               </div>
             </DashboardContentCard>
 
-            {/* Payment Overview */}
-            <DashboardContentCard title="Payment Overview">
+            {/* Analytics Overview */}
+            <DashboardContentCard title="Analytics Overview">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Paid Service Providers</span>
-                  <span className="font-semibold text-green-600">{stats.employees.paid}</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Booking Payments</span>
+                  <span className="font-semibold text-green-600">₹{analytics?.totalEarnings || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Pending Payments</span>
-                  <span className="font-semibold text-orange-600">{stats.employees.pending}</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Employee Fees</span>
+                  <span className="font-semibold text-orange-600">₹{analytics?.employeeFee || 0}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
                   <span className="text-neutral-600 dark:text-neutral-400">User Fee</span>
@@ -391,11 +452,9 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                   <span className="font-semibold text-neutral-800 dark:text-neutral-100">₹{stats.fees.employeeFee}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
-                  <span className="text-neutral-600 dark:text-neutral-400">Payment Completion Rate</span>
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-100">
-                    {stats.employees.total > 0 
-                      ? Math.round((stats.employees.paid / stats.employees.total) * 100) 
-                      : 0}%
+                  <span className="text-neutral-600 dark:text-neutral-400">Total Revenue</span>
+                  <span className="font-semibold text-blue-600">
+                    ₹{((analytics?.totalEarnings || 0) + (analytics?.employeeFee || 0))}
                   </span>
                 </div>
               </div>

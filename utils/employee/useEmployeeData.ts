@@ -21,10 +21,20 @@ export interface Employee {
     _id: string;
     categoryName: string;
     categoryType: string;
+    categoryDescription?: string;
+    categoryUnit?: string;
+    recommendationPrice?: number;
+    categoryMinPrice?: number;
+    categoryMaxPrice?: number;
+    categoryStatus?: boolean;
+    img?: string;
   };
   payrate?: number;
   createdAt: string;
   updatedAt: string;
+  totalEarnings?: number;
+  youEarn?: number;
+  bookingsCount?: number;
 }
 
 export interface EmployeeStats {
@@ -40,7 +50,7 @@ interface UseEmployeeDataReturn {
   stats: EmployeeStats;
   loading: boolean;
   error: string | null;
-  refetch: () => Promise<void>;
+  refetch: (startDate?: string, endDate?: string) => Promise<void>;
   handleDelete: (email: string) => Promise<boolean>;
   deleting: string | null;
 }
@@ -52,7 +62,7 @@ export const useEmployeeData = (): UseEmployeeDataReturn => {
   const [deleting, setDeleting] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchEmployees = useCallback(async () => {
+  const fetchEmployees = useCallback(async (startDate?: string, endDate?: string) => {
     setLoading(true);
     setError(null);
 
@@ -63,7 +73,16 @@ export const useEmployeeData = (): UseEmployeeDataReturn => {
     abortControllerRef.current = new AbortController();
 
     try {
-      const response = await fetch('/api/v1/employees', {
+      let url = '/api/v1/admin/analytics/employee';
+      if (startDate && endDate) {
+        const params = new URLSearchParams({
+          startDate,
+          endDate,
+        });
+        url += `?${params.toString()}`;
+      }
+
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -74,8 +93,8 @@ export const useEmployeeData = (): UseEmployeeDataReturn => {
 
       const data = await response.json();
 
-      if (data.success) {
-        setEmployees(data.employees || []);
+      if (data.status) {
+        setEmployees(data.data || []);
       } else {
         setError(data.message || 'Failed to fetch employees');
         toast.error(data.message || 'Failed to fetch employees');

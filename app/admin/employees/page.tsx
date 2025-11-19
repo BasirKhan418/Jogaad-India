@@ -43,6 +43,8 @@ import { useEmployeeUpdate } from "@/utils/employee/useEmployeeUpdate";
 import { useEmployeeData, Employee } from "@/utils/employee/useEmployeeData";
 import { getUserInitials } from "@/utils/auth";
 import Image from "next/image";
+import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
 
 export default function EmployeesPage() {
   const router = useRouter();
@@ -123,7 +125,9 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
   const [viewEmployee, setViewEmployee] = React.useState<Employee | null>(null);
   const [editEmployee, setEditEmployee] = React.useState<Employee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
-  const [filter, setFilter] = React.useState<'all' | 'active' | 'pending'>('all');
+  const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive'>('all');
+  const [startDate, setStartDate] = React.useState("");
+  const [endDate, setEndDate] = React.useState("");
 
   const handleCloseCreateModal = React.useCallback(() => {
     setShowCreateModal(false);
@@ -163,8 +167,8 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
     setFilter('active');
   }, []);
 
-  const handleFilterPending = React.useCallback(() => {
-    setFilter('pending');
+  const handleFilterInactive = React.useCallback(() => {
+    setFilter('inactive');
   }, []);
 
   const handleFilterAll = React.useCallback(() => {
@@ -182,11 +186,81 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
   const filteredEmployees = React.useMemo(() => {
     if (filter === 'active') {
       return employees.filter(emp => emp.isActive);
-    } else if (filter === 'pending') {
-      return employees.filter(emp => !emp.isPaid);
+    } else if (filter === 'inactive') {
+      return employees.filter(emp => !emp.isActive);
     }
     return employees;
   }, [employees, filter]);
+
+  const exportToExcel = async (dataToExport: Employee[], fileName: string) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Employees");
+    
+    worksheet.columns = [
+      { header: "Name", key: "name", width: 20 },
+      { header: "Email", key: "email", width: 30 },
+      { header: "Category Name", key: "categoryName", width: 25 },
+      { header: "Employee Payment", key: "payrate", width: 20 },
+      { header: "Total Earnings", key: "totalEarnings", width: 20 },
+      { header: "You Earn", key: "youEarn", width: 15 },
+      { header: "Booking Count", key: "bookingsCount", width: 15 },
+      { header: "Status", key: "status", width: 15 },
+      { header: "Payment Status", key: "paymentStatus", width: 15 },
+    ];
+
+    dataToExport.forEach((item) => {
+      worksheet.addRow({
+        name: item.name,
+        email: item.email,
+        categoryName: item.categoryid?.categoryName || 'N/A',
+        payrate: item.payrate || 0,
+        totalEarnings: item.totalEarnings || 0,
+        youEarn: item.youEarn || 0,
+        bookingsCount: item.bookingsCount || 0,
+        status: item.isActive ? 'Active' : 'Inactive',
+        paymentStatus: item.isPaid ? 'Paid' : 'Pending',
+      });
+    });
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    const buf = await workbook.xlsx.writeBuffer();
+    toast.success("Exported to excel successfully");
+    saveAs(new Blob([buf]), `${fileName}.xlsx`);
+  };
+
+  const handleExportPayment = async () => {
+    if (!startDate || !endDate) {
+      toast.error("Please select both start and end dates");
+      return;
+    }
+    
+    try {
+      const params = new URLSearchParams({
+        startDate,
+        endDate,
+      });
+      
+      const response = await fetch(`/api/v1/admin/analytics/employee?${params.toString()}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      const result = await response.json();
+      
+      if (result.status && result.data) {
+        exportToExcel(result.data, `employee-payments-${startDate}-to-${endDate}`);
+      } else {
+        toast.error(result.message || "Failed to fetch data for export");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Error exporting data");
+    }
+  };
+
   
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -265,98 +339,92 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
           />
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            {/* Add New Service Provider */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleShowCreateModal}
-              className="cursor-pointer rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 p-8 border border-green-200 dark:border-green-700 hover:shadow-lg transition-all duration-300 group"
-            >
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className="p-4 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <IconUserPlus className="h-8 w-8" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-green-800 dark:text-green-100 mb-2">Add New Service Provider</h3>
-                  <p className="text-green-600 dark:text-green-300 text-sm">Create a new service provider account with category and pricing</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* View Active Employees */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleFilterActive}
-              className={cn(
-                "cursor-pointer rounded-xl bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 p-8 border hover:shadow-lg transition-all duration-300 group",
-                filter === 'active' 
-                  ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-500 dark:ring-blue-400 shadow-lg" 
-                  : "border-blue-200 dark:border-blue-700"
-              )}
-            >
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className="p-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <IconUserCheck className="h-8 w-8" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-blue-800 dark:text-blue-100 mb-2">Active Service Providers</h3>
-                  <p className="text-blue-600 dark:text-blue-300 text-sm">View all active service provider accounts and their details</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* View Pending Payments */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleFilterPending}
-              className={cn(
-                "cursor-pointer rounded-xl bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-900/20 dark:to-violet-900/20 p-8 border hover:shadow-lg transition-all duration-300 group",
-                filter === 'pending' 
-                  ? "border-purple-500 dark:border-purple-400 ring-2 ring-purple-500 dark:ring-purple-400 shadow-lg" 
-                  : "border-purple-200 dark:border-purple-700"
-              )}
-            >
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className="p-4 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <IconCurrencyDollar className="h-8 w-8" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-purple-800 dark:text-purple-100 mb-2">Pending Payments</h3>
-                  <p className="text-purple-600 dark:text-purple-300 text-sm">View service providers with pending payment verification</p>
-                </div>
-              </div>
-            </motion.div>
-
+        {/* Export Employee Payment */}
+        <div className="mb-8 p-6 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-700">
+          <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-100 mb-4">Export Employee Payment</h2>
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex gap-2">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleExportPayment}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 font-medium flex items-center gap-2"
+              >
+                <IconCurrencyDollar className="h-5 w-5" />
+                Export Payment
+              </motion.button>
+            </div>
           </div>
         </div>
 
-        {/* Recent Service Providers */}
+        {/* Service Providers List */}
         <div className="mt-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100">
-              {filter === 'all' ? 'All Service Providers' : filter === 'active' ? 'Active Service Providers' : 'Pending Payments'}
-              {filter !== 'all' && (
-                <span className="ml-2 text-sm font-normal text-neutral-600 dark:text-neutral-400">
-                  ({filteredEmployees.length} {filter === 'active' ? 'active' : 'pending'})
-                </span>
-              )}
-            </h2>
-            {filter !== 'all' && (
+          <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+            <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
               <button
                 onClick={handleFilterAll}
-                className="px-4 py-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-medium transition-colors flex items-center gap-2"
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'all'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
               >
-                <IconX className="h-4 w-4" />
-                Clear Filter
+                All
               </button>
-            )}
+              <button
+                onClick={handleFilterActive}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'active'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                Active
+              </button>
+              <button
+                onClick={handleFilterInactive}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'inactive'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                Inactive
+              </button>
+            </div>
+
+            <button
+              onClick={() => exportToExcel(filteredEmployees, `employees-${filter}`)}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
+            >
+              <IconCurrencyDollar className="h-4 w-4" />
+              Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
+            </button>
           </div>
           {employeeLoading ? (
             <div className="rounded-xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-8 border border-neutral-200 dark:border-neutral-700">
