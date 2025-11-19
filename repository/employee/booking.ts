@@ -5,7 +5,7 @@ import { CreateBookingRazorPay } from "@/utils/user/createBooking";
 export const AcceptScheduleForBooking = async (bookingId: string, employeeId: string) => {
     try{
         await ConnectDb();
-        const schedule = await Schedule.findOne({bookingid: bookingId, employeeid: employeeId});
+        const schedule = await Schedule.findOne({bookingid: bookingId});
         if(!schedule){
             return {message:"Schedule not found",success:false};
         }
