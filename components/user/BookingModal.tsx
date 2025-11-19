@@ -212,40 +212,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       image:"https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png",
       description: description,
       order_id: order.id,
-      handler: async function (response: any) {
-        try {
-          const verifyResponse = await fetch("/api/v1/user/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              email: userData?.email
-            })
-          });
-
-          const verifyData = await verifyResponse.json();
-
-          if (verifyData.success) {
-            toast.success("Payment successful! Booking confirmed.");
-            toast.info(
-              "A service engineer will visit your location soon to assess the work. Final payment will be calculated after service completion.",
-              { duration: 6000 }
-            );
-            setTimeout(() => {
-              setLoading(false);
-              onSuccess();
-            }, 1000);
-
-          } else {
-            toast.error(verifyData.message || "Payment verification failed");
-          }
-        } catch (error) {
-          console.error("Payment verification error:", error);
-          toast.error("Failed to verify payment");
-        }
+      handler: function (response: any) {
+        toast.success("Payment successful! Booking confirmed.");
+        toast.info(
+          "A service engineer will visit your location soon to assess the work. Final payment will be calculated after service completion.",
+          { duration: 6000 }
+        );
+        setLoading(false);
+        onSuccess();
       },
       prefill: {
         name: userData?.name || "",
