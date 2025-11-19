@@ -6,7 +6,7 @@ import { sendScheduletoEmployee } from "@/email/employee/schedule";
 export const fetchAllBookings = async () => {
     try{
         await ConnectDb();
-        const bookings = await Booking.find().populate("categoryid").populate("userid").populate("employeeid");
+        const bookings = await Booking.find({ intialPaymentStatus: "paid" }).populate("categoryid").populate("userid").populate("employeeid");
         return {message:"Bookings fetched successfully",success:true,data:bookings};
     }
     catch(error){
@@ -16,7 +16,7 @@ export const fetchAllBookings = async () => {
 export const fetchBookingsByStatus = async (status: string) => {
     try{
         await ConnectDb();
-        const bookings = await Booking.find({status}).populate("categoryid").populate("userid").populate("employeeid");
+        const bookings = await Booking.find({status, intialPaymentStatus: "paid"}).populate("categoryid").populate("userid").populate("employeeid");
         return {message:"Bookings fetched successfully",success:true,data:bookings};
     }
     catch(error){

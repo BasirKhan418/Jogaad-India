@@ -151,6 +151,13 @@ export const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, loading,
                                 <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                   {Math.floor((new Date().getTime() - new Date(schedule.createdAt).getTime()) / 60000)} mins ago
                                 </span>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                                  schedule.isAccepted 
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" 
+                                    : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                }`}>
+                                  {schedule.isAccepted ? "Accepted" : "Not Accepted Yet"}
+                                </span>
                                 <div className="flex gap-2 mt-1">
                                   <Button 
                                     size="sm" 
