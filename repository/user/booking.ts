@@ -122,3 +122,15 @@ export const updateBookingStatus = async (id: string, status: string, additional
         return { message: "Internal Server Error", success: false };
     }
 }
+
+export const cacncelBookingByUser = async (id: string) => {
+    try{
+        await ConnectDb();
+        const booking = await Booking.findByIdAndDelete(id);
+        return { message: "Booking cancelled by user successfully", success: true, data: booking };
+    }
+    catch(error){
+        return { message: "Internal Server Error", success: false };
+    }
+}
+    
