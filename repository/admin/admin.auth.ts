@@ -115,3 +115,18 @@ export const verifyOTP = async (email: string, otp: string) => {
         return {message:"Error verifying OTP",error,success:false};
     }
 }
+
+
+export const deleteAdminById = async (id: string) => {
+    try{
+        await ConnectDb();
+        const deletedAdmin = await Admin.findByIdAndDelete(id);
+        if(deletedAdmin){
+            return {message:"Admin deleted successfully",success:true};
+        }
+        return {message:"Admin not found",success:false};
+    }
+    catch(error){
+        return {message:"Error deleting admin",error,success:false};
+    }
+}
