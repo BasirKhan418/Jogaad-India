@@ -16,3 +16,15 @@ export const AcceptScheduleForBooking = async (bookingId: string, employeeId: st
         return {message:"Internal Server Error",success:false};
     }
 }
+
+export const chnageBookingStatusByEmployee = async (bookingId: string) => {
+    try{
+        await ConnectDb();
+        let booking =await Booking.findByIdAndUpdate(bookingId, {status: "started"}, {new: true});
+        return {message:"Booking status updated to started",success:true,data:booking};
+    }
+    catch(error){
+        return {message:"Internal Server Error",success:false};
+    }
+}
+    
