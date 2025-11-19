@@ -91,3 +91,29 @@ export const getEmployeeAnalyticsByDateRange = async (
     };
   }
 };
+
+
+export const getAllBookings = async (employeeId: string) => {
+    try{
+        await ConnectDb();
+        const bookings = await Booking.find({ employeeid: employeeId })
+            .populate('categoryid')
+            .populate('userid');
+        return {message:"Bookings fetched successfully",bookings,success:true};
+    }
+    catch(error){
+        return {message:"Internal Server Error",success:false};
+    }
+}
+
+export const getPendingSchedules = async (employeeId: string) => {
+    try{
+        await ConnectDb();
+        const schedules = await Schedule.find({ employeeid: employeeId })
+            .populate('bookingid');
+        return {message:"Schedules fetched successfully",schedules,success:true};
+    }
+    catch(error){
+        return {message:"Internal Server Error",success:false};
+    }
+}
