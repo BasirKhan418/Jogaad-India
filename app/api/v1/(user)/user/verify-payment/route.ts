@@ -3,7 +3,7 @@ import ConnectDb from "@/middleware/connectDb";
 import Booking from "@/models/Booking";
 import crypto from "crypto";
 import { sendBookingConfirmationEmail } from "@/email/user/sendWelcome";
-
+import { sendBookingConfirmationEmailAdmin } from "@/email/admin/newbooking";
 
 export async function POST(request: NextRequest) {
     try {
@@ -66,7 +66,13 @@ export async function POST(request: NextRequest) {
 
         // Send confirmation email to user
         console.log("Sending booking confirmation email to user: for booking", booking.userid.email);
-            await sendBookingConfirmationEmail({
+            sendBookingConfirmationEmail({
+                name: booking.userid.name,
+                email: booking.userid.email,
+                serviceName: booking.categoryid.categoryName
+            });
+        // Send notification email to admin
+         sendBookingConfirmationEmailAdmin({
                 name: booking.userid.name,
                 email: booking.userid.email,
                 serviceName: booking.categoryid.categoryName

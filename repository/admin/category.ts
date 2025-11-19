@@ -64,3 +64,4 @@ export const getCategoryById = async (id: string) => {
         return {message:"Error fetching category by id",error,success:false};
     }
 }
+
