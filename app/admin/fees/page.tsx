@@ -9,7 +9,7 @@ import {
   IconSettings,
   IconUsers,
   IconCategory,
-  IconCurrencyDollar,
+  IconCurrencyRupee,
   IconChartBar,
   IconLogout,
   IconDashboard,
@@ -18,7 +18,7 @@ import {
   IconLoader2,
   IconCash,
   IconBriefcase,
-  IconUserDollar,
+  IconCurrencyRupee as IconUserDollar,
   IconRefresh,
   IconInfoCircle,
 } from "@tabler/icons-react";

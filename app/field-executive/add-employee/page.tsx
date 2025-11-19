@@ -16,7 +16,7 @@ import {
   ArrowRight, 
   ArrowLeft,
   Briefcase,
-  DollarSign,
+  IndianRupee,
   Upload,
   CheckCircle2,
   UserPlus,
@@ -633,7 +633,7 @@ export default function FieldExecAddEmployeePage() {
 
                       <LabelInputContainer>
                         <Label htmlFor="payrate" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-xs sm:text-sm">
-                          <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <IndianRupee className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           Service Rate *
                         </Label>
                         <Input

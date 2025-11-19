@@ -10,7 +10,7 @@ import {
   IconSettings,
   IconUsers,
   IconCategory,
-  IconCurrencyDollar,
+  IconCurrencyRupee,
   IconChartBar,
   IconLogout,
   IconDashboard,
@@ -31,6 +31,8 @@ import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
 import { useCategoryData } from "@/utils/admin/useCategoryData";
 import { Category } from "@/utils/admin/categoryService";
 import Image from "next/image";
+import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -111,12 +113,61 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
   const [showMaintenanceModal, setShowMaintenanceModal] = React.useState(false);
   const [viewCategory, setViewCategory] = React.useState<Category | null>(null);
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
+  const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive'>('all');
 
   const onDelete = async (categoryId: string) => {
     const success = await handleDelete(categoryId);
     if (success) {
       setDeleteConfirm(null);
     }
+  };
+
+  const filteredCategories = React.useMemo(() => {
+    if (filter === 'active') {
+      return categories.filter(cat => cat.categoryStatus);
+    } else if (filter === 'inactive') {
+      return categories.filter(cat => !cat.categoryStatus);
+    }
+    return categories;
+  }, [categories, filter]);
+
+  const exportToExcel = async (dataToExport: Category[], fileName: string) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Categories");
+    
+    worksheet.columns = [
+      { header: "Category Name", key: "categoryName", width: 25 },
+      { header: "Type", key: "categoryType", width: 15 },
+      { header: "Description", key: "categoryDescription", width: 30 },
+      { header: "Unit", key: "categoryUnit", width: 15 },
+      { header: "Rec. Price", key: "recommendationPrice", width: 15 },
+      { header: "Min Price", key: "categoryMinPrice", width: 15 },
+      { header: "Max Price", key: "categoryMaxPrice", width: 15 },
+      { header: "Status", key: "categoryStatus", width: 15 },
+      { header: "Created At", key: "createdAt", width: 20 },
+    ];
+
+    dataToExport.forEach((item) => {
+      worksheet.addRow({
+        categoryName: item.categoryName,
+        categoryType: item.categoryType,
+        categoryDescription: item.categoryDescription || 'N/A',
+        categoryUnit: item.categoryUnit || 'N/A',
+        recommendationPrice: item.recommendationPrice || 0,
+        categoryMinPrice: item.categoryMinPrice || 0,
+        categoryMaxPrice: item.categoryMaxPrice || 0,
+        categoryStatus: item.categoryStatus ? 'Active' : 'Inactive',
+        createdAt: new Date(item.createdAt).toLocaleDateString(),
+      });
+    });
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    const buf = await workbook.xlsx.writeBuffer();
+    toast.success("Exported to excel successfully");
+    saveAs(new Blob([buf]), `${fileName}.xlsx`);
   };
   
   return (
@@ -242,24 +293,76 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Tabs and Export */}
         <div className="mt-4">
-          <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">Recent Activity</h2>
+          <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+            <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+              <button
+                onClick={() => setFilter('all')}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'all'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setFilter('active')}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'active'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => setFilter('inactive')}
+                className={cn(
+                  "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  filter === 'inactive'
+                    ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                )}
+              >
+                Inactive
+              </button>
+            </div>
+
+            <button
+              onClick={() => exportToExcel(filteredCategories, `categories-${filter}`)}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
+            >
+              <IconChartBar className="h-4 w-4" />
+              Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
+            </button>
+          </div>
+
+          <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">
+            {filter === 'all' ? 'All Categories' : filter === 'active' ? 'Active Categories' : 'Inactive Categories'}
+            <span className="ml-2 text-sm font-normal text-neutral-600 dark:text-neutral-400">
+              ({filteredCategories.length})
+            </span>
+          </h2>
+
           {categoryLoading ? (
             <div className="rounded-xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-8 border border-neutral-200 dark:border-neutral-700">
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2B9EB3]"></div>
-                <p className="text-neutral-600 dark:text-neutral-400">Loading recent activity...</p>
+                <p className="text-neutral-600 dark:text-neutral-400">Loading categories...</p>
               </div>
             </div>
-          ) : categories.length > 0 ? (
+          ) : filteredCategories.length > 0 ? (
             <div className="space-y-4">
-              {categories.slice(0, 5).map((category, index) => (
+              {filteredCategories.map((category, index) => (
                 <motion.div
                   key={category._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                   className="rounded-xl bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800 dark:to-neutral-900 p-6 border border-neutral-200 dark:border-neutral-700 hover:shadow-lg transition-all duration-300"
                 >
                   <div className="flex items-center justify-between">
@@ -296,6 +399,7 @@ const CategoriesContent = ({ adminData }: { adminData: AdminData | null }) => {
                         </p>
                       </div>
                     </div>
+
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setViewCategory(category)}

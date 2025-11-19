@@ -15,7 +15,7 @@ import {
   Briefcase, 
   TrendingUp, 
   Calendar, 
-  DollarSign,
+  IndianRupee,
   CheckCircle,
   Clock,
   Star,
@@ -281,7 +281,7 @@ const DashboardContent = ({ employeeData }: { employeeData: any }) => {
           <StatCard 
             title="Total Earnings" 
             value="₹0" 
-            icon={<DollarSign className="w-5 h-5" />}
+            icon={<IndianRupee className="w-5 h-5" />}
             bgGradient="from-purple-500 to-purple-600"
           />
         </div>
@@ -322,7 +322,7 @@ const DashboardContent = ({ employeeData }: { employeeData: any }) => {
               <QuickActionButton 
                 label="Check Earnings" 
                 href="/employee/earnings"
-                icon={<DollarSign className="w-8 h-8" />}
+                icon={<IndianRupee className="w-8 h-8" />}
               />
             </div>
           </ContentCard>

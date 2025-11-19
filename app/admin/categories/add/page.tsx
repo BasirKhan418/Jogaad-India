@@ -10,7 +10,7 @@ import {
   IconSettings,
   IconUsers,
   IconCategory,
-  IconCurrencyDollar,
+  IconCurrencyRupee,
   IconChartBar,
   IconLogout,
   IconDashboard,
@@ -432,7 +432,7 @@ export default function AddCategoryPage() {
                   <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 px-4 md:px-5 py-2.5 md:py-3 border-b border-neutral-200 dark:border-neutral-700">
                     <h2 className="text-base md:text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
                       <div className="h-6 w-6 md:h-7 md:w-7 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                        <IconCurrencyDollar className="h-3 w-3 md:h-3.5 md:w-3.5 text-white" />
+                        <IconCurrencyRupee className="h-3 w-3 md:h-3.5 md:w-3.5 text-white" />
                       </div>
                       Pricing & Units
                     </h2>

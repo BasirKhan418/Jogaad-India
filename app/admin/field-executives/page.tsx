@@ -41,6 +41,8 @@ import { useFieldExecutiveData, FieldExecutive } from "@/utils/fieldexecutive/us
 import { getUserInitials } from "@/utils/auth";
 import { FieldExecAnalyticsModal } from "@/components/admin/FieldExecAnalyticsModal";
 import Image from "next/image";
+import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
 
 export default function FieldExecutivesPage() {
   const router = useRouter();
@@ -122,6 +124,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
   const [editFieldExecutive, setEditFieldExecutive] = React.useState<FieldExecutive | null>(null);
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
   const [analyticsFieldExec, setAnalyticsFieldExec] = React.useState<FieldExecutive | null>(null);
+  const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive'>('all');
 
   const handleCreateSuccess = () => {
     refetch();
@@ -142,6 +145,54 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
 
   const handleStatusToggle = async (id: string, currentStatus: boolean) => {
     await handleToggleStatus(id, currentStatus);
+  };
+
+  const filteredFieldExecutives = React.useMemo(() => {
+    if (filter === 'active') {
+      return fieldExecutives.filter(fe => fe.isActive);
+    } else if (filter === 'inactive') {
+      return fieldExecutives.filter(fe => !fe.isActive);
+    }
+    return fieldExecutives;
+  }, [fieldExecutives, filter]);
+
+  const exportToExcel = async (dataToExport: FieldExecutive[], fileName: string) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Employees");
+    
+    worksheet.columns = [
+      { header: "Name", key: "name", width: 20 },
+      { header: "Email", key: "email", width: 30 },
+      { header: "Phone", key: "phone", width: 15 },
+      { header: "Address", key: "address", width: 30 },
+      { header: "Pincode", key: "pincode", width: 15 },
+      { header: "Block", key: "block", width: 15 },
+      { header: "Status", key: "status", width: 15 },
+      { header: "Target", key: "target", width: 15 },
+      { header: "Target Date", key: "targetDate", width: 20 },
+    ];
+
+    dataToExport.forEach((item) => {
+      worksheet.addRow({
+        name: item.name,
+        email: item.email,
+        phone: item.phone,
+        address: item.address || 'N/A',
+        pincode: item.pincode || 'N/A',
+        block: item.block || 'N/A',
+        status: item.isActive ? 'Active' : 'Inactive',
+        target: item.target || 0,
+        targetDate: item.targetDate ? new Date(item.targetDate).toLocaleDateString() : 'N/A',
+      });
+    });
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    const buf = await workbook.xlsx.writeBuffer();
+    toast.success("Exported to excel successfully");
+    saveAs(new Blob([buf]), `${fileName}.xlsx`);
   };
 
   if (fieldExecLoading) {
@@ -218,6 +269,53 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
           />
         </div>
 
+        {/* Tabs and Export */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+          <div className="flex p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+            <button
+              onClick={() => setFilter('all')}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                filter === 'all'
+                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+              )}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setFilter('active')}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                filter === 'active'
+                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+              )}
+            >
+              Active
+            </button>
+            <button
+              onClick={() => setFilter('inactive')}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                filter === 'inactive'
+                  ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+              )}
+            >
+              Inactive
+            </button>
+          </div>
+
+          <button
+            onClick={() => exportToExcel(filteredFieldExecutives, `employees-${filter}`)}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
+          >
+            <IconCheck className="h-4 w-4" />
+            Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
+          </button>
+        </div>
+
         {/* Employees List */}
         <div className="flex-1 overflow-y-auto">
           {fieldExecError ? (
@@ -231,24 +329,28 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
                 Try Again
               </button>
             </div>
-          ) : fieldExecutives.length === 0 ? (
+          ) : filteredFieldExecutives.length === 0 ? (
             <div className="text-center py-12">
               <IconUsers className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No Employees Found</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Get started by adding your first employee
+                {filter === 'all' 
+                  ? "Get started by adding your first employee" 
+                  : `No ${filter} employees found`}
               </p>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white px-4 py-2 rounded-lg hover:shadow-lg transition-colors"
-              >
-                <IconUserPlus className="h-5 w-5" />
-                Add Employee
-              </button>
+              {filter === 'all' && (
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white px-4 py-2 rounded-lg hover:shadow-lg transition-colors"
+                >
+                  <IconUserPlus className="h-5 w-5" />
+                  Add Employee
+                </button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {fieldExecutives.map((fieldExec) => (
+              {filteredFieldExecutives.map((fieldExec) => (
                 <FieldExecutiveCard
                   key={fieldExec._id}
                   fieldExecutive={fieldExec}

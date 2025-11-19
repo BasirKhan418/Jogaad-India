@@ -13,7 +13,7 @@ import {
   IconSettings,
   IconUsers,
   IconCategory,
-  IconCurrencyDollar,
+  IconCurrencyRupee,
   IconChartBar,
   IconLogout,
   IconDashboard,

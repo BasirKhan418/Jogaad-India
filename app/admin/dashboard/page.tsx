@@ -12,11 +12,10 @@ import {
   IconDashboard,
   IconUsers,
   IconCategory,
-  IconCurrencyDollar,
+  IconCurrencyRupee,
   IconChartBar,
   IconUser,
   IconSettings,
-  IconCurrencyRupee,
 } from "@tabler/icons-react";
 import { AdminData } from "@/utils/admin/adminAuthService";
 import { getUserInitials } from "@/utils/auth";

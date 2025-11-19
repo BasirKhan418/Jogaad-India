@@ -16,7 +16,7 @@ import {
   IconTrash,
   IconEye,
   IconX,
-  IconCurrencyDollar,
+  IconCurrencyRupee,
   IconCheck
 } from "@tabler/icons-react";
 import {
@@ -27,7 +27,7 @@ import {
   Building2,
   CreditCard,
   Code,
-  DollarSign,
+  IndianRupee,
   Image as ImageIcon,
   CheckCircle2,
   AlertCircle,
@@ -332,7 +332,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
           <StatsCard 
             title="Pending" 
             value={employeeLoading ? "..." : stats.pending.toString()} 
-            icon={<IconCurrencyDollar className="h-8 w-8 text-red-500" />}
+            icon={<IconCurrencyRupee className="h-8 w-8 text-red-500" />}
             gradient="from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20"
             border="border-red-200 dark:border-red-700"
             subtitle={employeeLoading ? "Loading..." : `${stats.pending} pending payment`}
@@ -372,7 +372,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                 onClick={handleExportPayment}
                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 font-medium flex items-center gap-2"
               >
-                <IconCurrencyDollar className="h-5 w-5" />
+                <IconCurrencyRupee className="h-5 w-5" />
                 Export Payment
               </motion.button>
             </div>
@@ -422,7 +422,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
               onClick={() => exportToExcel(filteredEmployees, `employees-${filter}`)}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
             >
-              <IconCurrencyDollar className="h-4 w-4" />
+              <IconCurrencyRupee className="h-4 w-4" />
               Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
             </button>
           </div>

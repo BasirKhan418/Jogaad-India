@@ -20,7 +20,7 @@ import {
   Building2,
   CreditCard,
   Code,
-  DollarSign,
+  IndianRupee,
   Tag,
   AlertCircle,
 } from "lucide-react";
@@ -591,7 +591,7 @@ export default function EmployeeProfile() {
 
                       <div className="space-y-1.5">
                         <Label htmlFor="payrate" className="text-sm font-medium flex items-center gap-2">
-                          <DollarSign className="h-3.5 w-3.5" />
+                          <IndianRupee className="h-3.5 w-3.5" />
                           Hourly Rate (₹)
                         </Label>
                         <Input

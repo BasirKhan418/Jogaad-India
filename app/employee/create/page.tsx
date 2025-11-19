@@ -14,7 +14,7 @@ import {
   ArrowRight, 
   ArrowLeft,
   Briefcase,
-  DollarSign,
+  IndianRupee,
   Upload,
   CheckCircle2,
   UserPlus,
@@ -487,7 +487,7 @@ export default function EmployeeSignupPage() {
 
                   <LabelInputContainer>
                     <Label htmlFor="payrate" className="text-[#0A3D62] font-semibold flex items-center gap-2 text-sm">
-                      <DollarSign className="w-4 h-4" />
+                      <IndianRupee className="w-4 h-4" />
                       Your Service Rate *
                     </Label>
                     <Input

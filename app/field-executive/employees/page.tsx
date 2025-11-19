@@ -25,7 +25,7 @@ import {
   MapPin,
   Phone,
   Mail,
-  DollarSign,
+  IndianRupee,
   CheckCircle,
   XCircle,
   Calendar,
@@ -310,7 +310,7 @@ export default function FieldExecEmployeesPage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2 md:p-3 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-xl">
-                  <DollarSign className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+                  <IndianRupee className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
                 </div>
               </div>
               <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">Paid</h3>
@@ -523,7 +523,7 @@ const EmployeeCard = ({ employee, index, onEdit }: any) => {
           )}
           {employee.isPaid && (
             <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full flex items-center gap-1">
-              <DollarSign className="w-3 h-3" />
+              <IndianRupee className="w-3 h-3" />
               Paid
             </span>
           )}

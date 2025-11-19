@@ -26,7 +26,7 @@ import {
   Building2,
   CreditCard,
   Code,
-  DollarSign,
+  IndianRupee,
   Image as ImageIcon,
   Upload,
   CheckCircle2,
@@ -390,7 +390,7 @@ export default function AdminEmployeeCreationPage() {
 
                         <LabelInputContainer>
                           <Label htmlFor="payrate" className="flex items-center gap-2">
-                            <DollarSign className="w-4 h-4" />
+                            <IndianRupee className="w-4 h-4" />
                             Pay Rate (₹) *
                           </Label>
                           <Input
