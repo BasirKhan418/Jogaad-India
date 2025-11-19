@@ -21,11 +21,34 @@ export const AcceptScheduleForBooking = async (bookingId: string, employeeId: st
     }
 }
 
-export const chnageBookingStatusByEmployee = async (bookingId: string) => {
+export const changeBookingStatusByEmployee = async (bookingId: string) => {
     try{
         await ConnectDb();
         let booking =await Booking.findByIdAndUpdate(bookingId, {status: "started"}, {new: true});
         return {message:"Booking status updated to started",success:true,data:booking};
+    }
+    catch(error){
+        return {message:"Internal Server Error",success:false};
+    }
+}
+
+export const completeBookingByEmployee = async (bookingId: string) => {
+    try{
+        await ConnectDb();
+        const booking = await Booking.findById(bookingId);
+        if(!booking){
+            return {message:"Booking not found",success:false};
+        }
+        // Only allow completion if payment is done
+        if(booking.paymentStatus !== "paid"){
+            return {message:"Payment must be completed before marking as done",success:false};
+        }
+        let updatedBooking = await Booking.findByIdAndUpdate(bookingId, {
+            status: "completed",
+            isDone: true,
+            isActive: false
+        }, {new: true});
+        return {message:"Booking marked as completed",success:true,data:updatedBooking};
     }
     catch(error){
         return {message:"Internal Server Error",success:false};
@@ -55,7 +78,14 @@ export const TakePaymentForBooking = async (bookingId: string, amount: number) =
             };
         }
         
-        const updatebooking = await Booking.findByIdAndUpdate(bookingId, {orderid: paymentResult.order.id, bookingAmount: amount,paymentStatus: "pending"}, {new: true});
+        const updatebooking = await Booking.findByIdAndUpdate(bookingId, {
+            orderid: paymentResult.order.id, 
+            bookingAmount: amount,
+            paymentStatus: "pending"
+        }, {new: true})
+        .populate('userid')
+        .populate('categoryid');
+        
         return {message:"Payment order created and booking updated", success:true, data: updatebooking};
     }
     catch(error){

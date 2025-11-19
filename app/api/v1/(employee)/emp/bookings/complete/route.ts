@@ -1,7 +1,9 @@
 import { NextResponse,NextRequest } from "next/server";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import {cookies} from "next/headers";
-import { changeBookingStatusByEmployee } from "@/repository/employee/booking";
+import { getEmployeeByEmail } from "@/repository/employee/employee.auth";
+import { completeBookingByEmployee } from "@/repository/employee/booking";
+
 export const POST = async (request: NextRequest) => {
     try{
         const cookieStore = await cookies();
@@ -13,9 +15,16 @@ export const POST = async (request: NextRequest) => {
                 success: false
             }, { status: 401 });
         }
+        const employee = await getEmployeeByEmail(verifyResult.email);
+        if(!employee.success){
+            return NextResponse.json({
+                message: "Employee not found",
+                success: false
+            }, { status: 404 });
+        }
         const {bookingId} = await request.json();
-        const startResult = await changeBookingStatusByEmployee(bookingId);
-        return NextResponse.json(startResult);
+        const completeResult = await completeBookingByEmployee(bookingId);
+        return NextResponse.json(completeResult);
     }
     catch(error){
         return NextResponse.json({

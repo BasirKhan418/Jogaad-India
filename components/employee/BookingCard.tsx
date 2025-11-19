@@ -173,16 +173,16 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         {type === "active" && booking.status === "started" && (
           booking.paymentStatus === "paid" ? (
             <button 
-              disabled
-              className="w-full mt-2 bg-green-100 text-green-700 py-2 rounded-lg text-sm font-medium cursor-not-allowed flex items-center justify-center gap-2"
+              onClick={() => onAction?.("complete", booking)}
+              className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
             >
               <CheckCircle className="w-4 h-4" />
-              Paid
+              Mark as Complete
             </button>
           ) : (
             <button 
               onClick={() => onAction?.("payment", booking)}
-              className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+              className="w-full mt-2 bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
             >
               <IndianRupee className="w-4 h-4" />
               Take Payment

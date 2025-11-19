@@ -49,10 +49,9 @@ export async function POST(request: NextRequest) {
             { orderid: razorpay_order_id },
             {
                 paymentStatus: "paid",
-                status: "completed",
                 paymentid: razorpay_payment_id,
-                isActive: true,
-                isDone: true
+                isActive: true
+                // Don't set status to completed or isDone - employee needs to mark completion
             },
             { new: true }
         ).populate("categoryid").populate("userid");
@@ -75,7 +74,7 @@ export async function POST(request: NextRequest) {
         
 
         return NextResponse.json({
-            message: "Payment verified successfully. Your booking is now confirmed!",
+            message: "Payment verified successfully!",
             success: true,
             booking: booking
         }, { status: 200 });
