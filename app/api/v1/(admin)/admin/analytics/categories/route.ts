@@ -1,13 +1,13 @@
-import { NextResponse,NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import { cookies } from "next/headers";
-import { getallCategoriesAnalytics,getallCategoriesAnalyticsByDateRange } from "@/repository/admin/analytics/category";
+import { getallCategoriesAnalytics, getallCategoriesAnalyticsByDateRange } from "@/repository/admin/analytics/category";
 export const GET = async (request: NextRequest) => {
-    try{
-const cookieStore = await cookies();
+    try {
+        const cookieStore = await cookies();
         const userToken = cookieStore.get("token")?.value || "";
         const verifyResult = await verifyUserToken(userToken);
-        if(!verifyResult.success||verifyResult.type!=="admin"){
+        if (!verifyResult.success || verifyResult.type !== "admin") {
             return NextResponse.json({
                 message: "Unauthorized",
                 success: false
@@ -17,14 +17,14 @@ const cookieStore = await cookies();
         const params = url.searchParams;
         const startDate = params.get("startDate");
         const endDate = params.get("endDate");
-        if(!startDate || !endDate){
-            const allData =  await getallCategoriesAnalytics();
+        if (!startDate || !endDate) {
+            const allData = await getallCategoriesAnalytics();
             return NextResponse.json(allData);
         }
         const response = await getallCategoriesAnalyticsByDateRange(startDate, endDate);
         return NextResponse.json(response);
     }
-    catch(error){
+    catch (error) {
         return NextResponse.json({
             message: "Internal Server Error",
             success: false
