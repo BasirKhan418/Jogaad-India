@@ -82,6 +82,7 @@ export const getAllBookingsForUser = async (userid: string) => {
         const bookings = await Booking.find({ userid })
             .populate('categoryid')
             .populate('employeeid')
+            .populate('userid')
             .sort({ createdAt: -1 });
         return { message: "Bookings retrieved successfully", success: true, data: bookings };
     }

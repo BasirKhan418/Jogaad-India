@@ -245,7 +245,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#2B9EB3]" />
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-slate-700 text-xs">Address</p>
-              <p className="line-clamp-2">{booking.userid.address}, {booking.userid.pincode}</p>
+              <p className="line-clamp-2">
+                {[booking.userid?.address, booking.userid?.pincode].filter(Boolean).join(", ") || "Address not available"}
+              </p>
             </div>
           </div>
 

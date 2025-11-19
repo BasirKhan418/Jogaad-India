@@ -52,13 +52,13 @@ export const POST = async (request: NextRequest) => {
             }, { status: 400 });
         }
 
-        const hoursDifference = (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-        if (hoursDifference < 24) {
-            return NextResponse.json({
-                message: "Booking must be made at least 24 hours in advance",
-                success: false
-            }, { status: 400 });
-        }
+        // const hoursDifference = (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+        // if (hoursDifference < 24) {
+        //     return NextResponse.json({
+        //         message: "Booking must be made at least 24 hours in advance",
+        //         success: false
+        //     }, { status: 400 });
+        // }
 
         const user = await verifyUserByEmail(isTokenValid.email);
         if (!user.success || !user.data) {

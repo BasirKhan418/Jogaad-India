@@ -10,48 +10,18 @@ export const POST = async (request: NextRequest) => {
         const data = await request.json();
         const cookiesStore = await cookies();
         const token = cookiesStore.get("token")?.value || "";
+        
+        // Verify admin authentication
         const isTokenValid = await verifyUserToken(token);
         
-        // Validate admin creation credential
-        const adminCredential = process.env.ADMIN_CREATE_CREDENTIAL;
-        if (!adminCredential) {
-            return NextResponse.json({ 
-                message: "Admin creation is not configured", 
-                success: false 
-            }, { status: 503 });
-        }
-        
-        // Path 1: Create admin with credential password (for initial/bootstrap admin)
-        if (data.password === adminCredential) {
-            const validateData = AdminSchemaZod.safeParse(data);
-            if (!validateData.success) {
-                return NextResponse.json({ 
-                    message: "Invalid data", 
-                    success: false 
-                }, { status: 400 });
-            }
-            
-            const response = await createAdmin(validateData.data);
-            
-            if (response.success) {
-                sendWelcomeEmail({
-                    name: validateData.data.name, 
-                    email: validateData.data.email, 
-                    isAdmin: true
-                });
-            }
-            
-            return NextResponse.json(response);
-        }
-        
-        // Path 2: Create admin with valid admin token (legacy support)
         if (!isTokenValid.success || isTokenValid.type !== "admin") {
             return NextResponse.json({ 
-                message: "Invalid credential for creating admin", 
+                message: "Unauthorized. Admin access required.", 
                 success: false 
             }, { status: 401 });
         }
         
+        // Validate admin data
         const validateData = AdminSchemaZod.safeParse(data);
         if (!validateData.success) {
             return NextResponse.json({ 
@@ -60,8 +30,10 @@ export const POST = async (request: NextRequest) => {
             }, { status: 400 });
         }
         
+        // Create admin account
         const response = await createAdmin(validateData.data);
         
+        // Send welcome email on success
         if (response.success) {
             sendWelcomeEmail({
                 name: validateData.data.name, 
@@ -73,7 +45,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json(response);
 
     } catch (error) {
-        console.error("Admin signup error:", error);
+        console.error("Admin creation error:", error);
         return NextResponse.json({ 
             message: "Internal Server Error", 
             success: false 

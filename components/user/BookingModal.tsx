@@ -54,9 +54,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     address: userData?.address || "",
     pincode: userData?.pincode || "",
   });
-  const [bookingDate, setBookingDate] = useState(
-    new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16)
-  );
+  const [bookingDate, setBookingDate] = useState(() => {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localDate = new Date(now.getTime() - offset);
+    return localDate.toISOString().slice(0, 16);
+  });
 
   // Check if address is already present
   const hasAddress = userData?.address && userData?.pincode;
@@ -121,16 +124,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
       if (selectedDate <= now) {
         toast.error("Please select a future date and time");
+        setLoading(false);
         return;
       }
 
       // Check if booking is at least 24 hours in advance
-      const hoursDifference = (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-      if (hoursDifference < 24) {
-        toast.error("Booking must be made at least 24 hours in advance");
-        setLoading(false);
-        return;
-      }
+      // const hoursDifference = (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+      // if (hoursDifference < 24) {
+      //   toast.error("Booking must be made at least 24 hours in advance");
+      //   setLoading(false);
+      //   return;
+      // }
 
       // Convert bookingDate to ISO string with timezone offset
       const bookingDateISO = new Date(bookingDate).toISOString();
@@ -463,8 +467,24 @@ const BookingForm: React.FC<{
           id="bookingDate"
           type="datetime-local"
           value={bookingDate}
-          onChange={(e) => setBookingDate(e.target.value)}
-          min={new Date().toISOString().slice(0, 16)}
+          onChange={(e) => {
+            const selectedDate = new Date(e.target.value);
+            const now = new Date();
+            if (selectedDate < now) {
+              toast.error("Cannot select a past time");
+              const offset = now.getTimezoneOffset() * 60000;
+              const localDate = new Date(now.getTime() - offset);
+              setBookingDate(localDate.toISOString().slice(0, 16));
+            } else {
+              setBookingDate(e.target.value);
+            }
+          }}
+          min={(() => {
+            const now = new Date();
+            const offset = now.getTimezoneOffset() * 60000;
+            const localDate = new Date(now.getTime() - offset);
+            return localDate.toISOString().slice(0, 16);
+          })()}
           className="mt-1"
           disabled={loading}
         />

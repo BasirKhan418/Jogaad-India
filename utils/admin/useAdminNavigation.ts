@@ -9,7 +9,9 @@ import {
   IconUserPlus,
   IconUsersGroup,
   IconFileText,
-  IconCurrencyRupee
+  IconCurrencyRupee,
+  IconCalendar,
+  IconUserShield
 } from "@tabler/icons-react";
 
 export interface NavigationLink {
@@ -33,6 +35,13 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       }),
     },
     {
+      label: "Manage Admins",
+      href: "/admin/create-admin",
+      icon: React.createElement(IconUserShield, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
       label: "Service Providers",
       href: "/admin/employees",
       icon: React.createElement(IconUserPlus, {
@@ -50,6 +59,13 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       label: "Categories",
       href: "/admin/categories",
       icon: React.createElement(IconCategory, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
+      label: "Bookings",
+      href: "/admin/bookings",
+      icon: React.createElement(IconCalendar, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },
