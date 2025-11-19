@@ -89,9 +89,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           />
         )}
         <div className="absolute top-3 right-3">
-          <span className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border", statusColors[booking.status])}>
+          <span className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border", statusColors[booking.status] || "text-gray-600 bg-gray-50 border-gray-200")}>
             <StatusIcon className="w-3.5 h-3.5" />
-            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+            {booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : "Unknown"}
           </span>
         </div>
         <div className="absolute bottom-3 left-3 text-white">
