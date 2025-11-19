@@ -122,7 +122,7 @@ export const sendEmployeeActivationEmail = async ({
       <h2>Dear ${name},</h2>
       <p>
         We are happy to inform you that your <strong>one-time payment has been received successfully</strong>.
-        Your employee account is now <strong>fully activated</strong> on Jogaad India.
+        Your service provider account is now <strong>fully activated</strong> on Jogaad India.
       </p>
 
       <div class="highlight-box">
@@ -160,7 +160,7 @@ export const sendEmployeeActivationEmail = async ({
       text: `
 Dear ${name},
 
-Your one-time payment has been received successfully and your employee account is now activated.
+Your one-time payment has been received successfully and your service provider account is now activated.
 
 You can now start taking bookings and manage your account.
 
@@ -170,9 +170,9 @@ Login here: https://jogaadindia.in/employee-login
 `,
     });
 
-    return { message: "Employee activation email sent", success: true };
+    return { message: "Service Provider activation email sent", success: true };
   } catch (error) {
-    console.error("Error sending employee activation email:", error);
+    console.error("Error sending service provider activation email:", error);
     return { message: "Failed to send activation email", error, success: false };
   }
 };

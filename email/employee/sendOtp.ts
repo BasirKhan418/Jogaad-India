@@ -13,10 +13,10 @@ export const sendEmployeeOtpEmail = async ({ email, otp }: SendEmployeeOtpEmailP
       return { message: "Failed to connect to email client", success: false };
     }
 
-    // Email subject and title for employees
-    const subject = "Employee Login OTP for Jogaad India";
-    const title = "Your Employee Login Verification";
-    const greeting = "Hello Employee!";
+    // Email subject and title for service providers
+    const subject = "Service Provider Login OTP for Jogaad India";
+    const title = "Your Service Provider Login Verification";
+    const greeting = "Hello Service Provider!";
 
     // Send mail
     await emailTransporter.sendMail({
@@ -94,7 +94,7 @@ export const sendEmployeeOtpEmail = async ({ email, otp }: SendEmployeeOtpEmailP
       </div>
       <div class="content">
           <h2>${greeting}</h2>
-          <p>You are attempting to log in to your Jogaad India Employee Account. Use the OTP below to verify your identity:</p>
+          <p>You are attempting to log in to your Jogaad India Service Provider Account. Use the OTP below to verify your identity:</p>
           
           <div class="otp-box">
               <p style="margin: 0; font-size: 14px; color: #666;">Your OTP Code</p>
@@ -113,14 +113,14 @@ export const sendEmployeeOtpEmail = async ({ email, otp }: SendEmployeeOtpEmailP
 </body>
 </html>
       `,
-      text: `Your Employee Login OTP for Jogaad India is: ${otp}\n\nThis OTP will expire in 5 minutes.\n\nIf you didn't request this code, please ignore this email.`,
+      text: `Your Service Provider Login OTP for Jogaad India is: ${otp}\n\nThis OTP will expire in 5 minutes.\n\nIf you didn't request this code, please ignore this email.`,
     });
 
-    console.log(`Employee OTP email sent successfully to ${email}`);
-    return { message: `Employee OTP sent to ${email}`, success: true };
+    console.log(`Service Provider OTP email sent successfully to ${email}`);
+    return { message: `Service Provider OTP sent to ${email}`, success: true };
 
   } catch (error) {
-    console.error("Error sending Employee OTP email:", error);
+    console.error("Error sending Service Provider OTP email:", error);
     return { message: "Error sending OTP email", error, success: false };
   }
 };

@@ -36,9 +36,9 @@ import { getUserInitials } from "@/utils/auth";
 import { uploadImage } from "@/utils/fieldexecutive/fieldExecutiveApiService";
 
 /**
- * Field Executive Profile Page
- * View and edit field executive profile information
- * Matches Employee Profile Design Pattern
+ * Employee Profile Page
+ * View and edit employee profile information
+ * Matches Service Provider Profile Design Pattern
  */
 export default function FieldExecProfile() {
   const router = useRouter();
@@ -147,7 +147,7 @@ export default function FieldExecProfile() {
     }
 
     if (!fieldExecData?._id) {
-      toast.error("Field Executive ID not found");
+      toast.error("Employee ID not found");
       return;
     }
 
@@ -368,11 +368,11 @@ export default function FieldExecProfile() {
           <div className="mt-16 sm:mt-20 md:mt-24 px-3 sm:px-4 md:px-6 lg:px-8 pb-6 md:pb-8 relative z-10">
             <div className="text-center mb-6 md:mb-8">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">
-                {formData.name || "Field Executive"}
+                {formData.name || "Employee"}
               </h1>
               <div className="flex items-center justify-center gap-2 flex-wrap mb-1.5">
                 <span className="px-2.5 py-0.5 bg-gradient-to-r from-[#10B981] to-[#059669] text-white rounded-full text-xs font-medium shadow-md">
-                  Field Executive
+                  Employee
                 </span>
               </div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -554,7 +554,7 @@ export default function FieldExecProfile() {
                             Account Type
                           </div>
                           <div className="text-sm md:text-base font-bold text-neutral-800 dark:text-neutral-100">
-                            Field Executive
+                            Employee
                           </div>
                         </div>
 

@@ -38,8 +38,8 @@ import { getUserInitials } from "@/utils/auth";
 import { Toaster } from "sonner";
 
 /**
- * Field Executive Edit Employee Page Content Component
- * Allows field executives to edit employee details within 12 hours of creation
+ * Employee Edit Service Provider Page Content Component
+ * Allows employees to edit service provider details within 12 hours of creation
  */
 function FieldExecEditEmployeePageContent() {
   const pathname = usePathname();
@@ -74,7 +74,7 @@ function FieldExecEditEmployeePageContent() {
   const { open, setOpen } = useFieldExecSidebar();
   const { links } = useFieldExecNavigation();
 
-  // Load employee data on mount
+  // Load service provider data on mount
   useEffect(() => {
     if (employeeId) {
       loadEmployeeData(employeeId);
@@ -111,7 +111,7 @@ function FieldExecEditEmployeePageContent() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-[#0A3D62] mb-4">Invalid Request</h2>
-          <p className="text-slate-600 mb-6">No employee ID provided</p>
+          <p className="text-slate-600 mb-6">No service provider ID provided</p>
           <button
             onClick={() => router.push('/field-executive/dashboard')}
             className="px-6 py-2 bg-[#2B9EB3] text-white rounded-lg hover:bg-[#0A3D62] transition"
@@ -123,13 +123,13 @@ function FieldExecEditEmployeePageContent() {
     );
   }
 
-  // Loading state for fetching employee
+  // Loading state for fetching service provider
   if (fetchingEmployee || fieldExecLoading) {
     return (
       <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-[#2B9EB3] animate-spin mx-auto mb-4" />
-          <p className="text-lg text-[#0A3D62] font-semibold">Loading employee data...</p>
+          <p className="text-lg text-[#0A3D62] font-semibold">Loading service provider data...</p>
         </div>
       </div>
     );
@@ -227,10 +227,10 @@ function FieldExecEditEmployeePageContent() {
                 Back
               </button>
               <h1 className="text-3xl font-bold text-[#0A3D62] mb-2">
-                Edit Employee
+                Edit Service Provider
               </h1>
               <p className="text-base text-slate-600">
-                Update employee information
+                Update service provider information
               </p>
             </div>
 
@@ -284,7 +284,7 @@ function FieldExecEditEmployeePageContent() {
                     className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3"
                   >
                     <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
-                    <p className="text-sm text-green-800 font-medium">Employee updated successfully!</p>
+                    <p className="text-sm text-green-800 font-medium">Service provider updated successfully!</p>
                   </motion.div>
                 )}
 
@@ -587,7 +587,7 @@ function FieldExecEditEmployeePageContent() {
                       {loading 
                         ? "Updating..." 
                         : step === 'optional' 
-                          ? "Update Employee" 
+                          ? "Update Service Provider" 
                           : "Continue"}
                     </EnhancedButton>
                   </div>

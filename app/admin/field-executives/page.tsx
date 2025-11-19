@@ -113,7 +113,7 @@ export default function FieldExecutivesPage() {
   );
 }
 
-// Field Executives Content Component
+// Employees Content Component
 const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
   const router = useRouter();
   const { fieldExecutives, stats, loading: fieldExecLoading, error: fieldExecError, refetch, handleDelete, handleToggleStatus, deleting, toggling } = useFieldExecutiveData();
@@ -150,7 +150,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
         <div className="flex h-full w-full flex-1 flex-col gap-4 rounded-tl-2xl border border-neutral-200 bg-white p-4 md:p-10 dark:border-neutral-700 dark:bg-neutral-900 overflow-y-auto">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-neutral-300 dark:border-neutral-600 mx-auto mb-4"></div>
-            <p className="text-neutral-600 dark:text-neutral-400">Loading field executives...</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Loading employees...</p>
           </div>
         </div>
       </div>
@@ -172,10 +172,10 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
               </button>
               <div>
                 <h1 className="text-3xl font-bold text-neutral-800 dark:text-neutral-100">
-                  Field Executives Management
+                  Employees Management
                 </h1>
                 <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                  Manage your field executive team and track their performance
+                  Manage your employee team and track their performance
                 </p>
               </div>
             </div>
@@ -185,7 +185,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
               className="bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2 hover:scale-105"
             >
               <IconUserPlus className="h-5 w-5" />
-              Add Field Executive
+              Add Employee
             </button>
           </div>
         </div>
@@ -193,12 +193,12 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatsCard 
-            title="Total Field Executives" 
+            title="Total Employees" 
             value={fieldExecLoading ? "..." : stats.total.toString()} 
             icon={<IconUsers className="h-8 w-8 text-blue-500" />}
             gradient="from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20"
             border="border-blue-200 dark:border-blue-700"
-            subtitle={fieldExecLoading ? "Loading..." : `${stats.total} total field executives`}
+            subtitle={fieldExecLoading ? "Loading..." : `${stats.total} total employees`}
           />
           <StatsCard 
             title="Active" 
@@ -218,7 +218,7 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
           />
         </div>
 
-        {/* Field Executives List */}
+        {/* Employees List */}
         <div className="flex-1 overflow-y-auto">
           {fieldExecError ? (
             <div className="text-center py-12">
@@ -234,16 +234,16 @@ const FieldExecutivesContent = ({ adminData }: { adminData: any }) => {
           ) : fieldExecutives.length === 0 ? (
             <div className="text-center py-12">
               <IconUsers className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No Field Executives Found</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No Employees Found</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Get started by adding your first field executive
+                Get started by adding your first employee
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white px-4 py-2 rounded-lg hover:shadow-lg transition-colors"
               >
                 <IconUserPlus className="h-5 w-5" />
-                Add Field Executive
+                Add Employee
               </button>
             </div>
           ) : (
@@ -345,7 +345,7 @@ const StatsCard = React.memo(({
   );
 });
 
-// Field Executive Card Component
+// Employee Card Component
 const FieldExecutiveCard = React.memo(({ 
   fieldExecutive, 
   onView, 
@@ -487,7 +487,7 @@ const FieldExecutiveCard = React.memo(({
   );
 });
 
-// Create Field Executive Modal Component
+// Create Employee Modal Component
 const CreateFieldExecutiveModal = React.memo(({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
   const {
     loading,
@@ -544,7 +544,7 @@ const CreateFieldExecutiveModal = React.memo(({ onClose, onSuccess }: { onClose:
         <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              Create Field Executive
+              Create Employee
             </h3>
             <button
               onClick={handleClose}
@@ -752,7 +752,7 @@ const CreateFieldExecutiveModal = React.memo(({ onClose, onSuccess }: { onClose:
               ) : (
                 <>
                   <IconUserPlus className="w-5 h-5" />
-                  Create Field Executive
+                  Create Employee
                 </>
               )}
             </button>
@@ -763,7 +763,7 @@ const CreateFieldExecutiveModal = React.memo(({ onClose, onSuccess }: { onClose:
   );
 });
 
-// View Field Executive Modal Component
+// View Employee Modal Component
 const ViewFieldExecutiveModal = React.memo(({ fieldExecutive, onClose }: { fieldExecutive: FieldExecutive; onClose: () => void }) => {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -776,7 +776,7 @@ const ViewFieldExecutiveModal = React.memo(({ fieldExecutive, onClose }: { field
         <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              Field Executive Details
+              Employee Details
             </h3>
             <button
               onClick={onClose}
@@ -858,7 +858,7 @@ const ViewFieldExecutiveModal = React.memo(({ fieldExecutive, onClose }: { field
   );
 });
 
-// Edit Field Executive Modal Component
+// Edit Employee Modal Component
 const EditFieldExecutiveModal = React.memo(({ 
   fieldExecutive, 
   onClose, 
@@ -934,7 +934,7 @@ const EditFieldExecutiveModal = React.memo(({
         <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              Edit Field Executive
+              Edit Employee
             </h3>
             <button
               onClick={onClose}
@@ -1119,7 +1119,7 @@ const EditFieldExecutiveModal = React.memo(({
               </Label>
             </div>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
-              {formData.isActive ? 'Field Executive is currently active' : 'Field Executive is currently inactive'}
+              {formData.isActive ? 'Employee is currently active' : 'Employee is currently inactive'}
             </p>
           </div>
 
@@ -1164,7 +1164,7 @@ const EditFieldExecutiveModal = React.memo(({
               ) : (
                 <>
                   <IconCheck className="w-5 h-5" />
-                  Update Field Executive
+                  Update Employee
                 </>
               )}
             </button>
@@ -1201,11 +1201,11 @@ const DeleteConfirmModal = React.memo(({
           </div>
           
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 text-center mb-2">
-            Deactivate Field Executive
+            Deactivate Employee
           </h3>
           
           <p className="text-neutral-600 dark:text-neutral-400 text-center mb-6">
-            Are you sure you want to deactivate this field executive? This action will set their status to inactive but won't permanently delete their data.
+            Are you sure you want to deactivate this employee? This action will set their status to inactive but won't permanently delete their data.
           </p>
 
           <div className="flex gap-3">

@@ -36,8 +36,8 @@ interface AnalyticsResponse {
 }
 
 /**
- * Field Executive Analytics Modal Component
- * Displays performance metrics and targets for a specific field executive
+ * Employee Analytics Modal Component
+ * Displays performance metrics and targets for a specific employee
  * Follows SRP - Single responsibility of displaying analytics
  */
 export const FieldExecAnalyticsModal: React.FC<FieldExecAnalyticsModalProps> = ({
@@ -151,7 +151,7 @@ const AnalyticsModalHeader: React.FC<{
         </div>
         <div>
           <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            Field Executive Analytics
+            Employee Analytics
           </h3>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
             Performance metrics for {fieldExecName}
@@ -217,7 +217,7 @@ const TargetOverviewCard: React.FC<{ assignTarget: number }> = ({ assignTarget }
     </div>
     <div className="flex items-baseline gap-2">
       <span className="text-5xl font-bold text-[#0A3D62] dark:text-white">{assignTarget}</span>
-      <span className="text-lg text-slate-600 dark:text-neutral-400">employees</span>
+      <span className="text-lg text-slate-600 dark:text-neutral-400">service providers</span>
     </div>
   </div>
 );
@@ -237,7 +237,7 @@ const AchievedCard: React.FC<{ currentTarget: number }> = ({ currentTarget }) =>
       <h4 className="font-semibold text-sm text-slate-700 dark:text-neutral-300">Achieved</h4>
     </div>
     <p className="text-3xl font-bold text-[#0A3D62] dark:text-white mb-1">{currentTarget}</p>
-    <p className="text-xs text-slate-500 dark:text-neutral-400">Employees onboarded</p>
+    <p className="text-xs text-slate-500 dark:text-neutral-400">Service providers onboarded</p>
   </motion.div>
 );
 
@@ -303,7 +303,7 @@ const ProgressBar: React.FC<{
       <p className="text-xs text-slate-500 dark:text-neutral-400 mt-2 text-center">
         {progressPercentage >= 100 
           ? '🎉 Target achieved! Excellent performance!' 
-          : `${assignTarget - currentTarget} more employees needed to reach target`}
+          : `${assignTarget - currentTarget} more service providers needed to reach target`}
       </p>
     </div>
   );
@@ -326,7 +326,7 @@ const InfoCard: React.FC = () => (
       </li>
       <li className="flex items-start gap-2">
         <span className="text-[#2B9EB3] mt-0.5 font-bold">•</span>
-        <span>Progress includes only active employees onboarded in the current month</span>
+        <span>Progress includes only active service providers onboarded in the current month</span>
       </li>
       <li className="flex items-start gap-2">
         <span className="text-[#2B9EB3] mt-0.5 font-bold">•</span>
@@ -334,7 +334,7 @@ const InfoCard: React.FC = () => (
       </li>
       <li className="flex items-start gap-2">
         <span className="text-[#2B9EB3] mt-0.5 font-bold">•</span>
-        <span>Use this data to monitor field executive performance and adjust targets</span>
+        <span>Use this data to monitor employee performance and adjust targets</span>
       </li>
     </ul>
   </div>

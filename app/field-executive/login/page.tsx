@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 /**
- * Field Executive Login Page
+ * Employee Login Page
  * Two-step authentication: Email → OTP verification
  * Follows DRY and SRP principles with custom hook for business logic
  */
@@ -127,7 +127,7 @@ export default function FieldExecLoginPage() {
                 </div>
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-3">
-                Field Executive Login
+                Employee Login
               </h1>
               <p className="text-slate-600 text-sm">
                 {step === 'email' ? 'Enter your email to receive OTP' : 'Enter the OTP sent to your email'}
@@ -148,7 +148,7 @@ export default function FieldExecLoginPage() {
                   <div className="relative">
                     <Input
                       id="email"
-                      placeholder="fieldexec@company.com"
+                      placeholder="employee@company.com"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}

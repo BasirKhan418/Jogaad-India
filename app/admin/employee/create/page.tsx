@@ -175,9 +175,9 @@ export default function AdminEmployeeCreationPage() {
                     <IconUsers className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold text-[#0A3D62]">Create Employee Account</h1>
+                    <h1 className="text-3xl font-bold text-[#0A3D62]">Create Service Provider Account</h1>
                     <p className="text-[#0A3D62]/60 mt-1">
-                      Register a new employee with category and pricing
+                      Register a new service provider with category and pricing
                     </p>
                   </div>
                 </div>
@@ -251,7 +251,7 @@ export default function AdminEmployeeCreationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-sm text-neutral-600 mb-1">
-                            Upload employee profile picture
+                            Upload service provider profile picture
                           </p>
                           <p className="text-xs text-neutral-500">
                             PNG, JPG up to 5MB
@@ -521,12 +521,12 @@ export default function AdminEmployeeCreationPage() {
                         {loading ? (
                           <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Creating Employee...
+                            Creating Service Provider...
                           </>
                         ) : (
                           <>
                             <CheckCircle2 className="w-5 h-5" />
-                            Create Employee Account
+                            Create Service Provider Account
                           </>
                         )}
                       </button>

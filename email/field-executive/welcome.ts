@@ -19,14 +19,14 @@ export const sendFieldExecutiveWelcomeEmail = async ({
     await emailTransporter.sendMail({
       from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Your Field Executive Account is Ready – Jogaad India",
+      subject: "Your Employee Account is Ready – Jogaad India",
       html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Welcome Field Executive</title>
+  <title>Welcome Employee</title>
   <style>
     body {
       background-color: #f4f6f8;
@@ -105,15 +105,15 @@ export const sendFieldExecutiveWelcomeEmail = async ({
   <div class="container">
     <div class="header">
       <img src="https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png" alt="Jogaad India Logo" />
-      <h1>Welcome, Field Executive!</h1>
+      <h1>Welcome, Employee!</h1>
       <p style="font-size: 14px; color: #dff8ff">Your account has been created</p>
     </div>
 
     <div class="content">
       <h2>Hello ${name},</h2>
       <p>
-        Your Field Executive account has been successfully created by our admin team.
-        You can now access your dashboard, add employees, and start managing your tasks.
+        Your Employee account has been successfully created by our admin team.
+        You can now access your dashboard, add service providers, and start managing your tasks.
       </p>
 
       <p style="margin-top: 20px; font-weight: bold;">
@@ -140,7 +140,7 @@ export const sendFieldExecutiveWelcomeEmail = async ({
       text: `
 Hello ${name},
 
-Your Field Executive account has been created.
+Your Employee account has been created.
 
 Email: ${email}
 No password needed — you will receive an OTP after entering your email.
@@ -153,7 +153,7 @@ Login here: https://jogaadindia.in/field-executive-login
 
     return { message: "Email sent successfully", success: true };
   } catch (error) {
-    console.error("Error sending Field Executive welcome email:", error);
+    console.error("Error sending Employee welcome email:", error);
     return { message: "Email sending failed", error, success: false };
   }
 };

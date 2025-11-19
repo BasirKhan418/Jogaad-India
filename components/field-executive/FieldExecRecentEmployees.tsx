@@ -29,8 +29,8 @@ export const FieldExecRecentEmployees: React.FC = () => {
             <Users className="w-5 h-5 text-[#2B9EB3]" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-[#0A3D62]">Recent Employees</h2>
-            <p className="text-xs text-slate-600">Latest onboarded employees</p>
+            <h2 className="text-lg font-bold text-[#0A3D62]">Recent Service Providers</h2>
+            <p className="text-xs text-slate-600">Latest onboarded service providers</p>
           </div>
         </div>
         {!showAll && employees.length > 0 && (
@@ -61,7 +61,7 @@ const EmployeeList: React.FC<{ employees: EmployeeData[] }> = ({ employees }) =>
   const router = useRouter();
 
   const handleEdit = (employeeId: string) => {
-    // Navigate to employee edit page
+    // Navigate to service provider edit page
     router.push(`/field-executive/edit-employee?id=${employeeId}`);
   };
 

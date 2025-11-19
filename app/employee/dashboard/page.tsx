@@ -248,7 +248,7 @@ const DashboardContent = ({ employeeData }: { employeeData: any }) => {
         {/* Welcome Section */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-            Welcome back, {employeeData?.name?.split(' ')[0] || "Employee"}!
+            Welcome back, {employeeData?.name?.split(' ')[0] || "Service Provider"}!
             <span className="inline-block animate-wave">
               👋
             </span>

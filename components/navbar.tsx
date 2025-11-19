@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { FiLogOut, FiHome } from "react-icons/fi";
 import { toast } from "sonner";
 import { useAuth, getUserInitials } from "@/utils/auth";
+import type { AuthSession } from "@/utils/auth/getAuthSession";
 import Image from "next/image";
 const NAV_ITEMS = [
   {
@@ -40,9 +41,13 @@ const NAV_ITEMS = [
   },
 ];
 
-export function NavbarDemo() {
+export function NavbarDemo({ initialAuth }: { initialAuth?: AuthSession }) {
   const router = useRouter();
-  const { isAuthenticated, user, loading, logout: authLogout } = useAuth();
+  const { isAuthenticated, user, loading, logout: authLogout } = useAuth(
+    initialAuth?.user
+      ? { user: initialAuth.user, isAuthenticated: initialAuth.isAuthenticated }
+      : undefined
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   

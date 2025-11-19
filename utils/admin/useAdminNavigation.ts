@@ -33,14 +33,14 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       }),
     },
     {
-      label: "Employees",
+      label: "Service Providers",
       href: "/admin/employees",
       icon: React.createElement(IconUserPlus, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },
     {
-      label: "Field Executives",
+      label: "Employees",
       href: "/admin/field-executives",
       icon: React.createElement(IconUsersGroup, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"

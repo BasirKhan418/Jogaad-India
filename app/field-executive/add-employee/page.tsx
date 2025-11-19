@@ -37,8 +37,8 @@ import { getUserInitials } from "@/utils/auth";
 import { Toaster } from "sonner";
 
 /**
- * Field Executive Add Employee Page
- * Allows field executives to add new employees with payment processing
+ * Employee Add Service Provider Page
+ * Allows employees to add new service providers with payment processing
  */
 export default function FieldExecAddEmployeePage() {
   const pathname = usePathname();
@@ -299,10 +299,10 @@ export default function FieldExecAddEmployeePage() {
                   <UserPlus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-2">
-                  Add New Employee
+                  Add New Service Provider
                 </h1>
                 <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
-                  Register a new employee in 3 simple steps
+                  Register a new service provider in 3 simple steps
                 </p>
               </div>
 
@@ -385,7 +385,7 @@ export default function FieldExecAddEmployeePage() {
                         </Label>
                         <Input
                           id="name"
-                          placeholder="Enter employee's full name"
+                          placeholder="Enter service provider's full name"
                           type="text"
                           value={formData.name}
                           onChange={handleInputChange}
@@ -788,7 +788,7 @@ export default function FieldExecAddEmployeePage() {
                     {loading 
                       ? "Processing..." 
                       : step === 'optional' 
-                        ? "Add Employee" 
+                        ? "Add Service Provider" 
                         : "Continue"}
                   </EnhancedButton>
                 </div>

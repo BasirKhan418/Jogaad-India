@@ -115,7 +115,7 @@ export default function EmployeeLoginPage() {
                 </div>
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-3">
-                Employee Login
+                Service Provider Login
               </h1>
               <p className="text-slate-600 text-sm">
                 {step === 'email' ? 'Enter your email to receive OTP' : 'Enter the OTP sent to your email'}
@@ -136,7 +136,7 @@ export default function EmployeeLoginPage() {
                   <div className="relative">
                     <Input
                       id="email"
-                      placeholder="employee@company.com"
+                      placeholder="provider@company.com"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -345,7 +345,7 @@ export default function EmployeeLoginPage() {
             <div className="mt-8 pt-6 border-t border-slate-200">
               <div className="text-center space-y-3">
                 <p className="text-sm text-slate-600">
-                  Want to join as an employee?{' '}
+                  Want to join as a service provider?{' '}
                   <Link 
                     href="/employee/create" 
                     className="font-semibold text-[#2B9EB3] hover:text-[#0A3D62] transition-colors"

@@ -19,7 +19,7 @@ export const sendFieldExecutiveOtp = async ({
     await emailTransporter.sendMail({
       from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Your OTP for Field Executive Login – Jogaad India",
+      subject: "Your OTP for Employee Login – Jogaad India",
       html: `
 <!DOCTYPE html>
 <html>
@@ -87,14 +87,14 @@ export const sendFieldExecutiveOtp = async ({
       <div class="header">
           <img src="https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png" 
                alt="Jogaad India Logo" class="logo" />
-          <h1>Field Executive Login Verification</h1>
+          <h1>Employee Login Verification</h1>
           <p style="margin: 0; font-size: 14px;">Use the OTP below to continue</p>
       </div>
 
       <div class="content">
-          <p>Hello Field Executive,</p>
+          <p>Hello Employee,</p>
 
-          <p>You requested an OTP to access your Jogaad India Field Executive dashboard.</p>
+          <p>You requested an OTP to access your Jogaad India Employee dashboard.</p>
 
           <div class="otp-box">
               <p style="margin: 0; font-size: 14px; color: #666;">Your OTP Code</p>
@@ -115,7 +115,7 @@ export const sendFieldExecutiveOtp = async ({
 </html>
       `,
       text: `
-Your Field Executive OTP for Jogaad India is: ${otp}
+Your Employee OTP for Jogaad India is: ${otp}
 
 This OTP will expire in 5 minutes.
 
@@ -123,9 +123,9 @@ If you didn't request this code, please ignore this email.
 `,
     });
 
-    return { message: "Field Executive OTP sent successfully", success: true };
+    return { message: "Employee OTP sent successfully", success: true };
   } catch (error) {
-    console.error("Error sending Field Executive OTP email:", error);
-    return { message: "Failed to send Field Executive OTP", error, success: false };
+    console.error("Error sending Employee OTP email:", error);
+    return { message: "Failed to send Employee OTP", error, success: false };
   }
 };

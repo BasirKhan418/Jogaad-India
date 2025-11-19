@@ -83,17 +83,17 @@ export default function FieldExecEmployeesPage() {
       if (data.success) {
         setEmployees(data.data || []);
       } else {
-        toast.error(data.message || "Failed to fetch employees");
+        toast.error(data.message || "Failed to fetch service providers");
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      toast.error("Failed to load employees");
+      console.error("Error fetching service providers:", error);
+      toast.error("Failed to load service providers");
     } finally {
       setLoading(false);
     }
   };
 
-  // Filter and search employees
+  // Filter and search service providers
   const filteredEmployees = employees
     .filter((emp) => {
       // Search filter
@@ -127,7 +127,7 @@ export default function FieldExecEmployeesPage() {
   const handleEdit = (employeeId: string, createdAt: string) => {
     const hoursSinceCreation = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60);
     if (hoursSinceCreation > 12) {
-      toast.error("Cannot edit employee after 12 hours of creation");
+      toast.error("Cannot edit service provider after 12 hours of creation");
       return;
     }
     router.push(`/field-executive/edit-employee?id=${employeeId}`);
@@ -263,10 +263,10 @@ export default function FieldExecEmployeesPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-2">
-              All Employees
+              All Service Providers
             </h1>
             <p className="text-slate-600">
-              Manage and view all employees under your supervision
+              Manage and view all service providers under your supervision
             </p>
           </div>
 
@@ -283,7 +283,7 @@ export default function FieldExecEmployeesPage() {
                   <Users className="w-5 h-5 md:w-6 md:h-6 text-[#2B9EB3]" />
                 </div>
               </div>
-              <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">Total Employees</h3>
+              <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">Total Service Providers</h3>
               <p className="text-2xl md:text-3xl font-bold text-[#0A3D62]">{employees.length}</p>
             </motion.div>
 
@@ -377,7 +377,7 @@ export default function FieldExecEmployeesPage() {
                         className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-200 z-50 overflow-hidden"
                       >
                         {[
-                          { value: "all", label: "All Employees" },
+                          { value: "all", label: "All Service Providers" },
                           { value: "active", label: "Active Only" },
                           { value: "inactive", label: "Inactive Only" },
                           { value: "paid", label: "Paid Only" },
@@ -563,7 +563,7 @@ const EmployeeCard = ({ employee, index, onEdit }: any) => {
             className="w-full py-2.5 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] text-white rounded-lg font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all"
           >
             <Edit className="w-4 h-4" />
-            Edit Employee
+            Edit Service Provider
           </button>
         ) : (
           <div className="w-full py-2.5 bg-slate-100 text-slate-500 rounded-lg font-medium text-center text-sm">
@@ -699,12 +699,12 @@ const EmptyState = ({ searchQuery }: { searchQuery: string }) => (
       <Users className="w-8 h-8 md:w-10 md:h-10 text-slate-400" />
     </div>
     <h3 className="text-xl md:text-2xl font-bold text-[#0A3D62] mb-2">
-      {searchQuery ? "No employees found" : "No employees yet"}
+      {searchQuery ? "No service providers found" : "No service providers yet"}
     </h3>
     <p className="text-slate-600 mb-6">
       {searchQuery
         ? "Try adjusting your search or filter criteria"
-        : "Start by adding your first employee"}
+        : "Start by adding your first service provider"}
     </p>
     {!searchQuery && (
       <Link
@@ -712,7 +712,7 @@ const EmptyState = ({ searchQuery }: { searchQuery: string }) => (
         className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
       >
         <Users className="w-5 h-5" />
-        Add Employee
+        Add Service Provider
       </Link>
     )}
   </div>

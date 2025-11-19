@@ -25,14 +25,14 @@ export const useFieldExecNavigation = () => {
       }),
     },
     {
-      label: "Add Employee",
+      label: "Add Service Provider",
       href: "/field-executive/add-employee",
       icon: React.createElement(IconUserPlus, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },
     {
-      label: "Employees",
+      label: "Service Providers",
       href: "/field-executive/employees",
       icon: React.createElement(IconUsers, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"

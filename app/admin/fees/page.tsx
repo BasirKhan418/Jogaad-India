@@ -159,7 +159,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
                 Fees Management
               </h1>
               <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                Configure dynamic pricing for users and employees
+                Configure dynamic pricing for users and service providers
               </p>
             </div>
             <button
@@ -188,17 +188,17 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
             </div>
           </div>
 
-          {/* Employee Fee Card */}
+          {/* Service Provider Fee Card */}
           <div className="rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 border border-purple-200 dark:border-purple-700">
             <div className="flex items-center justify-between mb-4">
-              <div className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">Employee Registration Fee</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">Service Provider Registration Fee</div>
               <IconBriefcase className="h-8 w-8 text-purple-500" />
             </div>
             <div className="text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">
               ₹{feesData?.employeeOneTimeFee?.toLocaleString() || '0'}
             </div>
             <div className="text-xs text-neutral-500 dark:text-neutral-500">
-              One-time registration fee for employees
+              One-time registration fee for service providers
             </div>
           </div>
 
@@ -249,11 +249,11 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
                   </p>
                 </LabelInputContainer>
 
-                {/* Employee One-Time Fee */}
+                {/* Service Provider One-Time Fee */}
                 <LabelInputContainer>
                   <Label htmlFor="employeeFee" className="text-sm text-neutral-600 dark:text-neutral-400 font-medium flex items-center gap-2">
                     <IconBriefcase className="h-4 w-4 text-purple-500" />
-                    Employee One-Time Fee (₹) *
+                    Service Provider One-Time Fee (₹) *
                   </Label>
                   <Input
                     id="employeeFee"
@@ -267,7 +267,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
                     className="h-11 rounded-lg border-2 border-neutral-200 dark:border-neutral-600 focus:border-[#2B9EB3] focus:ring-0 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-100"
                   />
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                    Fee charged when a new employee joins the platform
+                    Fee charged when a new service provider joins the platform
                   </p>
                 </LabelInputContainer>
 
@@ -361,7 +361,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
           <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
-              <span>User and employee fees are charged only once during registration for new accounts.</span>
+              <span>User and service provider fees are charged only once during registration for new accounts.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
@@ -373,7 +373,7 @@ const FeesContent = ({ adminData }: { adminData: AdminData | null }) => {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>
-              <span>Existing users and employees will not be affected by fee changes.</span>
+              <span>Existing users and service providers will not be affected by fee changes.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#2B9EB3] mt-1">•</span>

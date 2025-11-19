@@ -3,8 +3,10 @@
 import { usePathname } from "next/navigation";
 import { NavbarDemo } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import type { AuthSession } from "@/utils/auth/getAuthSession";
+import { RoleConflictBanner } from "@/components/role-conflict-banner";
 
-export function ConditionalLayout({ children }: { children: React.ReactNode }) {
+export function ConditionalLayout({ children, initialAuth }: { children: React.ReactNode; initialAuth?: AuthSession }) {
   const pathname = usePathname();
   
   const isAdminRoute = pathname?.startsWith("/admin");
@@ -14,7 +16,8 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && !isUserRoute && <NavbarDemo />}
+      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && !isUserRoute && <RoleConflictBanner />}
+      {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && !isUserRoute && <NavbarDemo initialAuth={initialAuth} />}
       {children}
       {!isAdminRoute && !isEmployeeRoute && !isFieldExecRoute && !isUserRoute && <Footer />}
     </>

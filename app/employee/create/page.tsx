@@ -167,7 +167,7 @@ export default function EmployeeSignupPage() {
                 Join as Service Professional
               </h1>
               <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
-                Create your employee account in 3 simple steps
+                Create your service provider account in 3 simple steps
               </p>
             </div>
 

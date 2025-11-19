@@ -130,13 +130,13 @@ export const Footer: React.FC = () => {
                 href="/employee/login"
                 className="block w-full px-4 py-2 text-xs font-medium text-center text-white bg-gradient-to-r from-[#F9A825] to-[#F57C00] rounded-lg hover:from-[#F57C00] hover:to-[#F9A825] transition-all duration-300 shadow-md hover:shadow-lg"
               >
-                Employee Login
+                Service Provider Login
               </Link>
               <Link 
                 href="/field-executive/login"
                 className="block w-full px-4 py-2 text-xs font-medium text-center text-white bg-gradient-to-r from-[#10B981] to-[#059669] rounded-lg hover:from-[#059669] hover:to-[#10B981] transition-all duration-300 shadow-md hover:shadow-lg"
               >
-                Field Executive Login
+                Employee Login
               </Link>
             </div>
           </div>

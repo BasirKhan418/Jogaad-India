@@ -151,7 +151,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
         const fieldExecData = await fieldExecRes.json();
         
         if (employeesData.success) {
-          // Get last 5 employees
+          // Get last 5 service providers
           const sortedEmployees = (employeesData.employees || []).sort((a: any, b: any) => 
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           ).slice(0, 5);
@@ -159,7 +159,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
         }
         
         if (fieldExecData.success) {
-          // Get last 5 field executives
+          // Get last 5 employees
           const sortedFieldExec = (fieldExecData.data || []).sort((a: any, b: any) => 
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           ).slice(0, 5);
@@ -191,7 +191,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <DashboardStatCard 
-            title="Total Employees" 
+            title="Total Service Providers" 
             value={statsLoading ? "..." : (stats?.employees.total.toString() || "0")}
             subtitle={statsLoading ? "Loading..." : `${stats?.employees.active || 0} active`}
             icon={<IconUsers className="h-8 w-8 text-blue-500" />}
@@ -199,7 +199,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
             border="border-blue-200 dark:border-blue-700"
           />
           <DashboardStatCard 
-            title="Field Executives" 
+            title="Total Employees" 
             value={statsLoading ? "..." : (stats?.fieldExecutives.total.toString() || "0")}
             subtitle={statsLoading ? "Loading..." : `${stats?.fieldExecutives.active || 0} active`}
             icon={<IconCategory className="h-8 w-8 text-green-500" />}
@@ -217,13 +217,13 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
           <DashboardStatCard 
             title="Pending Payments" 
             value={statsLoading ? "..." : (stats?.employees.pending.toString() || "0")}
-            subtitle={statsLoading ? "Loading..." : "Employees unpaid"}
+            subtitle={statsLoading ? "Loading..." : "Service Providers unpaid"}
             icon={<IconCurrencyRupee className="h-8 w-8 text-orange-500" />}
             gradient="from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20"
             border="border-orange-200 dark:border-orange-700"
           />
           <DashboardStatCard 
-            title="Employee Fee" 
+            title="Service Provider Fee" 
             value={statsLoading ? "..." : `₹${stats?.fees.employeeFee || 0}`}
             subtitle={statsLoading ? "Loading..." : "Current rate"}
             icon={<IconCurrencyRupee className="h-8 w-8 text-yellow-500" />}
@@ -237,7 +237,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
           <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            {/* Manage Employees */}
+            {/* Manage Service Providers */}
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -249,13 +249,13 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                   <IconUsers className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-blue-800 dark:text-blue-100 mb-2">Manage Employees</h3>
-                  <p className="text-blue-600 dark:text-blue-300 text-sm">View and manage all employee accounts</p>
+                  <h3 className="text-lg font-bold text-blue-800 dark:text-blue-100 mb-2">Manage Service Providers</h3>
+                  <p className="text-blue-600 dark:text-blue-300 text-sm">View and manage all service provider accounts</p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Manage Field Executives */}
+            {/* Manage Employees */}
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -267,8 +267,8 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                   <IconCategory className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-green-800 dark:text-green-100 mb-2">Field Executives</h3>
-                  <p className="text-green-600 dark:text-green-300 text-sm">Manage field executive accounts</p>
+                  <h3 className="text-lg font-bold text-green-800 dark:text-green-100 mb-2">Manage Employees</h3>
+                  <p className="text-green-600 dark:text-green-300 text-sm">Manage employee accounts</p>
                 </div>
               </div>
             </motion.div>
@@ -304,7 +304,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-orange-800 dark:text-orange-100 mb-2">Manage Fees</h3>
-                  <p className="text-orange-600 dark:text-orange-300 text-sm">Update user and employee fees</p>
+                  <p className="text-orange-600 dark:text-orange-300 text-sm">Update user and service provider fees</p>
                 </div>
               </div>
             </motion.div>
@@ -315,11 +315,11 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
         {/* Detailed Stats */}
         {!statsLoading && stats && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Employee Overview */}
-            <DashboardContentCard title="Employee Overview">
+            {/* Service Provider Overview */}
+            <DashboardContentCard title="Service Provider Overview">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Total Employees</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Total Service Providers</span>
                   <span className="font-semibold text-neutral-800 dark:text-neutral-100">{stats.employees.total}</span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -341,19 +341,19 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
               </div>
             </DashboardContentCard>
 
-            {/* Field Executive & Category Overview */}
-            <DashboardContentCard title="Field Executive & Category Overview">
+            {/* Employee & Category Overview */}
+            <DashboardContentCard title="Employee & Category Overview">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Total Field Executives</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Total Employees</span>
                   <span className="font-semibold text-neutral-800 dark:text-neutral-100">{stats.fieldExecutives.total}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Active FEs</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Active Employees</span>
                   <span className="font-semibold text-green-600">{stats.fieldExecutives.active}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Inactive FEs</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Inactive Employees</span>
                   <span className="font-semibold text-red-600">{stats.fieldExecutives.inactive}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
@@ -375,7 +375,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
             <DashboardContentCard title="Payment Overview">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Paid Employees</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Paid Service Providers</span>
                   <span className="font-semibold text-green-600">{stats.employees.paid}</span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -387,7 +387,7 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                   <span className="font-semibold text-neutral-800 dark:text-neutral-100">₹{stats.fees.userFee}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-neutral-600 dark:text-neutral-400">Employee Fee</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">Service Provider Fee</span>
                   <span className="font-semibold text-neutral-800 dark:text-neutral-100">₹{stats.fees.employeeFee}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
@@ -437,11 +437,11 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
           </div>
         )}
 
-        {/* Recent Employees & Field Executives */}
+        {/* Recent Service Providers & Employees */}
         {!recentEmployeesLoading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Recent Employees */}
-            <DashboardContentCard title="Recent Employees">
+            {/* Recent Service Providers */}
+            <DashboardContentCard title="Recent Service Providers">
               {employees.length > 0 ? (
                 <div className="space-y-3">
                   {employees.map((employee: any, index: number) => (
@@ -497,18 +497,18 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                     onClick={() => router.push('/admin/employees')}
                     className="w-full mt-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   >
-                    View all employees →
+                    View all service providers →
                   </button>
                 </div>
               ) : (
                 <div className="text-center py-8 text-neutral-600 dark:text-neutral-400">
-                  No employees found
+                  No service providers found
                 </div>
               )}
             </DashboardContentCard>
 
-            {/* Recent Field Executives */}
-            <DashboardContentCard title="Recent Field Executives">
+            {/* Recent Employees */}
+            <DashboardContentCard title="Recent Employees">
               {fieldExecutives.length > 0 ? (
                 <div className="space-y-3">
                   {fieldExecutives.map((fe: any, index: number) => (
@@ -555,12 +555,12 @@ const Dashboard = ({ adminData }: { adminData: AdminData | null }) => {
                     onClick={() => router.push('/admin/field-executives')}
                     className="w-full mt-4 py-2 text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
                   >
-                    View all field executives →
+                    View all employees →
                   </button>
                 </div>
               ) : (
                 <div className="text-center py-8 text-neutral-600 dark:text-neutral-400">
-                  No field executives found
+                  No employees found
                 </div>
               )}
             </DashboardContentCard>

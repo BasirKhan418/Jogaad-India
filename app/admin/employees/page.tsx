@@ -203,10 +203,10 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
               </button>
               <div>
                 <h1 className="text-3xl font-bold text-neutral-800 dark:text-neutral-100">
-                  Employee Management
+                  Service Provider Management
                 </h1>
                 <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                  Manage employee accounts, categories, and payment status
+                  Manage service provider accounts, categories, and payment status
                 </p>
               </div>
             </div>
@@ -216,7 +216,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
               className="bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2 hover:scale-105"
             >
               <IconUserPlus className="h-5 w-5" />
-              Add New Employee
+              Add New Service Provider
             </button>
           </div>
         </div>
@@ -224,12 +224,12 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <StatsCard 
-            title="Total Employees" 
+            title="Total Service Providers" 
             value={employeeLoading ? "..." : stats.total.toString()} 
             icon={<IconUsers className="h-8 w-8 text-blue-500" />}
             gradient="from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20"
             border="border-blue-200 dark:border-blue-700"
-            subtitle={employeeLoading ? "Loading..." : `${stats.total} total employees`}
+            subtitle={employeeLoading ? "Loading..." : `${stats.total} total service providers`}
           />
           <StatsCard 
             title="Active" 
@@ -270,7 +270,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
           <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            {/* Add New Employee */}
+            {/* Add New Service Provider */}
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -282,8 +282,8 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                   <IconUserPlus className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-green-800 dark:text-green-100 mb-2">Add New Employee</h3>
-                  <p className="text-green-600 dark:text-green-300 text-sm">Create a new employee account with category and pricing</p>
+                  <h3 className="text-lg font-bold text-green-800 dark:text-green-100 mb-2">Add New Service Provider</h3>
+                  <p className="text-green-600 dark:text-green-300 text-sm">Create a new service provider account with category and pricing</p>
                 </div>
               </div>
             </motion.div>
@@ -305,8 +305,8 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                   <IconUserCheck className="h-8 w-8" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-blue-800 dark:text-blue-100 mb-2">Active Employees</h3>
-                  <p className="text-blue-600 dark:text-blue-300 text-sm">View all active employee accounts and their details</p>
+                  <h3 className="text-lg font-bold text-blue-800 dark:text-blue-100 mb-2">Active Service Providers</h3>
+                  <p className="text-blue-600 dark:text-blue-300 text-sm">View all active service provider accounts and their details</p>
                 </div>
               </div>
             </motion.div>
@@ -329,7 +329,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-purple-800 dark:text-purple-100 mb-2">Pending Payments</h3>
-                  <p className="text-purple-600 dark:text-purple-300 text-sm">View employees with pending payment verification</p>
+                  <p className="text-purple-600 dark:text-purple-300 text-sm">View service providers with pending payment verification</p>
                 </div>
               </div>
             </motion.div>
@@ -337,11 +337,11 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
           </div>
         </div>
 
-        {/* Recent Employees */}
+        {/* Recent Service Providers */}
         <div className="mt-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100">
-              {filter === 'all' ? 'All Employees' : filter === 'active' ? 'Active Employees' : 'Pending Payments'}
+              {filter === 'all' ? 'All Service Providers' : filter === 'active' ? 'Active Service Providers' : 'Pending Payments'}
               {filter !== 'all' && (
                 <span className="ml-2 text-sm font-normal text-neutral-600 dark:text-neutral-400">
                   ({filteredEmployees.length} {filter === 'active' ? 'active' : 'pending'})
@@ -362,7 +362,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
             <div className="rounded-xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-8 border border-neutral-200 dark:border-neutral-700">
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2B9EB3]"></div>
-                <p className="text-neutral-600 dark:text-neutral-400">Loading employees...</p>
+                <p className="text-neutral-600 dark:text-neutral-400">Loading service providers...</p>
               </div>
             </div>
           ) : filteredEmployees.length > 0 ? (
@@ -423,14 +423,14 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                       <button
                         onClick={() => handleEditEmployee(employee)}
                         className="p-2 rounded-lg bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-600 dark:text-green-400 transition-colors"
-                        title="Edit Employee"
+                        title="Edit Service Provider"
                       >
                         <IconEdit className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteRequest(employee.email)}
                         className="p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 transition-colors"
-                        title="Delete Employee"
+                        title="Delete Service Provider"
                         disabled={deleting === employee.email}
                       >
                         {deleting === employee.email ? (
@@ -448,17 +448,17 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
             <div className="rounded-xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-12 border border-neutral-200 dark:border-neutral-700 text-center">
               <IconUsers className="h-16 w-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">
-                {filter === 'all' ? 'No Employees Found' : filter === 'active' ? 'No Active Employees' : 'No Pending Payments'}
+                {filter === 'all' ? 'No Service Providers Found' : filter === 'active' ? 'No Active Service Providers' : 'No Pending Payments'}
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-                {filter === 'all' ? 'Get started by adding your first employee' : filter === 'active' ? 'No employees are currently active' : 'All employees have completed their payments'}
+                {filter === 'all' ? 'Get started by adding your first service provider' : filter === 'active' ? 'No service providers are currently active' : 'All service providers have completed their payments'}
               </p>
               <button
                 onClick={handleShowCreateModal}
                 className="bg-gradient-to-r from-[#F9A825] to-[#2B9EB3] text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 inline-flex items-center gap-2"
               >
                 <IconUserPlus className="h-5 w-5" />
-                Add Employee
+                Add Service Provider
               </button>
             </div>
           )}
@@ -588,7 +588,7 @@ const CreateEmployeeModal = React.memo(({ onClose }: { onClose: () => void }) =>
         className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div className="sticky top-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Create New Employee</h2>
+          <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Create New Service Provider</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -658,7 +658,7 @@ const CreateEmployeeModal = React.memo(({ onClose }: { onClose: () => void }) =>
               </div>
               <div>
                 <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-1">
-                  Upload employee profile picture
+                  Upload service provider profile picture
                 </p>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   PNG, JPG up to 5MB
@@ -893,7 +893,7 @@ const CreateEmployeeModal = React.memo(({ onClose }: { onClose: () => void }) =>
               ) : (
                 <>
                   <IconUserPlus className="w-5 h-5" />
-                  Create Employee
+                  Create Service Provider
                 </>
               )}
             </button>
@@ -915,7 +915,7 @@ const ViewEmployeeModal = React.memo(({ employee, onClose }: { employee: Employe
         className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div className="sticky top-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Employee Details</h2>
+          <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Service Provider Details</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -1055,7 +1055,7 @@ const EditEmployeeModal = React.memo(({ employee, onClose }: { employee: Employe
         className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div className="sticky top-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Edit Employee</h2>
+          <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Edit Service Provider</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -1378,7 +1378,7 @@ const DeleteConfirmModal = React.memo(({
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
             <IconTrash className="h-8 w-8 text-red-600 dark:text-red-400" />
           </div>
-          <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">Delete Employee?</h3>
+          <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">Delete Service Provider?</h3>
           <p className="text-neutral-600 dark:text-neutral-400 mb-6">
             Are you sure you want to delete this employee? This action cannot be undone.
           </p>

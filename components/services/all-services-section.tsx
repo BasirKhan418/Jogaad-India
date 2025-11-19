@@ -64,7 +64,7 @@ const services = [
   { title: "Project Management", description: "We offer project management services including planning", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Business" },
   
   { title: "Construction Services", description: "We provide construction services including building design", image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Construction" },
-  { title: "Employees Benefits", description: "We provide employee benefits services including health insurance", image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Business" },
+  { title: "Service Provider Benefits", description: "We provide service provider benefits services including health insurance", image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Business" },
   { title: "Payroll Services", description: "We offer payroll services including salary processing", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Business" },
   
   { title: "Seminars", description: "We organize seminars including event planning", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Events" },

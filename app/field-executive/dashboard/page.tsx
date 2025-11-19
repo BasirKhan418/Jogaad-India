@@ -168,7 +168,7 @@ export default function FieldExecutiveDashboard() {
           {/* Welcome Header */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#0A3D62] to-[#2B9EB3] bg-clip-text text-transparent mb-2">
-              Welcome back, {fieldExecData?.name?.split(' ')[0] || 'Field Executive'}!
+              Welcome back, {fieldExecData?.name?.split(' ')[0] || 'Employee'}!
             </h1>
             <p className="text-slate-600">Here's your field activity overview</p>
           </div>
@@ -227,13 +227,13 @@ export default function FieldExecutiveDashboard() {
                   <Users className="w-6 h-6 text-purple-600" />
                 </div>
               </div>
-              <h3 className="text-slate-600 text-sm font-medium mb-1">Employees Added</h3>
+              <h3 className="text-slate-600 text-sm font-medium mb-1">Service Providers Added</h3>
               <p className="text-3xl font-bold text-[#0A3D62]">{analytics?.currentTarget || 0}</p>
               <p className="text-xs text-slate-500 mt-2">This month</p>
             </motion.div>
           </div>
 
-          {/* Recent Employees Section */}
+          {/* Recent Service Providers Section */}
           <div className="mb-8">
             <FieldExecRecentEmployees />
           </div>
@@ -276,8 +276,8 @@ export default function FieldExecutiveDashboard() {
                   <Building2 className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-semibold text-[#0A3D62]">Manage Employees</p>
-                  <p className="text-xs text-slate-600">View employee list</p>
+                  <p className="font-semibold text-[#0A3D62]">Manage Service Providers</p>
+                  <p className="text-xs text-slate-600">View service provider list</p>
                 </div>
               </button>
             </div>

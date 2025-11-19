@@ -13,10 +13,11 @@ export interface UseAuthReturn extends AuthState {
   logout: () => void;
 }
 
+type InitialAuth = { user?: AuthUser | null; isAuthenticated?: boolean } | undefined;
 
-export const useAuth = (): UseAuthReturn => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<AuthUser | null>(null);
+export const useAuth = (initial?: InitialAuth): UseAuthReturn => {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!initial?.isAuthenticated);
+  const [user, setUser] = useState<AuthUser | null>(initial?.user ?? null);
   const [loading, setLoading] = useState(true);
   const lastFetchTimeRef = useRef(0); 
   const isMountedRef = useRef(true);
@@ -91,6 +92,15 @@ export const useAuth = (): UseAuthReturn => {
 
 
   useEffect(() => {
+    // If we have initial data, avoid a flicker and seed cache
+    if (initial?.user) {
+      try {
+        // Seed cache without waiting for network
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { clearAuthCache: _c } = require('./authService');
+      } catch {}
+      setLoading(false);
+    }
     refreshAuth(true); 
     
     const interval = setInterval(() => refreshAuth(true), 30000); 

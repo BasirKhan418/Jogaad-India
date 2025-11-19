@@ -147,7 +147,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       image: "https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png",
       currency: order.currency,
       name: 'Jogaad India',
-      description: 'Employee Registration Fee',
+      description: 'Service Provider Registration Fee',
       order_id: order.id,
       prefill: {
         email: email,

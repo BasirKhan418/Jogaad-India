@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Employee Dashboard - Jogaad India",
-  description: "Employee dashboard for Jogaad India",
+  title: "Service Provider Dashboard - Jogaad India",
+  description: "Service Provider dashboard for Jogaad India",
 };
 
 export default function EmployeeLayout({

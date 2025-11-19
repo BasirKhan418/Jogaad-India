@@ -38,9 +38,9 @@ export const EmployeesModal: React.FC<EmployeesModalProps> = ({ open, onOpenChan
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogClose onClose={() => onOpenChange(false)} />
         <DialogHeader>
-          <DialogTitle>Manage Employees</DialogTitle>
+          <DialogTitle>Manage Service Providers</DialogTitle>
           <DialogDescription>
-            View and manage all employees under your supervision
+            View and manage all service providers under your supervision
           </DialogDescription>
         </DialogHeader>
 
@@ -50,7 +50,7 @@ export const EmployeesModal: React.FC<EmployeesModalProps> = ({ open, onOpenChan
             <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search employees..."
+              placeholder="Search service providers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B9EB3] focus:border-transparent touch-manipulation"
@@ -71,10 +71,10 @@ export const EmployeesModal: React.FC<EmployeesModalProps> = ({ open, onOpenChan
               <Users className="w-7 h-7 sm:w-8 sm:h-8 text-slate-400" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-slate-700 mb-2">
-              {searchQuery ? 'No employees found' : 'No employees yet'}
+              {searchQuery ? 'No service providers found' : 'No service providers yet'}
             </h3>
             <p className="text-sm text-slate-500">
-              {searchQuery ? 'Try adjusting your search criteria' : 'Start onboarding employees to see them here'}
+              {searchQuery ? 'Try adjusting your search criteria' : 'Start onboarding service providers to see them here'}
             </p>
           </div>
         ) : (
