@@ -35,6 +35,7 @@ export const chnageBookingStatusByEmployee = async (bookingId: string) => {
 export const TakePaymentForBooking = async (bookingId: string, amount: number) => {
     try{
         await ConnectDb();
+<<<<<<< HEAD
         const recipt = `booking_${bookingId}_${Date.now()}`;
         const paymentResult = await CreateBookingRazorPay(Math.floor(amount*100), "INR",recipt) as { success: boolean; order?: { id?: string } | null; message?: string; error?: string };
         
@@ -45,6 +46,12 @@ export const TakePaymentForBooking = async (bookingId: string, amount: number) =
                 success: false,
                 error: paymentResult?.error
             };
+=======
+        const recipt = `booking_${bookingId}}`;
+        const paymentResult = await CreateBookingRazorPay(Math.floor(amount*100), "INR",recipt) as { success: boolean; order?: { id?: string } | null };
+        if(!paymentResult || !paymentResult.success || !paymentResult.order || !paymentResult.order.id){
+            return {message:"Error creating payment order",success:false};
+>>>>>>> d36efde466d8a22e48f5790663cc41b640532de0
         }
         
         if(!paymentResult.order || !paymentResult.order.id){
