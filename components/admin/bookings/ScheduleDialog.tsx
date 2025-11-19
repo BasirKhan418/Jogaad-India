@@ -3,18 +3,21 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Booking } from "./types";
 
 interface Provider {
   _id: string;
   name: string;
   address: string;
   payrate: number;
+  img?: string;
+  phone?: string;
 }
 
 interface ScheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  booking: any;
+  booking: Booking | null;
   onSuccess: () => void;
 }
 
@@ -29,28 +32,21 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChan
       fetchProviders();
       setSelectedProvider(null);
     }
-  }, [open, booking?._id]); // Only depend on booking ID to prevent unnecessary re-fetches
+  }, [open, booking?._id]); 
 
   const fetchProviders = async () => {
     setLoading(true);
     try {
-      const categoryId = booking.categoryid?._id || booking.categoryid;
+      // @ts-ignore
+      const categoryId = booking?.categoryid?._id || booking?.categoryid;
       if (!categoryId) {
         console.error("No category ID found");
         setLoading(false);
         return;
       }
 
-      const res = await fetch(`/api/v1/schedule?category=${categoryId}`);
+      const res = await fetch(`/api/v1/adminbooking/schedule?categoryid=${categoryId}`);
       
-      // Check if response is JSON
-      const contentType = res.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        console.error("Response is not JSON:", await res.text());
-        setLoading(false);
-        return;
-      }
-
       const data = await res.json();
       if (data.success) {
         setProviders(data.data || []);
@@ -68,12 +64,12 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChan
     if (!selectedProvider || !booking) return;
     setSubmitting(true);
     try {
-      const res = await fetch("/api/v1/schedule", {
+      const res = await fetch("/api/v1/adminbooking/schedule/do", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          bookingId: booking._id,
-          employeeId: selectedProvider._id
+          bookingid: booking._id,
+          employeeid: selectedProvider._id
         })
       });
       const data = await res.json();
@@ -93,60 +89,73 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChan
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogClose onClose={() => onOpenChange(false)} />
+      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Schedule Booking</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4 mt-4">
-          <div className="text-sm text-muted-foreground">
-            Select a service provider for booking #{booking?.orderid}
-          </div>
-
+        <div className="py-4">
+          <h3 className="text-sm font-medium mb-4">Select a Service Provider</h3>
+          
           {loading ? (
-            <div className="flex justify-center p-8">Loading providers...</div>
+            <div className="text-center py-8">Loading providers...</div>
           ) : providers.length === 0 ? (
-            <div className="text-center p-8 text-muted-foreground">No providers found for this category.</div>
+            <div className="text-center py-8 text-neutral-500">No providers found for this category.</div>
           ) : (
-            <div className="grid gap-3 max-h-[50vh] overflow-y-auto pr-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {providers.map((provider) => (
-                <div
+                <div 
                   key={provider._id}
                   onClick={() => setSelectedProvider(provider)}
                   className={`
-                    p-4 rounded-lg border cursor-pointer transition-all
-                    flex justify-between items-center
+                    cursor-pointer rounded-xl border p-4 transition-all
                     ${selectedProvider?._id === provider._id 
-                      ? "border-primary bg-primary/5 ring-1 ring-primary" 
-                      : "hover:bg-muted/50 border-border"}
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-500/20" 
+                      : "border-neutral-200 dark:border-neutral-700 hover:border-blue-300 dark:hover:border-blue-700"
+                    }
                   `}
                 >
-                  <div>
-                    <h4 className="font-medium">{provider.name}</h4>
-                    <p className="text-sm text-muted-foreground">{provider.address || "No address"}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-bold text-primary">
-                      ₹{provider.payrate || 0}/hr
+                  <div className="flex items-start gap-4">
+                    {provider.img ? (
+                      <img src={provider.img} alt={provider.name} className="w-12 h-12 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                        <span className="text-lg font-bold text-neutral-500">{provider.name.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-neutral-900 dark:text-neutral-100 truncate">{provider.name}</h4>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">{provider.phone}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2">{provider.address}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-green-50 dark:bg-green-900/20 text-xs font-medium text-green-700 dark:text-green-300">
+                          ₹{provider.payrate}/hr
+                        </span>
+                      </div>
                     </div>
+                    {selectedProvider?._id === provider._id && (
+                      <div className="text-blue-500">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           )}
+        </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleConfirm} 
-              disabled={!selectedProvider || submitting}
-            >
-              {submitting ? "Scheduling..." : "Confirm Schedule"}
-            </Button>
-          </div>
+        <div className="flex justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button 
+            onClick={handleConfirm} 
+            disabled={!selectedProvider || submitting}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {submitting ? "Scheduling..." : "Confirm Schedule"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

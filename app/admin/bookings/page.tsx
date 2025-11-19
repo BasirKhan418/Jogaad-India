@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { BookingsTable } from "@/components/admin/bookings/BookingsTable";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { useAdminData, useAdminLogout } from "@/utils/admin/useAdminHooks";
+import { Booking, Schedule } from "@/components/admin/bookings/types";
 
 const tabs = [
   { id: "all", label: "All" },
@@ -92,9 +93,28 @@ export default function BookingsPage() {
 
 function BookingsContent() {
   const [activeTab, setActiveTab] = useState("all");
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
-  const [allBookings, setAllBookings] = useState([]);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+
+  const fetchSchedules = useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/adminbooking/schedule/do");
+      const data = await res.json();
+      if (data.success) {
+        setSchedules(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch schedules", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "confirmed") {
+      fetchSchedules();
+    }
+  }, [activeTab, fetchSchedules]);
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -139,11 +159,11 @@ function BookingsContent() {
   }, [fetchAllBookings]);
 
   const getStatusCount = (status: string) => {
-    return allBookings.filter((b: any) => b.status === status).length;
+    return allBookings.filter((b) => b.status === status).length;
   };
 
   const getTotalAmount = () => {
-    return allBookings.reduce((sum: number, b: any) => sum + (b.intialamount || 0), 0);
+    return allBookings.reduce((sum, b) => sum + (b.intialamount || 0), 0);
   };
 
   return (
@@ -224,8 +244,10 @@ function BookingsContent() {
           onRefresh={() => {
             fetchBookings();
             fetchAllBookings();
+            if (activeTab === "confirmed") fetchSchedules();
           }}
           isConfirmedTab={activeTab === "confirmed"}
+          schedules={schedules}
         />
       </div>
     </div>
