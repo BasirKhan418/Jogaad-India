@@ -12,7 +12,9 @@ import {
   Loader2,
   IndianRupee,
   User,
-  Phone
+  Phone,
+  Star,
+  MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +40,9 @@ interface Booking {
   bookingAmount?: number;
   paymentStatus?: string;
   createdAt: string;
+  rating?: number;
+  feedback?: string;
+  isRated?: boolean;
 }
 
 interface BookingCardProps {
@@ -150,7 +155,43 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           </p>
         </div>
 
-        {/* Actions */}
+        {/* Rating & Review (History Only) */}
+        {type === "history" && booking.isRated && (
+          <>
+            <div className="h-px bg-slate-100" />
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={cn(
+                        "w-4 h-4",
+                        i < (booking.rating || 0)
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-slate-300"
+                      )}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm font-semibold text-slate-700">
+                  {booking.rating?.toFixed(1) || "0.0"}
+                </span>
+              </div>
+              {booking.feedback && (
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <MessageSquare className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-slate-600 line-clamp-3">
+                      {booking.feedback}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
         {type === "pending" && (
           <button 
             onClick={() => onAction?.("accept", booking)}

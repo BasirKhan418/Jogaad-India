@@ -314,7 +314,7 @@ const JobInsights = ({ stats, loading }: { stats: JobStats; loading: boolean }) 
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
         {/* Total Jobs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -393,22 +393,6 @@ const JobInsights = ({ stats, loading }: { stats: JobStats; loading: boolean }) 
           </div>
           <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">Completed</h3>
           <p className="text-2xl md:text-3xl font-bold text-emerald-700">{stats.completed}</p>
-        </motion.div>
-
-        {/* Total Earnings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-2xl p-4 md:p-5 border border-purple-500/20 hover:shadow-lg transition-shadow"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="p-2 bg-purple-500 rounded-xl">
-              <IndianRupee className="w-5 h-5 text-white" />
-            </div>
-          </div>
-          <h3 className="text-slate-600 text-xs md:text-sm font-medium mb-1">Total Earnings</h3>
-          <p className="text-xl md:text-2xl font-bold text-purple-700">₹{stats.totalEarnings.toLocaleString()}</p>
         </motion.div>
       </div>
 
@@ -527,7 +511,7 @@ const RecentBookings = ({ bookings, loading }: { bookings: any[]; loading: boole
 const QuickActions = () => (
   <div className="mb-8">
     <h2 className="text-xl font-bold text-[#0A3D62] mb-4">Quick Actions</h2>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
       <Link
         href="/employee/bookings"
         className="bg-white rounded-xl p-6 border border-slate-200 hover:border-[#2B9EB3] hover:shadow-lg transition-all group"
@@ -552,20 +536,6 @@ const QuickActions = () => (
           </div>
           <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-600">
             My Profile
-          </span>
-        </div>
-      </Link>
-
-      <Link
-        href="/employee/earnings"
-        className="bg-white rounded-xl p-6 border border-slate-200 hover:border-[#2B9EB3] hover:shadow-lg transition-all group"
-      >
-        <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-            <IndianRupee className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-sm font-semibold text-slate-700 group-hover:text-purple-600">
-            Earnings
           </span>
         </div>
       </Link>

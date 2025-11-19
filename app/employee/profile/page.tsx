@@ -73,6 +73,7 @@ export default function EmployeeProfile() {
         img: employeeData.img || '',
         categoryid: employeeData.categoryid || '',
         payrate: employeeData.payrate || 0,
+        isActive: employeeData.isActive || false,
       });
     }
   }, [employeeData, setFormData]);
@@ -479,11 +480,68 @@ export default function EmployeeProfile() {
                   </div>
                 </motion.div>
 
-                {/* Bank Information Card */}
+                {/* Availability Toggle Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
+                  className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+                >
+                  <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 px-4 md:px-5 py-2.5 md:py-3 border-b border-neutral-200 dark:border-neutral-700">
+                    <h2 className="text-base md:text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+                      <div className="h-6 w-6 md:h-7 md:w-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                        <IconShield className="h-3 w-3 md:h-3.5 md:w-3.5 text-white" />
+                      </div>
+                      Availability Status
+                    </h2>
+                  </div>
+                  <div className="p-4 md:p-5">
+                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-neutral-900 dark:to-neutral-800 rounded-lg">
+                      <div className="flex-1">
+                        <h3 className="text-sm md:text-base font-semibold text-neutral-800 dark:text-neutral-100 mb-1">
+                          Service Availability
+                        </h3>
+                        <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400">
+                          {formData.isActive 
+                            ? "You are currently accepting new service requests" 
+                            : "You are not accepting new service requests"}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, isActive: !prev.isActive }))}
+                        className={cn(
+                          "relative inline-flex h-7 w-12 md:h-8 md:w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2",
+                          formData.isActive 
+                            ? "bg-gradient-to-r from-green-500 to-emerald-600 focus:ring-green-500" 
+                            : "bg-neutral-300 dark:bg-neutral-600 focus:ring-neutral-400"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "pointer-events-none inline-block h-6 w-6 md:h-7 md:w-7 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
+                            formData.isActive ? "translate-x-5 md:translate-x-6" : "translate-x-0"
+                          )}
+                        />
+                      </button>
+                    </div>
+                    <div className="mt-3 flex items-start gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+                      <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      <p>
+                        Toggle this switch to control whether you want to receive new service booking requests. 
+                        When inactive, customers won't be able to book your services.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Bank Information Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
                   className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
                 >
                   <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 px-4 md:px-5 py-2.5 md:py-3 border-b border-neutral-200 dark:border-neutral-700">

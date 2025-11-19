@@ -264,6 +264,7 @@ export const getUploadUrl = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(request),
+      credentials: 'include',
       signal
     });
 
@@ -276,11 +277,23 @@ export const getUploadUrl = async (
       };
     }
 
+    // Handle both direct response and nested data response
+    const uploadURL = data.data?.uploadURL || data.uploadURL;
+    const fileURL = data.data?.fileURL || data.fileURL;
+
+    if (!uploadURL || !fileURL) {
+      console.error('Invalid upload response:', data);
+      return {
+        success: false,
+        message: 'Invalid upload URL response format'
+      };
+    }
+
     return {
       success: true,
       data: {
-        uploadURL: data.uploadURL,
-        fileURL: data.fileURL
+        uploadURL,
+        fileURL
       },
       message: 'Upload URL generated successfully'
     };

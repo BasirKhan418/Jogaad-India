@@ -19,6 +19,7 @@ export interface EmployeeUpdateData {
   img?: string;
   categoryid: string;
   payrate: number;
+  isActive?: boolean;
 }
 
 export interface UseEmployeeUpdateReturn {
@@ -62,7 +63,8 @@ export const useEmployeeUpdate = (initialData?: EmployeeUpdateData): UseEmployee
       bankIfscCode: '',
       img: '',
       categoryid: '',
-      payrate: 0
+      payrate: 0,
+      isActive: false
     }
   );
   const [categories, setCategories] = useState<CategoryData[]>([]);
