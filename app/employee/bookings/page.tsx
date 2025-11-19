@@ -82,9 +82,8 @@ export default function EmployeeBookingsPage() {
       const pendingData = await pendingRes.json();
       
       if (pendingData.success) {
-        // Extract booking from schedule and filter out accepted ones
+        // Extract booking from schedule - schedules are deleted after acceptance, so no filter needed
         const bookings = pendingData.schedules
-          .filter((s: any) => !s.isAccepted) 
           .map((s: any) => ({
             ...s.bookingid,
             scheduleId: s._id

@@ -82,7 +82,7 @@ export const TakePaymentForBooking = async (bookingId: string, amount: number) =
             orderid: paymentResult.order.id, 
             bookingAmount: amount,
             paymentStatus: "pending",
-            renderPaymentButton: true  // Show Pay Now button to user
+            renderPaymentButton: true 
         }, {new: true})
         .populate('userid')
         .populate('categoryid');
