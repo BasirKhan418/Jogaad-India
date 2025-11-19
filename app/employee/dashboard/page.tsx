@@ -11,6 +11,7 @@ import { getUserInitials } from "@/utils/auth";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useEmployeeNavigation } from "@/utils/employee/useEmployeeNavigation";
 import { useEmployeeData, useEmployeeLogout, useEmployeeSidebar } from "@/utils/employee/useEmployeeHooks";
+import { useEmployeeAnalytics } from "@/utils/employee/useEmployeeAnalytics";
 import { 
   Briefcase, 
   TrendingUp, 
@@ -19,7 +20,9 @@ import {
   CheckCircle,
   Clock,
   Star,
-  Users
+  Users,
+  Filter,
+  X
 } from "lucide-react";
 
 export default function EmployeeDashboard() {
@@ -242,68 +245,170 @@ const MobileBottomNav = ({ links, currentPath }: { links: any[], currentPath: st
 
 // Dashboard Content Component
 const DashboardContent = ({ employeeData }: { employeeData: any }) => {
+  const { analytics, loading, dateRange, setDateRange } = useEmployeeAnalytics();
+  const [showFilters, setShowFilters] = React.useState(false);
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDateRange(prev => ({ ...prev, [name]: value }));
+  };
+
+  const clearFilters = () => {
+    setDateRange({ startDate: "", endDate: "" });
+  };
+
   return (
     <div className="flex flex-1 overflow-hidden">
       <div className="flex h-full w-full flex-1 flex-col gap-4 rounded-none md:rounded-tl-2xl border-0 md:border border-neutral-200 bg-white p-3 sm:p-6 md:p-10 pb-24 md:pb-10 dark:border-neutral-700 dark:bg-neutral-900 overflow-y-auto">
-        {/* Welcome Section */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-            Welcome back, {employeeData?.name?.split(' ')[0] || "Service Provider"}!
-            <span className="inline-block animate-wave">
-              👋
-            </span>
-          </h1>
-          <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-            Here's your performance overview for today.
-          </p>
+        {/* Welcome Section & Filters */}
+        <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+              Welcome back, {employeeData?.name?.split(' ')[0] || "Service Provider"}!
+              <span className="inline-block animate-wave">
+                👋
+              </span>
+            </h1>
+            <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+              Here's your performance overview.
+            </p>
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            <button 
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 text-sm font-medium text-[#2B9EB3] hover:text-[#0A3D62] transition-colors self-start md:self-end"
+            >
+              <Filter className="w-4 h-4" />
+              {showFilters ? "Hide Filters" : "Filter by Date"}
+            </button>
+            
+            {showFilters && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 bg-neutral-50 p-2 rounded-lg border border-neutral-200"
+              >
+                <input 
+                  type="date" 
+                  name="startDate"
+                  value={dateRange.startDate}
+                  onChange={handleDateChange}
+                  className="text-xs p-1.5 rounded border border-neutral-300"
+                />
+                <span className="text-neutral-400">-</span>
+                <input 
+                  type="date" 
+                  name="endDate"
+                  value={dateRange.endDate}
+                  onChange={handleDateChange}
+                  className="text-xs p-1.5 rounded border border-neutral-300"
+                />
+                {(dateRange.startDate || dateRange.endDate) && (
+                  <button 
+                    onClick={clearFilters}
+                    className="p-1 hover:bg-red-100 text-red-500 rounded-full transition-colors"
+                    title="Clear filters"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard 
-            title="Total Jobs" 
-            value="0" 
-            icon={<Briefcase className="w-5 h-5" />}
-            bgGradient="from-blue-500 to-blue-600"
-          />
-          <StatCard 
-            title="Completed" 
-            value="0" 
-            icon={<CheckCircle className="w-5 h-5" />}
-            bgGradient="from-green-500 to-green-600"
-          />
-          <StatCard 
-            title="Pending" 
-            value="0" 
-            icon={<Clock className="w-5 h-5" />}
-            bgGradient="from-yellow-500 to-yellow-600"
-          />
-          <StatCard 
-            title="Total Earnings" 
-            value="₹0" 
-            icon={<IndianRupee className="w-5 h-5" />}
-            bgGradient="from-purple-500 to-purple-600"
-          />
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {/* Recent Bookings */}
-          <ContentCard title="Recent Bookings" icon={<Calendar className="w-5 h-5" />}>
-            <div className="space-y-3">
-              <EmptyState message="No recent bookings" />
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2B9EB3]"></div>
+          </div>
+        ) : (
+          <>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard 
+                title="Total Jobs" 
+                value={analytics?.totalBookings?.toString() || "0"} 
+                icon={<Briefcase className="w-5 h-5" />}
+                bgGradient="from-blue-500 to-blue-600"
+              />
+              <StatCard 
+                title="Completed" 
+                value={analytics?.completedBookings?.toString() || "0"} 
+                icon={<CheckCircle className="w-5 h-5" />}
+                bgGradient="from-green-500 to-green-600"
+              />
+              <StatCard 
+                title="Pending" 
+                value={analytics?.pendings?.toString() || "0"} 
+                icon={<Clock className="w-5 h-5" />}
+                bgGradient="from-yellow-500 to-yellow-600"
+              />
+              <StatCard 
+                title="Total Earnings" 
+                value={`₹${analytics?.totalEarnings?.toLocaleString() || "0"}`} 
+                icon={<IndianRupee className="w-5 h-5" />}
+                bgGradient="from-purple-500 to-purple-600"
+              />
             </div>
-          </ContentCard>
 
-          {/* Performance */}
-          <ContentCard title="Performance Overview" icon={<TrendingUp className="w-5 h-5" />}>
-            <div className="space-y-4">
-              <PerformanceItem label="Rating" value="0.0" icon={<Star className="w-4 h-4 text-yellow-500" />} />
-              <PerformanceItem label="Reviews" value="0" icon={<Users className="w-4 h-4 text-blue-500" />} />
-              <PerformanceItem label="Completion Rate" value="0%" icon={<CheckCircle className="w-4 h-4 text-green-500" />} />
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {/* Recent Bookings */}
+              <ContentCard title="Recent Bookings" icon={<Calendar className="w-5 h-5" />}>
+                <div className="space-y-3">
+                  {analytics?.recentData && analytics.recentData.length > 0 ? (
+                    analytics.recentData.map((booking: any) => (
+                      <div key={booking._id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-neutral-100 hover:shadow-sm transition-shadow">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-2 rounded-full ${
+                            booking.status === 'completed' ? 'bg-green-500' :
+                            booking.status === 'pending' ? 'bg-yellow-500' :
+                            booking.status === 'confirmed' ? 'bg-blue-500' : 'bg-gray-500'
+                          }`} />
+                          <div>
+                            <p className="text-sm font-medium text-neutral-800">
+                              {booking.categoryid?.categoryName || "Service"}
+                            </p>
+                            <p className="text-xs text-neutral-500">
+                              {new Date(booking.bookingDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold text-[#2B9EB3]">
+                          ₹{booking.intialamount}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <EmptyState message="No recent bookings" />
+                  )}
+                </div>
+              </ContentCard>
+
+              {/* Performance */}
+              <ContentCard title="Performance Overview" icon={<TrendingUp className="w-5 h-5" />}>
+                <div className="space-y-4">
+                  <PerformanceItem 
+                    label="Rating" 
+                    value={analytics?.averageRating?.toFixed(1) || "0.0"} 
+                    icon={<Star className="w-4 h-4 text-yellow-500" />} 
+                  />
+                  <PerformanceItem 
+                    label="Reviews" 
+                    value={analytics?.totalReviews?.toString() || "0"} 
+                    icon={<Users className="w-4 h-4 text-blue-500" />} 
+                  />
+                  <PerformanceItem 
+                    label="Completion Rate" 
+                    value={`${analytics?.completionRate || 0}%`} 
+                    icon={<CheckCircle className="w-4 h-4 text-green-500" />} 
+                  />
+                </div>
+              </ContentCard>
             </div>
-          </ContentCard>
-        </div>
+          </>
+        )}
 
         {/* Quick Actions */}
         <div className="mt-6">
@@ -315,8 +420,8 @@ const DashboardContent = ({ employeeData }: { employeeData: any }) => {
                 icon="👤"
               />
               <QuickActionButton 
-                label="View Schedule" 
-                href="/employee/schedule"
+                label="View Bookings" 
+                href="/employee/bookings"
                 icon={<Calendar className="w-8 h-8" />}
               />
               <QuickActionButton 

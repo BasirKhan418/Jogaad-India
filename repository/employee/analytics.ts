@@ -1,6 +1,9 @@
 import ConnectDb from "@/middleware/connectDb";
 import Booking from "@/models/Booking";
 import Schedule from "@/models/Schedule";
+import "@/models/Category"; // Ensure Category model is registered
+import "@/models/User"; // Ensure User model is registered
+
 const calculateEmployeeStats = (bookings: any[]) => {
   const totalBookings = bookings.length;
   const completedBookings = bookings.filter(b => b.status === "completed");
@@ -110,7 +113,13 @@ export const getPendingSchedules = async (employeeId: string) => {
     try{
         await ConnectDb();
         const schedules = await Schedule.find({ employeeid: employeeId })
-            .populate('bookingid');
+            .populate({
+                path: 'bookingid',
+                populate: [
+                    { path: 'userid' },
+                    { path: 'categoryid' }
+                ]
+            });
         return {message:"Schedules fetched successfully",schedules,success:true};
     }
     catch(error){

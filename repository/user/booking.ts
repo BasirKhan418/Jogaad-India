@@ -126,8 +126,26 @@ export const updateBookingStatus = async (id: string, status: string, additional
 export const cacncelBookingByUser = async (id: string) => {
     try{
         await ConnectDb();
-        const booking = await Booking.findByIdAndDelete(id);
-        return { message: "Booking cancelled by user successfully", success: true, data: booking };
+        const booking = await Booking.findById(id);
+        if(!booking){
+            return { message: "Booking not found", success: false };
+        }
+
+        if(booking.status === "pending"){
+            await Booking.findByIdAndDelete(id);
+            return { message: "Booking cancelled successfully", success: true };
+        }
+
+        if(booking.status === "confirmed"){
+            booking.status = "cancelled";
+            if(booking.paymentStatus === "paid" || booking.intialPaymentStatus === "paid"){
+                booking.refundStatus = "requested";
+            }
+            await booking.save();
+            return { message: "Booking cancelled successfully", success: true, data: booking };
+        }
+
+        return { message: "Cannot cancel booking at this stage", success: false };
     }
     catch(error){
         return { message: "Internal Server Error", success: false };

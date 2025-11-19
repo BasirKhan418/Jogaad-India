@@ -351,23 +351,24 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-2 pt-2">
           {booking.status === "pending" && !isPaymentExpired && (
-            <>
-              <Button
-                onClick={() => onPayNow(booking)}
-                className="flex-1 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] hover:from-[#0A3D62] hover:to-[#2B9EB3] text-white font-semibold shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
-              >
-                <IndianRupee className="w-4 h-4 mr-1" />
-                Pay Now
-              </Button>
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                className="flex-1 border-red-300 text-red-600 hover:bg-red-50 font-semibold text-sm md:text-base"
-                disabled={cancelling}
-              >
-                {cancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cancel"}
-              </Button>
-            </>
+            <Button
+              onClick={() => onPayNow(booking)}
+              className="flex-1 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] hover:from-[#0A3D62] hover:to-[#2B9EB3] text-white font-semibold shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
+            >
+              <IndianRupee className="w-4 h-4 mr-1" />
+              Pay Now
+            </Button>
+          )}
+
+          {((booking.status === "pending" && !isPaymentExpired) || booking.status === "confirmed") && (
+            <Button
+              onClick={handleCancel}
+              variant="outline"
+              className="flex-1 border-red-300 text-red-600 hover:bg-red-50 font-semibold text-sm md:text-base"
+              disabled={cancelling}
+            >
+              {cancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cancel"}
+            </Button>
           )}
 
           {booking.status === "confirmed" && !booking.employeeid && (

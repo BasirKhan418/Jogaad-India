@@ -1,5 +1,6 @@
 import ConnectDb from "@/middleware/connectDb";
 import Employee from "@/models/Employee";
+import "@/models/Category"; // Ensure Category model is registered for population
 import { EmployeeInput } from "@/validator/employee/employee.auth";
 
 export const createEmployee = async (employeeData: EmployeeInput) => {

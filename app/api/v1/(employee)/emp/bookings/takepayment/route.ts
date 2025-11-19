@@ -21,8 +21,8 @@ export const POST= async (request: NextRequest) => {
                 success: false
             }, { status: 404 });
         }
-        const {bookingid,amount} = await request.json();
-        const paymentResult = await TakePaymentForBooking(bookingid,amount);
+        const {bookingId,amount} = await request.json();
+        const paymentResult = await TakePaymentForBooking(bookingId,amount);
         return NextResponse.json(paymentResult);
 
 

@@ -172,9 +172,9 @@ export default function UserProfile() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex h-full w-full flex-1 flex-col rounded-none md:rounded-tl-2xl border-0 md:border border-neutral-200 bg-gradient-to-br from-white via-neutral-50 to-neutral-100 dark:border-neutral-700 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-800 overflow-y-auto pb-24 md:pb-0">
-          <div className="relative z-0 mt-20 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] h-38 sm:h-36 md:h-40">
+          <div className="relative z-0 mt-0 bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] h-24 md:h-32">
             <div className="absolute inset-0 bg-black/10"></div>
-            <div className="absolute -bottom-12 sm:-bottom-14 md:-bottom-16 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="absolute -bottom-10 md:-bottom-12 left-1/2 transform -translate-x-1/2 z-20">
               <ProfileImageSection 
                 imagePreview={imagePreview}
                 formData={formData}
@@ -186,9 +186,9 @@ export default function UserProfile() {
           </div>
 
           {/* Content Section */}
-          <div className="mt-16 sm:mt-20 md:mt-24 px-3 sm:px-4 md:px-6 lg:px-8 pb-6 md:pb-8 relative z-10">
-            <div className="text-center mb-6 md:mb-8">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">
+          <div className="mt-14 md:mt-16 px-3 md:px-6 lg:px-8 pb-4 md:pb-6 relative z-10">
+            <div className="text-center mb-4 md:mb-6">
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-1.5">
                 {formData.name || "User"}
               </h1>
               <div className="flex items-center justify-center gap-2 flex-wrap mb-1.5">
@@ -203,7 +203,7 @@ export default function UserProfile() {
 
             {/* Form Container */}
             <div className="max-w-5xl mx-auto w-full">
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
                 {/* Error/Success Messages */}
                 <StatusMessages updateError={updateError} success={success} />
 
@@ -321,7 +321,7 @@ const UserAvatar = ({ userData, formData, imagePreview }: any) => (
 
 const ProfileImageSection = ({ imagePreview, formData, uploadingImage, fileInputRef, handleFileChange }: any) => (
   <div className="relative">
-    <div className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full bg-white dark:bg-neutral-800 p-1.5 shadow-2xl">
+    <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-white dark:bg-neutral-800 p-1.5 shadow-2xl">
       <div className="h-full w-full rounded-full bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center text-white font-bold text-2xl md:text-3xl overflow-hidden relative">
         {(imagePreview || formData.img) && (
           <img
@@ -408,18 +408,18 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
     transition={{ delay: 0.1 }}
     className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
   >
-    <div className="bg-gradient-to-r from-[#2B9EB3]/10 to-[#0A3D62]/10 dark:from-[#2B9EB3]/20 dark:to-[#0A3D62]/20 px-4 sm:px-5 md:px-6 py-3 md:py-4 border-b border-neutral-200 dark:border-neutral-700">
-      <h2 className="text-base sm:text-lg md:text-xl font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-        <div className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center">
-          <IconUser className="h-3.5 w-3.5 md:h-4 md:w-4 text-white" />
+    <div className="bg-gradient-to-r from-[#2B9EB3]/10 to-[#0A3D62]/10 dark:from-[#2B9EB3]/20 dark:to-[#0A3D62]/20 px-4 md:px-5 py-2.5 md:py-3 border-b border-neutral-200 dark:border-neutral-700">
+      <h2 className="text-base md:text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+        <div className="h-6 w-6 md:h-7 md:w-7 rounded-lg bg-gradient-to-br from-[#2B9EB3] to-[#0A3D62] flex items-center justify-center">
+          <IconUser className="h-3 w-3 md:h-3.5 md:w-3.5 text-white" />
         </div>
         Personal Information
       </h2>
     </div>
-    <div className="p-4 sm:p-5 md:p-6 space-y-4 md:space-y-5">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+    <div className="p-4 md:p-5 space-y-3 md:space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
         <div className="space-y-1.5">
-          <Label htmlFor="name" className="text-sm md:text-base font-medium flex items-center gap-2">
+          <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
             <User className="h-3.5 w-3.5" />
             Full Name *
           </Label>
@@ -431,7 +431,7 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
             onChange={handleInputChange}
             placeholder="Enter your full name"
             required
-            className="h-10 md:h-11 text-sm md:text-base"
+            className="h-9 md:h-10 text-sm"
           />
         </div>
 
@@ -447,7 +447,7 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
               type="email"
               value={formData.email}
               disabled
-              className="h-10 md:h-11 text-sm md:text-base bg-neutral-100 dark:bg-neutral-900 cursor-not-allowed pr-9"
+              className="h-9 md:h-10 text-sm bg-neutral-100 dark:bg-neutral-900 cursor-not-allowed pr-9"
             />
             <svg
               className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400"
@@ -488,7 +488,7 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
             onChange={handleInputChange}
             placeholder="Enter 10-digit phone number"
             maxLength={10}
-            className="h-10 md:h-11 text-sm md:text-base"
+            className="h-9 md:h-10 text-sm"
           />
         </div>
 
@@ -505,7 +505,7 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
             onChange={handleInputChange}
             placeholder="Enter 6-digit pincode"
             maxLength={6}
-            className="h-10 md:h-11 text-sm md:text-base"
+            className="h-9 md:h-10 text-sm"
           />
         </div>
       </div>
@@ -522,7 +522,7 @@ const PersonalInfoCard = ({ formData, handleInputChange }: any) => (
           onChange={handleInputChange}
           placeholder="Enter your complete address"
           rows={3}
-          className="text-sm md:text-base resize-none"
+          className="text-sm resize-none"
         />
       </div>
     </div>
@@ -534,21 +534,12 @@ const ActionButtons = ({ isSaving, updateLoading, isFormValid }: any) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: 0.2 }}
-    className="flex flex-col sm:flex-row gap-3 justify-end pt-4"
+    className="flex flex-col sm:flex-row gap-2.5 md:gap-3 justify-center pt-2"
   >
-    <Button
-      type="button"
-      variant="outline"
-      onClick={() => window.history.back()}
-      disabled={isSaving || updateLoading}
-      className="w-full sm:w-auto order-2 sm:order-1"
-    >
-      Cancel
-    </Button>
     <Button
       type="submit"
       disabled={isSaving || updateLoading || !isFormValid}
-      className="w-full sm:w-auto bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] hover:from-[#0A3D62] hover:to-[#2B9EB3] text-white order-1 sm:order-2"
+      className="bg-gradient-to-r from-[#2B9EB3] to-[#0A3D62] text-white hover:shadow-xl hover:scale-105 transition-all h-9 md:h-10 px-5 md:px-6 text-sm font-semibold w-full sm:w-auto order-1 sm:order-1"
     >
       {isSaving || updateLoading ? (
         <>
@@ -556,8 +547,32 @@ const ActionButtons = ({ isSaving, updateLoading, isFormValid }: any) => (
           Saving...
         </>
       ) : (
-        'Save Changes'
+        <>
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          Save Changes
+        </>
       )}
+    </Button>
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => window.history.back()}
+      disabled={isSaving || updateLoading}
+      className="border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 h-9 md:h-10 px-5 md:px-6 text-sm font-semibold transition-all w-full sm:w-auto order-2 sm:order-2"
+    >
+      Cancel
     </Button>
   </motion.div>
 );
