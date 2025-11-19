@@ -29,7 +29,8 @@ import {
   List,
   AlertTriangle,
   Package,
-  Ban
+  Ban,
+  Search
 } from "lucide-react";
 
 type TabType = "all" | "pending" | "confirmed" | "completed" | "cancelled" | "refunded";
@@ -72,6 +73,11 @@ export default function UserBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("all");
+  
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "amount-high" | "amount-low">("newest");
+  const [dateFilter, setDateFilter] = useState("");
 
   // Fetch bookings on mount and set up polling
   useEffect(() => {
@@ -149,7 +155,7 @@ export default function UserBookingsPage() {
       handler: async function (response: any) {
         // Verify payment with backend
         try {
-          const verifyResponse = await fetch("/api/v1/user/verify-payment", {
+          const verifyResponse = await fetch("/api/v1/user/verify-payment/v2", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -204,29 +210,81 @@ export default function UserBookingsPage() {
 
 
   /**
-   * Filter bookings based on active tab
+   * Filter and sort bookings based on active tab, search, date, and sort criteria
    */
   const getFilteredBookings = (): Booking[] => {
+    let filtered = bookings;
+
+    // 1. Filter by Tab
     switch (activeTab) {
-      case "all":
-        return bookings;
       case "pending":
-        return bookings.filter(b => b.status === "pending");
+        filtered = filtered.filter(b => {
+          if (b.status !== "pending") return false;
+          // Hide if older than 24 hours
+          const createdAt = new Date(b.createdAt);
+          const now = new Date();
+          const diffMs = now.getTime() - createdAt.getTime();
+          const hours = diffMs / (1000 * 60 * 60);
+          return hours < 24;
+        });
+        break;
       case "confirmed":
-        return bookings.filter(b => 
+        filtered = filtered.filter(b => 
           b.status === "confirmed" || 
           b.status === "in-progress" || 
           b.status === "started"
         );
+        break;
       case "completed":
-        return bookings.filter(b => b.status === "completed");
+        filtered = filtered.filter(b => b.status === "completed");
+        break;
       case "cancelled":
-        return bookings.filter(b => b.status === "cancelled");
+        filtered = filtered.filter(b => b.status === "cancelled");
+        break;
       case "refunded":
-        return bookings.filter(b => b.status === "refunded");
+        filtered = filtered.filter(b => b.status === "refunded");
+        break;
+      case "all":
       default:
-        return bookings;
+        // No tab filtering
+        break;
     }
+
+    // 2. Filter by Search Query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(b => 
+        b.categoryid?.categoryName?.toLowerCase().includes(query) ||
+        b.orderid?.toLowerCase().includes(query) ||
+        b._id.toLowerCase().includes(query)
+      );
+    }
+
+    // 3. Filter by Date
+    if (dateFilter) {
+      filtered = filtered.filter(b => {
+        const bDate = new Date(b.bookingDate).toISOString().split('T')[0];
+        return bDate === dateFilter;
+      });
+    }
+
+    // 4. Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case "oldest":
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case "amount-high":
+          return (b.intialamount || 0) - (a.intialamount || 0);
+        case "amount-low":
+          return (a.intialamount || 0) - (b.intialamount || 0);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
   };
 
   const filteredBookings = getFilteredBookings();
@@ -398,6 +456,61 @@ export default function UserBookingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
+            {/* Filters Toolbar */}
+            <div className="flex flex-col md:flex-row gap-3 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100">
+              {/* Search */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search by service or ID..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2B9EB3]/20 focus:border-[#2B9EB3]"
+                />
+              </div>
+
+              {/* Date Filter */}
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="date"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="w-full md:w-auto pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2B9EB3]/20 focus:border-[#2B9EB3]"
+                />
+              </div>
+
+              {/* Sort */}
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="w-full md:w-auto pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2B9EB3]/20 focus:border-[#2B9EB3] appearance-none cursor-pointer"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="amount-high">Amount: High to Low</option>
+                  <option value="amount-low">Amount: Low to High</option>
+                </select>
+              </div>
+              
+              {/* Clear Filters */}
+              {(searchQuery || dateFilter || sortBy !== "newest") && (
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setDateFilter("");
+                    setSortBy("newest");
+                  }}
+                  className="px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
             <div className="flex items-center justify-between mb-3 md:mb-4">
               <h2 className="text-lg md:text-xl font-bold text-[#0A3D62] flex items-center gap-2">
                 {activeTab === "all" && (

@@ -103,9 +103,22 @@ export const rateBooking = async (bookingid: string, rating: number, feedback: s
         if(!booking){
             return { message: "Booking not found", success: false };
         }
-        return { message: "Booking rated successfully", success: true, data: booking };
+        return { message: "Rating submitted successfully", success: true, data: booking };
     }
     catch(error){
+        return { message: "Internal Server Error", success: false };
+    }
+}
+
+export const updateBookingStatus = async (id: string, status: string, additionalFields: any = {}) => {
+    try {
+        await ConnectDb();
+        const booking = await Booking.findByIdAndUpdate(id, { status, ...additionalFields }, { new: true });
+        if (!booking) {
+            return { message: "Booking not found", success: false };
+        }
+        return { message: "Booking status updated", success: true, data: booking };
+    } catch (error) {
         return { message: "Internal Server Error", success: false };
     }
 }

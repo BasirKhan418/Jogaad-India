@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { verifyUserToken } from "@/utils/user/usertoken.verify";
 import { cookies } from "next/headers";
-import { getBookingById } from "@/repository/user/booking";
+import { getBookingById, updateBookingStatus } from "@/repository/user/booking";
 import { isFineImposedForBooking } from "@/repository/user/booking";
 import { RefundBookingPayment } from "@/utils/user/refund";
 import { markFine } from "@/repository/user/booking";
-//untested endpoint after payment will check fine imposition and refund accordingly
+
 export const POST = async (request: NextRequest) => {
     try {
         const cookiesStore = await cookies();
@@ -19,35 +19,57 @@ export const POST = async (request: NextRequest) => {
         if (!id) {
             return NextResponse.json({ message: "ID is required to cancel the booking", success: false }, { status: 400 });
         }
-        const bookingdata = await getBookingById(id);
+        const bookingResult = await getBookingById(id);
         
-        if (!bookingdata.success) {
+        if (!bookingResult.success || !bookingResult.data) {
             return NextResponse.json({ message: "Booking not found", success: false }, { status: 404 });
         }
-        if(bookingdata.data.status=="started"){
-            return NextResponse.json({ message: "Cannot cancel a booking that has already started", success: false }, { status: 400 });
-        }
-        const fineData = await isFineImposedForBooking(id);
-        if (!fineData.success) {
-            return NextResponse.json({ message: "Error checking fine status", success: false }, { status: 500 });
-        }
-        if (fineData.data?.fine) {
-            const markfine = await markFine(bookingdata.data.userid.toString());
-            if (!markfine.success) {
-                return NextResponse.json({ message: "Error imposing fine", success: false }, { status: 500 });
-            }
-            const response = await RefundBookingPayment(bookingdata.data.paymentid!, bookingdata.data.intialamount * 100);
-            if (!response.success) {
-                return NextResponse.json({ message: "Error processing refund", success: false }, { status: 500 });
-            }
-            return NextResponse.json({ message: "Booking cancelled and refund processed successfully", success: true }, { status: 200 });
 
+        const booking = bookingResult.data;
+
+        // Check if booking can be cancelled
+        if (["started", "in-progress", "completed", "cancelled", "refunded"].includes(booking.status)) {
+            return NextResponse.json({ message: "Cannot cancel this booking", success: false }, { status: 400 });
         }
-        const response = await RefundBookingPayment(bookingdata.data.paymentid!, bookingdata.data.intialamount * 100);
-        if (!response.success) {
-            return NextResponse.json({ message: "Error processing refund", success: false }, { status: 500 });
+
+        // If payment is done, process refund
+        if (booking.intialPaymentStatus === "paid") {
+            const fineData = await isFineImposedForBooking(id);
+            if (!fineData.success) {
+                return NextResponse.json({ message: "Error checking fine status", success: false }, { status: 500 });
+            }
+
+            if (fineData.data?.fine) {
+                const markfine = await markFine(booking.userid.toString());
+                if (!markfine.success) {
+                    return NextResponse.json({ message: "Error imposing fine", success: false }, { status: 500 });
+                }
+            }
+
+            if (booking.paymentid) {
+                const response = await RefundBookingPayment(booking.paymentid, booking.intialamount * 100);
+                if (!response.success) {
+                    return NextResponse.json({ message: "Error processing refund", success: false }, { status: 500 });
+                }
+
+                await updateBookingStatus(id, "refunded", {
+                    refundStatus: "processed",
+                    refundAmount: booking.intialamount,
+                    refundDate: new Date(),
+                    refundid: (response.refund as any).id
+                });
+
+                return NextResponse.json({ message: "Booking cancelled and refund processed successfully", success: true }, { status: 200 });
+            } else {
+                // Paid but no payment ID (should not happen ideally)
+                await updateBookingStatus(id, "cancelled");
+                return NextResponse.json({ message: "Booking cancelled", success: true }, { status: 200 });
+            }
+        } else {
+            // Payment not done, just cancel
+            await updateBookingStatus(id, "cancelled");
+            return NextResponse.json({ message: "Booking cancelled successfully", success: true }, { status: 200 });
         }
-        return NextResponse.json({ message: "Booking cancelled and refund processed successfully", success: true }, { status: 200 });
     }
     catch (error) {
         return NextResponse.json({ message: "Internal Server Error", success: false }, { status: 500 });

@@ -12,9 +12,13 @@ import {
   XCircle,
   Loader2,
   IndianRupee,
-  User
+  User,
+  Star
 } from "lucide-react";
 import { toast } from "sonner";
+import { BikeAnimation } from "./BikeAnimation";
+import { RatingDialog } from "./RatingDialog";
+import { CancelBookingDialog } from "./CancelBookingDialog";
 
 
 const formatDistanceToNow = (date: Date): string => {
@@ -52,6 +56,7 @@ interface Booking {
     _id: string;
     name: string;
     phone: string;
+    img?: string;
   };
   status: "pending" | "confirmed" | "in-progress" | "started" | "completed" | "cancelled" | "refunded";
   bookingDate: string;
@@ -65,6 +70,7 @@ interface Booking {
   intialPaymentStatus?: string;
   feedback?: string;
   rating?: number;
+  isRated?: boolean;
   refundStatus?: string;
   refundAmount?: number;
   renderPaymentButton: boolean;
@@ -85,6 +91,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   onRefresh
 }) => {
   const [cancelling, setCancelling] = useState(false);
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   // Calculate expiry time once using useMemo
   const paymentExpiry = useMemo(() => {
@@ -171,9 +179,11 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   }, [booking.status]);
 
   // Handle cancel booking
-  const handleCancel = async () => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+  const handleCancel = () => {
+    setIsCancelDialogOpen(true);
+  };
 
+  const confirmCancel = async () => {
     setCancelling(true);
     try {
       const response = await fetch("/api/v1/user/cancelbooking", {
@@ -188,6 +198,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       if (data.success) {
         toast.success("Booking cancelled successfully");
         onRefresh();
+        setIsCancelDialogOpen(false);
       } else {
         toast.error(data.message || "Failed to cancel booking");
       }
@@ -252,16 +263,39 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           </div>
 
           {booking.employeeid && (
-            <div className="flex items-start gap-2 text-slate-600">
-              <User className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#2B9EB3]" />
+            <div className="flex items-start gap-2 text-slate-600 bg-blue-50/50 p-2 rounded-lg border border-blue-100">
+              {booking.employeeid.img ? (
+                <img 
+                  src={booking.employeeid.img} 
+                  alt={booking.employeeid.name} 
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-blue-200" 
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4 text-blue-600" />
+                </div>
+              )}
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-700 text-xs">Service Engineer</p>
-                <p className="truncate">{booking.employeeid.name}</p>
+                <p className="font-semibold text-slate-700 text-xs">Assigned Engineer</p>
+                <p className="truncate font-medium text-[#0A3D62]">{booking.employeeid.name}</p>
                 <p className="text-xs text-slate-500">{booking.employeeid.phone}</p>
+                {(booking.status === "confirmed" || booking.status === "in-progress" || booking.status === "started") && (
+                  <p className="text-[10px] text-green-600 font-medium mt-0.5">Will reach soon</p>
+                )}
               </div>
             </div>
           )}
         </div>
+
+        {/* Bike Animation for Confirmed but not assigned */}
+        {booking.status === "confirmed" && !booking.employeeid && (
+          <div className="py-2">
+            <BikeAnimation />
+            <p className="text-xs text-center text-slate-500 mt-2">
+              A new engineer will be assigned soon
+            </p>
+          </div>
+        )}
 
         {/* Payment Information */}
         <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-2.5 md:p-3 space-y-1 md:space-y-1.5 text-xs md:text-sm border border-slate-200">
@@ -336,22 +370,33 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             </>
           )}
 
-          {booking.status === "confirmed" && (
+          {booking.status === "confirmed" && !booking.employeeid && (
             <div className="w-full text-center text-xs md:text-sm bg-green-50 text-green-700 py-2.5 rounded-lg font-semibold border border-green-200">
-              ✓ Booking confirmed! Engineer will contact you soon.
-            </div>
-          )}
-
-          {(booking.status === "in-progress" || booking.status === "started") && (
-            <div className="w-full text-center text-xs md:text-sm bg-blue-50 text-blue-700 py-2.5 rounded-lg font-semibold border border-blue-200 flex items-center justify-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Service in progress...
+              ✓ Booking confirmed!
             </div>
           )}
 
           {booking.status === "completed" && (
-            <div className="w-full text-center text-xs md:text-sm bg-green-50 text-green-700 py-2.5 rounded-lg font-semibold border border-green-200">
-              ✓ Service completed successfully
+            <div className="w-full flex flex-col gap-2">
+              <div className="w-full text-center text-xs md:text-sm bg-green-50 text-green-700 py-2.5 rounded-lg font-semibold border border-green-200">
+                ✓ Service completed successfully
+              </div>
+              {!booking.isRated && (
+                <Button 
+                  onClick={() => setIsRatingOpen(true)}
+                  variant="outline"
+                  className="w-full border-yellow-400 text-yellow-600 hover:bg-yellow-50"
+                >
+                  <Star className="w-4 h-4 mr-2 fill-yellow-400" />
+                  Rate Service
+                </Button>
+              )}
+              {booking.isRated && booking.rating && (
+                <div className="flex items-center justify-center gap-1 text-yellow-500 text-sm font-medium bg-yellow-50 py-1 rounded border border-yellow-100">
+                  <Star className="w-4 h-4 fill-yellow-500" />
+                  <span>You rated: {booking.rating}/5</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -385,6 +430,20 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           </div>
         </div>
       </div>
+
+      <RatingDialog 
+        open={isRatingOpen} 
+        onOpenChange={setIsRatingOpen}
+        bookingId={booking._id}
+        onSuccess={onRefresh}
+      />
+
+      <CancelBookingDialog 
+        open={isCancelDialogOpen} 
+        onOpenChange={setIsCancelDialogOpen}
+        onConfirm={confirmCancel}
+        loading={cancelling}
+      />
     </motion.div>
   );
 };
