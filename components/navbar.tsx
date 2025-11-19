@@ -54,15 +54,14 @@ export function NavbarDemo({ initialAuth }: { initialAuth?: AuthSession }) {
   // Memoize role-based routes
   const dashboardRoute = useMemo(() => {
     const userType = user?.type;
-    
+    // New naming: old field-exec -> employee, old employee -> service-provider
     if (userType === 'admin' || user?.isSuperAdmin === true) {
       return '/admin/dashboard';
+    } else if (userType === 'service-provider') {
+      return '/employee/dashboard'; // folder retains original name
     } else if (userType === 'employee') {
-      return '/employee/dashboard';
-    } else if (userType === 'field-exec') {
-      return '/field-executive/dashboard';
+      return '/field-executive/dashboard'; // employee now represents former field executive
     }
-    
     return '/user/dashboard';
   }, [user?.type, user?.isSuperAdmin]);
   

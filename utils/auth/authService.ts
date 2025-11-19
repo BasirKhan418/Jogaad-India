@@ -5,7 +5,9 @@ export interface AuthUser {
   img?: string;
   phone?: string;
   address?: string;
-  type?: 'admin' | 'user' | 'employee' | 'field-exec';
+  // Updated role naming: previous 'employee' becomes 'service-provider'; previous 'field-exec' becomes 'employee'.
+  // Keep legacy values for backward compatibility while UI migrates.
+  type?: 'admin' | 'user' | 'service-provider' | 'employee' | 'field-exec';
   isSuperAdmin?: boolean;
   [key: string]: any;
 }
