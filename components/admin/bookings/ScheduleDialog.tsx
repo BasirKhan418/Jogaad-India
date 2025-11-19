@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Booking } from "./types";
 
 interface Provider {
+  pincode: string;
   _id: string;
   name: string;
   address: string;
@@ -51,6 +52,7 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChan
       const data = await res.json();
       if (data.success) {
         setProviders(data.data || []);
+        console.log("Fetched providers:", data.data);
       } else {
         console.error("Failed to fetch providers:", data.message);
       }
@@ -127,7 +129,8 @@ export const ScheduleDialog: React.FC<ScheduleDialogProps> = ({ open, onOpenChan
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-neutral-900 dark:text-neutral-100 truncate">{provider.name}</h4>
                       <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">{provider.phone}</p>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2">{provider.address}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2">{provider.address} PinCode:- {provider.pincode}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2"> PinCode:- {provider.pincode}</p>
                       <div className="mt-2 flex items-center gap-2">
                         <span className="inline-flex items-center px-2 py-1 rounded-md bg-green-50 dark:bg-green-900/20 text-xs font-medium text-green-700 dark:text-green-300">
                           ₹{provider.payrate}/hr

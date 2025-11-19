@@ -115,7 +115,7 @@ export const updateOrderidByEmail = async (email: string, orderId: string) => {
 export const getEmployeeByCategoryId = async (categoryid: string) => {
     try{
         await ConnectDb();
-        const employees = await Employee.find({categoryid, isActive: true}).select("name email phone address payrate img");
+        const employees = await Employee.find({categoryid, isActive: true}).select("name email phone address payrate img pincode");
         return {message:"Employees retrieved successfully",data:employees,success:true};
     }
     catch(error){
