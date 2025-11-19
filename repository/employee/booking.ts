@@ -58,7 +58,7 @@ export const completeBookingByEmployee = async (bookingId: string) => {
 export const TakePaymentForBooking = async (bookingId: string, amount: number) => {
     try{
         await ConnectDb();
-        const recipt = `booking_${bookingId}_${Date.now()}`;
+        const recipt = `booking_${bookingId}}`;
         const paymentResult = await CreateBookingRazorPay(Math.floor(amount*100), "INR",recipt) as { success: boolean; order?: { id?: string } | null; message?: string; error?: string };
         
         if(!paymentResult || !paymentResult.success){
