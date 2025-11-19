@@ -34,7 +34,8 @@ export const FileUpload = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    // Replace files instead of appending - only keep the latest file
+    setFiles(newFiles);
     onChange && onChange(newFiles);
   };
 
@@ -65,6 +66,7 @@ export const FileUpload = ({
           ref={fileInputRef}
           id="file-upload-handle"
           type="file"
+          accept="image/*"
           onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
           className="hidden"
         />
