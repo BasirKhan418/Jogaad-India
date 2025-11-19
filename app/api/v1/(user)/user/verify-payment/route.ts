@@ -65,16 +65,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Send confirmation email to user
-        try {
+        console.log("Sending booking confirmation email to user: for booking", booking.userid.email);
             await sendBookingConfirmationEmail({
                 name: booking.userid.name,
                 email: booking.userid.email,
                 serviceName: booking.categoryid.categoryName
             });
-        } catch (emailError) {
-            console.error("Error sending confirmation email:", emailError);
-            // Don't fail the request if email fails
-        }
+        
 
         return NextResponse.json({
             message: "Payment verified successfully. Your booking is now confirmed!",

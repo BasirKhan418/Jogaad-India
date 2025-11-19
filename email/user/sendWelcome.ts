@@ -203,6 +203,8 @@ export const sendBookingConfirmationEmail = async ({
   email,
   serviceName,
 }: SendBookingConfirmationEmailParams) => {
+  console.log("Preparing to send booking confirmation email to:", email);
+  console.log("Booking details - Name:", name, "Service:", serviceName);
   try {
     const emailTransporter = await ConnectEmailClient();
 

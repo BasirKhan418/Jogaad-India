@@ -142,6 +142,7 @@ export default function UserBookingsPage() {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
       amount: booking.intialamount * 100, // Convert to paise
       currency: "INR",
+      image:"https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png",
       name: "Jogaad India",
       description: `Payment for ${booking.categoryid.categoryName}`,
       order_id: booking.orderid,
@@ -164,7 +165,11 @@ export default function UserBookingsPage() {
 
           if (verifyData.success) {
             toast.success("Payment successful! Booking confirmed.");
-            fetchBookings();
+            
+            setTimeout(()=>{
+              fetchBookings();
+            },1000);
+            
           } else {
             toast.error(verifyData.message || "Payment verification failed");
           }
