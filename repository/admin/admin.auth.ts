@@ -3,6 +3,7 @@ import Admin from "@/models/Admin";
 import setConnectionRedis from "@/middleware/connectRedis";
 import { sendOtpEmail } from "@/email/user/sendOtp";
 import jwt from "jsonwebtoken";
+
 export const createAdmin= async (userData: any) => {
     try{
         await ConnectDb();
@@ -14,6 +15,7 @@ export const createAdmin= async (userData: any) => {
         return {message:"Error creating admin",error,success:false};
     }
 }
+
 //verify admin by email
 export const verifyAdminByEmail = async (email: string) => {
     try{
@@ -28,6 +30,7 @@ export const verifyAdminByEmail = async (email: string) => {
         return {message:"Error verifying admin",err,success:false};
     }
 }
+
 //update admin by email
 export const updateAdminByEmail = async (email: string, updateData: any) => {
     try{
@@ -115,7 +118,6 @@ export const verifyOTP = async (email: string, otp: string) => {
         return {message:"Error verifying OTP",error,success:false};
     }
 }
-
 
 export const deleteAdminById = async (id: string) => {
     try{

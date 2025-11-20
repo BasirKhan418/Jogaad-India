@@ -394,10 +394,13 @@ export const getEmailTemplate = (content: string) => {
               <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" style="width:22px;height:22px;vertical-align:middle;">
             </a>
             <a href="https://x.com/jogaadindia" class="social-icon" target="_blank" style="text-decoration:none;">
-              <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" style="width:22px;height:22px;vertical-align:middle;">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X" style="width:22px;height:22px;vertical-align:middle;">
             </a>
             <a href="http://www.linkedin.com/in/jogaad-india-40833a357" class="social-icon" target="_blank" style="text-decoration:none;">
               <img src="https://cdn-icons-png.flaticon.com/512/733/733561.png" alt="LinkedIn" style="width:22px;height:22px;vertical-align:middle;">
+            </a>
+            <a href="https://youtube.com/@jogaadindia?si=QzmPrFZaDhGLmbQL" class="social-icon" target="_blank" style="text-decoration:none;">
+              <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width:22px;height:22px;vertical-align:middle;">
             </a>
           </div>
 

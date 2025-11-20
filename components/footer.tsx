@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaXTwitter, FaLinkedinIn, FaInstagram, FaYoutube } from 'react-icons/fa6';
 
 const footerLinks = {
   pages: [
@@ -15,8 +15,9 @@ const footerLinks = {
   socials: [
     { icon: FaFacebookF, label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61583383065934' },
     { icon: FaInstagram, label: 'Instagram', href: 'https://www.instagram.com/jogaadindia25/' },
-    { icon: FaTwitter, label: 'Twitter', href: 'https://x.com/jogaadindia' },
+    { icon: FaXTwitter, label: 'X', href: 'https://x.com/jogaadindia' },
     { icon: FaLinkedinIn, label: 'LinkedIn', href: 'http://www.linkedin.com/in/jogaad-india-40833a357' },
+    { icon: FaYoutube, label: 'YouTube', href: 'https://youtube.com/@jogaadindia?si=QzmPrFZaDhGLmbQL' },
   ],
   legal: [
     { label: 'Privacy Policy', href: '/privacy' },
