@@ -28,7 +28,7 @@ export const sendFieldExecutiveWelcomeEmail = async ({
       You are now part of the Jogaad India team. You can log in to your dashboard to manage your tasks and profile.
     </p>
 
-    <a href="https://jogaadindia.in/field-executive/login" style="display: inline-block; margin-top: 25px; background: #2B9EB3; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
+    <a href="https://jogaadindia.com/field-executive/login" style="display: inline-block; margin-top: 25px; background: #2B9EB3; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
       Login to Dashboard
     </a>
 
@@ -49,7 +49,7 @@ Congratulations! Your employee account has been successfully created.
 
 You are now part of the Jogaad India team. You can log in to your dashboard to manage your tasks and profile.
 
-Login to Dashboard: https://jogaadindia.in/field-executive/login
+Login to Dashboard: https://jogaadindia.com/field-executive/login
 
 - Jogaad India Team
 `,

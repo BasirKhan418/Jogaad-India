@@ -136,7 +136,7 @@ export const sendBookingConfirmationEmail = async ({
       <strong>“Customer’s Problem is Our Solution.”</strong>
     </p>
 
-    <a href="https://jogaadindia.in/user/bookings" style="display: inline-block; padding: 14px 28px; background: #2B9EB3; color: #fff; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px; margin-top: 20px;">
+    <a href="https://jogaadindia.com/user/bookings" style="display: inline-block; padding: 14px 28px; background: #2B9EB3; color: #fff; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px; margin-top: 20px;">
       View Your Booking
     </a>
     `;
@@ -158,7 +158,7 @@ Next Step: A service engineer will be assigned to your booking soon. You will be
 Thank you for booking with Jogaad India.
 Customer’s problem is our solution.
 
-View your booking: https://jogaadindia.in/user/bookings
+View your booking: https://jogaadindia.com/user/bookings
 
 - Jogaad India Team
 `,

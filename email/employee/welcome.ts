@@ -35,7 +35,7 @@ export const sendEmployeeActivationEmail = async ({
       We are excited to have you on board.
     </p>
 
-    <a href="https://jogaadindia.in/employee/login" style="display: inline-block; background: #2B9EB3; color: #fff; padding: 14px 32px; margin-top: 25px; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold;">
+    <a href="https://jogaadindia.com/employee/login" style="display: inline-block; background: #2B9EB3; color: #fff; padding: 14px 32px; margin-top: 25px; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold;">
       Login to Dashboard
     </a>
 
@@ -58,7 +58,7 @@ Welcome to the Jogaad India Team!
 
 You can now log in to your dashboard and start accepting service requests.
 
-Login to Dashboard: https://jogaadindia.in/employee/login
+Login to Dashboard: https://jogaadindia.com/employee/login
 
 - Jogaad India Team
 `,

@@ -36,7 +36,7 @@ export const sendBookingConfirmationEmailAdmin = async ({
       Please review the booking details and assign a service engineer as soon as possible.
     </p>
 
-    <a href="https://jogaadindia.in/admin/bookings" style="display: inline-block; padding: 12px 22px; background: #ff8c00; color: #fff !important; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 6px; margin-top: 18px;">
+    <a href="https://jogaadindia.com/admin/bookings" style="display: inline-block; padding: 12px 22px; background: #ff8c00; color: #fff !important; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 6px; margin-top: 18px;">
       Manage Bookings
     </a>
     `;
@@ -57,7 +57,7 @@ Status: Confirmed
 
 Please review the booking details and assign a service engineer.
 
-Manage Bookings: https://jogaadindia.in/admin/bookings
+Manage Bookings: https://jogaadindia.com/admin/bookings
 
 - Jogaad India Team
 `,
