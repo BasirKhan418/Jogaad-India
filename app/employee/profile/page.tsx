@@ -118,7 +118,7 @@ export default function EmployeeProfile() {
     const newStatus = !formData.isActive;
     
     // Optimistically update UI
-    setFormData(prev => ({ ...prev, isActive: newStatus }));
+    setFormData({ ...formData, isActive: newStatus });
     
     try {
       const response = await fetch('/api/v1/emp/update-availability', {
@@ -136,12 +136,12 @@ export default function EmployeeProfile() {
         toast.success(newStatus ? 'You are now available for bookings' : 'You are now unavailable for bookings');
       } else {
         // Revert on failure
-        setFormData(prev => ({ ...prev, isActive: !newStatus }));
+        setFormData({ ...formData, isActive: !newStatus });
         toast.error(data.message || 'Failed to update availability');
       }
     } catch (error) {
       // Revert on error
-      setFormData(prev => ({ ...prev, isActive: !newStatus }));
+      setFormData({ ...formData, isActive: !newStatus });
       toast.error('Failed to update availability. Please try again.');
     }
   };
