@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CometCard } from "@/components/ui/comet-card";
 import { FiSearch } from "react-icons/fi";
-
+import { useRouter } from "next/navigation";
 const services = [
     
   { title: "Financial Services", description: "We offer financial services including investment planning", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2400&auto=format&fit=crop", location: "India", category: "Finance" },
@@ -109,6 +109,7 @@ export function AllServicesSection() {
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory]);
+  const router = useRouter();
 
   return (
     <section className="relative py-20 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
@@ -256,7 +257,9 @@ export function AllServicesSection() {
                       <span className="text-xs font-medium">{service.location}</span>
                     </div>
                     
-                    <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#2B9EB3] to-[#1B7A8F] text-white text-xs font-semibold hover:from-[#3BB4CF] hover:to-[#2B9EB3] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105">
+                    <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#2B9EB3] to-[#1B7A8F] text-white text-xs font-semibold hover:from-[#3BB4CF] hover:to-[#2B9EB3] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105" onClick={()=>{
+                      router.push(`/user/bookings/new`);
+                    }}>
                       Book Now
                     </button>
                   </div>

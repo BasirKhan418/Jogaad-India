@@ -17,6 +17,7 @@ import { FiLogOut, FiHome } from "react-icons/fi";
 import { toast } from "sonner";
 import { useAuth, getUserInitials } from "@/utils/auth";
 import type { AuthSession } from "@/utils/auth/getAuthSession";
+
 import Image from "next/image";
 const NAV_ITEMS = [
   {
@@ -155,7 +156,9 @@ export function NavbarDemo({ initialAuth }: { initialAuth?: AuthSession }) {
             ) : (
               <NavbarButton variant="secondary" onClick={() => router.push("/signin")}>Login</NavbarButton>
             )}
-            <NavbarButton variant="primary" className="!px-4 !py-2 !text-sm shadow-none hover:shadow-none">Book a Call</NavbarButton>
+            <NavbarButton variant="primary" className="!px-4 !py-2 !text-sm shadow-none hover:shadow-none" onClick={()=>{
+              router.push("/user/bookings/new")
+            }}>Book Now</NavbarButton>
           </div>
         </NavBody>
 
