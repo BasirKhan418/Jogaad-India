@@ -41,7 +41,7 @@ export const sendScheduletoEmployee = async ({
           Please check your dashboard for more details and to manage this booking.
         </p>
 
-        <a href="https://jogaadindia.in/employee/bookings" style="display: inline-block; padding: 12px 24px; background: #2B9EB3; color: #ffffff !important; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px; margin-top: 18px; text-align: center;">
+        <a href="https://jogaadindia.com/employee/bookings" style="display: inline-block; padding: 12px 24px; background: #2B9EB3; color: #ffffff !important; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px; margin-top: 18px; text-align: center;">
           View Booking
         </a>
         `;
@@ -62,7 +62,7 @@ Scheduled Date: ${scheduledDate}
 
 Please check your dashboard for more details.
 
-View Booking: https://jogaadindia.in/employee/bookings
+View Booking: https://jogaadindia.com/employee/bookings
 
 - Jogaad India Team
 `,

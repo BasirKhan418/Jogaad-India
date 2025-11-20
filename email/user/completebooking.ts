@@ -39,7 +39,7 @@ export const sendServiceCompletionEmailUser = async ({
       We hope you are satisfied with our service. Your feedback helps us improve!
     </p>
 
-    <a href="https://jogaadindia.in/user/bookings" style="display: inline-block; padding: 14px 26px; background: #28a745; color: #fff !important; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px; margin-top: 20px;">
+    <a href="https://jogaadindia.com/user/bookings" style="display: inline-block; padding: 14px 26px; background: #28a745; color: #fff !important; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px; margin-top: 20px;">
       View Booking Details
     </a>
     `;
@@ -60,7 +60,7 @@ Status: Completed
 
 We hope you are satisfied with our service.
 
-View Booking Details: https://jogaadindia.in/user/bookings
+View Booking Details: https://jogaadindia.com/user/bookings
 
 - Jogaad India Team
 `,

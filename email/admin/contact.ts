@@ -125,19 +125,7 @@ export const sendContactToAdmin = async (data: SendContactToAdminParams) => {
         Please review the request and take the required action.
       </p>
 
-      <a href="https://jogaadindia.com/admin/contacts" 
-        style="
-          display: inline-block; 
-          padding: 12px 22px; 
-          background: #2B9EB3; 
-          color: #fff !important; 
-          text-decoration: none; 
-          font-size: 15px; 
-          font-weight: bold; 
-          border-radius: 6px;
-          margin-top: 18px;">
-        View Enquiries
-      </a>
+      
     `;
 
     await emailTransporter.sendMail({
