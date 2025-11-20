@@ -27,9 +27,18 @@ export const fetchBookingsByStatus = async (status: string) => {
 export const scheduleBooking = async (bookingid: string, employeeid: string) => {
 try{
 await ConnectDb();
-const findbyonedelete = await Schedule.findOneAndDelete({bookingid});
+
+await Schedule.findOneAndDelete({bookingid});
+
+
+await Booking.findByIdAndUpdate(bookingid, { 
+    $unset: { employeeid: "" },
+    status: "pending" 
+});
+
 const newSchedule = new Schedule({bookingid, employeeid});
 await newSchedule.save();
+
 let employee = await Employee.findById(employeeid);
 const booking = await Booking.findById(bookingid).populate("categoryid");
 console.log(booking);

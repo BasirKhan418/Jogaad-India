@@ -5,6 +5,8 @@ import { getBookingById, updateBookingStatus } from "@/repository/user/booking";
 import { isFineImposedForBooking } from "@/repository/user/booking";
 import { RefundBookingPayment } from "@/utils/user/refund";
 import { markFine } from "@/repository/user/booking";
+import Schedule from "@/models/Schedule";
+import ConnectDb from "@/middleware/connectDb";
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -52,6 +54,10 @@ export const POST = async (request: NextRequest) => {
                     return NextResponse.json({ message: "Error processing refund", success: false }, { status: 500 });
                 }
 
+                // Delete any pending schedule so employee doesn't see it
+                await ConnectDb();
+                await Schedule.findOneAndDelete({bookingid: id});
+                
                 await updateBookingStatus(id, "refunded", {
                     refundStatus: "processed",
                     refundAmount: booking.intialamount,
@@ -62,11 +68,17 @@ export const POST = async (request: NextRequest) => {
                 return NextResponse.json({ message: "Booking cancelled and refund processed successfully", success: true }, { status: 200 });
             } else {
                 // Paid but no payment ID (should not happen ideally)
+                // Delete any pending schedule so employee doesn't see it
+                await ConnectDb();
+                await Schedule.findOneAndDelete({bookingid: id});
                 await updateBookingStatus(id, "cancelled");
                 return NextResponse.json({ message: "Booking cancelled", success: true }, { status: 200 });
             }
         } else {
             // Payment not done, just cancel
+            // Also delete any pending schedule so employee doesn't see it
+            await ConnectDb();
+            await Schedule.findOneAndDelete({bookingid: id});
             await updateBookingStatus(id, "cancelled");
             return NextResponse.json({ message: "Booking cancelled successfully", success: true }, { status: 200 });
         }

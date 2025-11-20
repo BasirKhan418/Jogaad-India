@@ -1,6 +1,7 @@
 import ConnectDb from "@/middleware/connectDb";
 import Booking from "@/models/Booking";
 import User from "@/models/User";
+import Schedule from "@/models/Schedule";
 export const createUserBooking = async (bookingdata: any) => {
     try{
         await ConnectDb();
@@ -132,11 +133,15 @@ export const cacncelBookingByUser = async (id: string) => {
         }
 
         if(booking.status === "pending"){
+            // Delete any pending schedule for this booking
+            await Schedule.findOneAndDelete({bookingid: id});
             await Booking.findByIdAndDelete(id);
             return { message: "Booking cancelled successfully", success: true };
         }
 
         if(booking.status === "confirmed"){
+            // Delete any pending schedule for this booking
+            await Schedule.findOneAndDelete({bookingid: id});
             booking.status = "cancelled";
             if(booking.paymentStatus === "paid" || booking.intialPaymentStatus === "paid"){
                 booking.refundStatus = "requested";
