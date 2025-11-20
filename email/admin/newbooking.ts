@@ -42,7 +42,7 @@ export const sendBookingConfirmationEmailAdmin = async ({
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: "jogaadindia@gmail.com",
       subject: `Admin New Booking Confirmed – ${serviceName}`,
       html: getEmailTemplate(emailContent),

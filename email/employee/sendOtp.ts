@@ -35,7 +35,7 @@ export const sendEmployeeOtpEmail = async ({ email, otp }: SendEmployeeOtpEmailP
 
     // Send mail
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject,
       html: getEmailTemplate(emailContent),

@@ -37,7 +37,7 @@ export const sendRefundInitiatedEmail = async ({
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject: `Refund Initiated – Order ${orderId}`,
       html: getEmailTemplate(emailContent),

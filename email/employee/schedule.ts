@@ -47,7 +47,7 @@ export const sendScheduletoEmployee = async ({
         `;
 
         await emailTransporter.sendMail({
-            from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+            from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
             to: email,
             subject: `New Booking Assigned – ${serviceName}`,
             html: getEmailTemplate(emailContent),

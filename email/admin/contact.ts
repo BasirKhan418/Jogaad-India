@@ -141,7 +141,7 @@ export const sendContactToAdmin = async (data: SendContactToAdminParams) => {
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: "jogaadindia@gmail.com",
       subject: `New ${enqType} Received – ${name}`,
       html: getEmailTemplate(emailContent),

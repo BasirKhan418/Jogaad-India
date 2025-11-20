@@ -32,7 +32,7 @@ export const sendFieldExecutiveOtp = async ({
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject: "Your OTP for Employee Login – Jogaad India",
       html: getEmailTemplate(emailContent),

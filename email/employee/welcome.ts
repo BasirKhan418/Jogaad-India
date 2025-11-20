@@ -45,7 +45,7 @@ export const sendEmployeeActivationEmail = async ({
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject: "Your Account is Activated – Welcome to Jogaad India!",
       html: getEmailTemplate(emailContent),

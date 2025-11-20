@@ -45,7 +45,7 @@ export const sendServiceCompletionEmailUser = async ({
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject: `Your Service for ${serviceName} is Completed ✔️`,
       html: getEmailTemplate(emailContent),

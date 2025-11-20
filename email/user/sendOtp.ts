@@ -44,7 +44,7 @@ export const sendOtpEmail = async ({ email, otp, isAdmin = false }: SendOtpEmail
 
     // Send mail
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject,
       html: getEmailTemplate(emailContent),
