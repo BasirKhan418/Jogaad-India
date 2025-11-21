@@ -11,7 +11,8 @@ import {
   IconFileText,
   IconCurrencyRupee,
   IconCalendar,
-  IconUserShield
+  IconUserShield,
+  IconBriefcase
 } from "@tabler/icons-react";
 
 export interface NavigationLink {
@@ -66,6 +67,13 @@ export const useAdminNavigation = (): UseAdminNavigationReturn => {
       label: "Bookings",
       href: "/admin/bookings",
       icon: React.createElement(IconCalendar, {
+        className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
+      }),
+    },
+    {
+      label: "Careers",
+      href: "/admin/careers",
+      icon: React.createElement(IconBriefcase, {
         className: "text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0"
       }),
     },

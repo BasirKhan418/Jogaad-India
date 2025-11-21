@@ -31,7 +31,7 @@ export const getEmailTemplate = (content: string) => {
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #0A2A3A 0%, #1a4a5a 50%, #2B9EB3 100%);
+      background: #f5f5f5;
       font-family: 'Inter', Arial, sans-serif;
     }
     table {
@@ -46,7 +46,7 @@ export const getEmailTemplate = (content: string) => {
     .wrapper {
       width: 100%;
       table-layout: fixed;
-      background: linear-gradient(135deg, #0A2A3A 0%, #1a4a5a 50%, #2B9EB3 100%);
+      background: #f5f5f5;
       padding: 30px 0;
     }
     .main {
@@ -63,59 +63,33 @@ export const getEmailTemplate = (content: string) => {
       position: relative;
     }
     
-    /* Animated Background Pattern */
-    .pattern-bg {
-      background-image: 
-        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(43, 158, 179, 0.03) 10px, rgba(43, 158, 179, 0.03) 20px),
-        repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(10, 61, 98, 0.03) 10px, rgba(10, 61, 98, 0.03) 20px);
-    }
-    
     .header {
-      background: linear-gradient(135deg, #0A2A3A 0%, #0A3D62 50%, #2B9EB3 100%);
-      padding: 40px 20px;
+      background: #ffffff;
+      padding: 35px 20px;
       text-align: center;
       position: relative;
-      overflow: hidden;
-    }
-    
-    /* Animated circles in header */
-    .header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(43, 158, 179, 0.1) 0%, transparent 70%);
-      animation: pulse 4s ease-in-out infinite;
+      border-bottom: 4px solid #F9A825;
     }
     
     .header::after {
       content: '';
       position: absolute;
-      bottom: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(10, 61, 98, 0.1) 0%, transparent 70%);
-      animation: pulse 4s ease-in-out infinite 2s;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.1); opacity: 0.8; }
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #F9A825 0%, #0A3D62 100%);
     }
     
     .header img {
-      max-width: 180px;
+      max-width: 200px;
       height: auto;
-      position: relative;
-      z-index: 1;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+      display: block;
+      margin: 0 auto;
     }
     
     .banner {
-      background: linear-gradient(135deg, #2B9EB3 0%, #0A3D62 100%);
+      background: #0A3D62;
       padding: 40px 20px;
       text-align: center;
       position: relative;
@@ -157,39 +131,17 @@ export const getEmailTemplate = (content: string) => {
       margin: 0 0 15px 0;
     }
     
-    /* Animated Button */
     .cta-button {
       display: inline-block;
       padding: 16px 36px;
-      background: linear-gradient(135deg, #2B9EB3 0%, #0A3D62 100%);
+      background: #0A3D62;
       color: #ffffff !important;
       text-decoration: none;
-      border-radius: 50px;
+      border-radius: 8px;
       font-weight: 600;
       font-size: 16px;
       margin: 10px 0;
-      box-shadow: 0 4px 15px rgba(43, 158, 179, 0.4);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    
-    .cta-button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.2);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-    
-    .cta-button:hover::before {
-      width: 300px;
-      height: 300px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     
     /* Decorative wave divider */
@@ -200,72 +152,24 @@ export const getEmailTemplate = (content: string) => {
       margin: -1px 0 0 0;
     }
     
-    /* Highlight box with shimmer effect */
     .highlight-box {
-      background: linear-gradient(135deg, #e8f8fb 0%, #f0f9ff 100%);
-      border-left: 4px solid #2B9EB3;
+      background: #f8f9fa;
+      border-left: 4px solid #0A3D62;
       padding: 20px;
       margin: 25px 0;
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(43, 158, 179, 0.15);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     
-    .highlight-box::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-      animation: shimmer 3s infinite;
-    }
-    
-    @keyframes shimmer {
-      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-    
-    /* Decorative corner elements */
     .corner-decor {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      opacity: 0.1;
-    }
-    
-    .corner-decor.top-left {
-      top: 0;
-      left: 0;
-      background: linear-gradient(135deg, #2B9EB3 0%, transparent 70%);
-      border-radius: 0 0 100px 0;
-    }
-    
-    .corner-decor.bottom-right {
-      bottom: 0;
-      right: 0;
-      background: linear-gradient(-135deg, #0A3D62 0%, transparent 70%);
-      border-radius: 100px 0 0 0;
+      display: none;
     }
     
     .footer {
-      background: linear-gradient(135deg, #0A2A3A 0%, #0A3D62 100%);
+      background: #0A3D62;
       padding: 40px 20px;
       text-align: center;
       color: #b0b8bf;
-      position: relative;
-    }
-    
-    .footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #2B9EB3, transparent);
     }
     
     .footer-links {
@@ -277,58 +181,38 @@ export const getEmailTemplate = (content: string) => {
       text-decoration: none;
       margin: 0 12px;
       font-size: 13px;
-      transition: color 0.3s ease;
     }
     
     .footer-links a:hover {
-      color: #2B9EB3;
+      color: #ffffff;
     }
     
     .social-icons {
       margin: 25px 0;
     }
     
-    /* Animated social icons */
     .social-icon {
       display: inline-block;
       width: 44px;
       height: 44px;
       margin: 0 8px;
-      background: linear-gradient(135deg, rgba(43, 158, 179, 0.2) 0%, rgba(10, 61, 98, 0.2) 100%);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 50%;
       text-align: center;
       line-height: 44px;
-      transition: all 0.4s ease;
-      border: 2px solid transparent;
-    }
-    
-    .social-icon:hover {
-      background: linear-gradient(135deg, #2B9EB3 0%, #0A3D62 100%);
-      transform: translateY(-5px) scale(1.1);
-      border-color: rgba(43, 158, 179, 0.5);
-      box-shadow: 0 8px 20px rgba(43, 158, 179, 0.4);
     }
     
     .social-icon img {
       width: 22px;
       height: 22px;
       vertical-align: middle;
-      transition: transform 0.3s ease;
     }
     
-    .social-icon:hover img {
-      transform: rotate(360deg);
-    }
-    
-    /* Tagline with gradient text */
     .tagline {
       margin: 15px 0 0 0;
       font-size: 14px;
       font-weight: 600;
-      background: linear-gradient(135deg, #2B9EB3 0%, #5ac8de 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #ffffff;
       letter-spacing: 0.5px;
     }
     
@@ -359,33 +243,26 @@ export const getEmailTemplate = (content: string) => {
  <body style="margin:0;padding:0;">
   <center class="wrapper">
     <table class="main" width="100%" style="max-width:600px;">
-      <!-- Header with animated background -->
+      <!-- Header -->
       <tr>
-        <td class="header">
-          <a href="https://jogaadindia.com" target="_blank" style="text-decoration:none;">
-            <img src="https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png" alt="Jogaad India" style="display:block;margin:0 auto;max-width:180px;height:auto;">
+        <td class="header" style="background:#ffffff;padding:35px 20px;text-align:center;border-bottom:4px solid #F9A825;">
+          <a href="https://jogaadindia.com" target="_blank" style="text-decoration:none;display:block;">
+            <img src="https://jogaadindiaassets.s3.ap-south-1.amazonaws.com/logo.png" alt="Jogaad India" style="display:block;margin:0 auto;max-width:200px;height:auto;">
           </a>
         </td>
       </tr>
 
-      <!-- Wave Divider -->
+      <!-- Content -->
       <tr>
-        <td class="wave-divider"></td>
-      </tr>
-
-      <!-- Content with pattern background -->
-      <tr>
-        <td class="content pattern-bg">
-          <div class="corner-decor top-left"></div>
+        <td class="content">
           ${content}
-          <div class="corner-decor bottom-right"></div>
         </td>
       </tr>
 
-      <!-- Footer with gradient -->
+      <!-- Footer -->
       <tr>
         <td class="footer">
-          <!-- Social Icons with hover animations -->
+          <!-- Social Icons -->
           <div class="social-icons">
             <a href="https://www.facebook.com/profile.php?id=61583383065934" class="social-icon" target="_blank" style="text-decoration:none;">
               <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width:22px;height:22px;vertical-align:middle;">
@@ -424,7 +301,7 @@ export const getEmailTemplate = (content: string) => {
           <!-- Copyright -->
           <p style="margin:20px 0 0 0;font-size:13px;color:#8b9299;">
             &copy; ${new Date().getFullYear()} Jogaad India. All rights reserved.<br>
-            <a href="https://jogaadindia.com" style="color:#2B9EB3;text-decoration:none;">www.jogaadindia.com</a>
+            <a href="https://jogaadindia.com" style="color:#ffffff;text-decoration:none;">www.jogaadindia.com</a>
           </p>
           
           <!-- Animated Tagline -->

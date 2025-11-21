@@ -33,6 +33,10 @@ const NAV_ITEMS = [
     link: "/services",
   },
   {
+    name: "Careers",
+    link: "/careers",
+  },
+  {
     name: "Blog",
     link: "/blog",
   },

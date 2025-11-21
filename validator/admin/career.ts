@@ -12,9 +12,7 @@ export const careerSchema = z.object({
 
   location: z.string().min(1, "Location is required"),
 
-  mode: z.enum(["remote", "offline", "hybrid"] as const, {
-    error: "Mode is required"
-  }),
+  mode: z.enum(["remote", "offline", "hybrid"]),
 
   applyUrl: z
     .string()
