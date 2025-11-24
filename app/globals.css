@@ -276,5 +276,8 @@
     padding-bottom: 2rem;
   }
 }
+body{
+  scroll-behavior: smooth;
+}
 
 
