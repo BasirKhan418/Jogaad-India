@@ -107,7 +107,7 @@ export default function FieldExecAddEmployeePage() {
       case 'customDescription':
         if (formData.categoryid === 'others') {
           if (!formData.customDescription) return 'Service description is required';
-          if (formData.customDescription.trim().length < 20) return 'Description must be at least 20 characters';
+          if (formData.customDescription.trim().length < 10) return 'Description must be at least 10 characters';
         }
         return null;
       case 'payrate':
@@ -573,12 +573,12 @@ export default function FieldExecAddEmployeePage() {
                           </Label>
                           <textarea
                             id="customDescription"
-                            placeholder="Describe the service employee will provide (minimum 20 characters)..."
+                            placeholder="Describe the service employee will provide (minimum 10 characters)..."
                             value={formData.customDescription || ''}
                             onChange={handleInputChange}
                             onBlur={() => handleBlur('customDescription')}
                             required
-                            minLength={20}
+                            minLength={10}
                             rows={3}
                             className={cn(
                               "w-full px-4 py-2.5 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm resize-none",
@@ -596,9 +596,9 @@ export default function FieldExecAddEmployeePage() {
                             )}
                             <p className={cn(
                               "text-xs",
-                              (formData.customDescription || '').length < 20 ? "text-red-500 font-medium" : "text-gray-400"
+                              (formData.customDescription || '').length < 10 ? "text-red-500 font-medium" : "text-gray-400"
                             )}>
-                              {(formData.customDescription || '').length}/20 min
+                              {(formData.customDescription || '').length}/10 min
                             </p>
                           </div>
                         </LabelInputContainer>
@@ -761,7 +761,7 @@ export default function FieldExecAddEmployeePage() {
                     <p className="text-xs sm:text-sm text-amber-800 font-medium">
                       {step === 'personal' && '⚠️ Please fill in all required personal information correctly'}
                       {step === 'service' && !formData.categoryid && '⚠️ Please select a service category'}
-                      {step === 'service' && formData.categoryid === 'others' && (!formData.customDescription || formData.customDescription.length < 20) && '⚠️ Please provide detailed service description (min 20 characters)'}
+                      {step === 'service' && formData.categoryid === 'others' && (!formData.customDescription || formData.customDescription.length < 10) && '⚠️ Please provide detailed service description (min 10 characters)'}
                       {step === 'service' && formData.categoryid && formData.categoryid !== 'others' && (!formData.payrate || formData.payrate <= 0 || priceError) && '⚠️ Please enter a valid service rate within the allowed range'}
                     </p>
                   </div>

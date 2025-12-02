@@ -421,9 +421,9 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       }
 
       if (formData.categoryid === 'others') {
-        if (!formData.customDescription || formData.customDescription.trim().length < 20) {
-          setError('Please provide a detailed service description (minimum 20 characters)');
-          toast.error('Service description must be at least 20 characters');
+        if (!formData.customDescription || formData.customDescription.trim().length < 10) {
+          setError('Please provide a detailed service description (minimum 10 characters)');
+          toast.error('Service description must be at least 10 characters');
           setLoading(false);
           return false;
         }
@@ -561,7 +561,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         
         // For custom service (others), must have description
         if (formData.categoryid === 'others') {
-          return !!(formData.customDescription && formData.customDescription.trim().length >= 20);
+          return !!(formData.customDescription && formData.customDescription.trim().length >= 10);
         }
         
         // For regular categories, must have valid payrate

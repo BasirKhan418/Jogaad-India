@@ -6,7 +6,7 @@ import { getCategoryById } from "@/repository/admin/category";
 import { createEmployee } from "@/repository/employee/employee.auth";
 import { updateEmployeeByEmail } from "@/repository/employee/employee.auth";
 import { EmployeeZodSchema } from "@/validator/employee/employee.auth";
-import { is } from "zod/v4/locales";
+import { deleteEmployeeByEmail } from "@/repository/employee/employee.auth";
 export const GET = async (request:NextRequest) => {
 try{
 const cookiesStore = await cookies();
@@ -77,6 +77,22 @@ if(!categoryCheck.success){
         return NextResponse.json({message:`Payrate must be between ${categoryCheck.category.categoryMinPrice} and ${categoryCheck.category.categoryMaxPrice}`,success:false}, {status:400});
     }
 const response = await updateEmployeeByEmail(reqBody.email!,reqBody);
+return NextResponse.json(response);
+}
+catch(error){
+    return NextResponse.json({message:"Internal Server Error",success:false}, {status:500});
+}
+}
+export const DELETE = async (request:Request) => {
+try{
+const cookiesStore = await cookies();
+const token = cookiesStore.get("token")?.value||"";
+const isTokenValid = await verifyUserToken(token);
+if(!isTokenValid.success||isTokenValid.type!=="admin"){
+    return NextResponse.json({message:"Invalid token",success:false}, {status:401});
+}
+const reqBody = await request.json();
+const response = await deleteEmployeeByEmail(reqBody.email);
 return NextResponse.json(response);
 }
 catch(error){

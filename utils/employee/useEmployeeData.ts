@@ -65,7 +65,6 @@ export const useEmployeeData = (): UseEmployeeDataReturn => {
   const fetchEmployees = useCallback(async (startDate?: string, endDate?: string) => {
     setLoading(true);
     setError(null);
-
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -125,11 +124,12 @@ export const useEmployeeData = (): UseEmployeeDataReturn => {
   const handleDelete = useCallback(async (email: string): Promise<boolean> => {
     setDeleting(email);
     try {
-      const response = await fetch(`/api/v1/employee/${email}`, {
+      const response = await fetch(`/api/v1/emp-admin`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
