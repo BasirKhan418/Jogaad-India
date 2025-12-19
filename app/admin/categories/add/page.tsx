@@ -442,8 +442,11 @@ export default function AddCategoryPage() {
                           className="w-full px-3 py-2.5 text-sm bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-[#2B9EB3] focus:border-transparent transition-all duration-200 text-neutral-800 dark:text-neutral-100"
                         >
                           <option value="">Select category type</option>
-                          <option value="Service">Service</option>
-                          <option value="Maintenance">Maintenance</option>
+                          {/* <option value="Service">Service</option> */}
+                         
+                          <option value="FullTimeService">FullTime Service</option>
+                          <option value="PartTimeService">PartTime Service</option>
+                           <option value="Maintenance">Maintenance</option>
                         </select>
                       </div>
                     </div>

@@ -5,25 +5,25 @@ import { motion } from "framer-motion";
 import { CometCard } from "@/components/ui/comet-card";
 
 const testimonials = [
+  // {
+  //   name: "Soumya Ranjan",
+  //   text: "In my point of View's we would like to create an employment in every homes in life that nobody will tell to others that why you are in \" ବେକାର\" in your family. this is a message for my side to Human Society.",
+  //   odia: "ମୋ ଦୃଷ୍ଟିକୋଣରୁ ଆମେ ଜୀବନରେ ପ୍ରତ୍ୟେକ ଘରେ ଏପରି ଏକ ନିଯୁକ୍ତି ସୃଷ୍ଟି କରିବାକୁ ଚାହୁଁଛୁ ଯେଉଁଥିରେ କେହି ଅନ୍ୟମାନଙ୍କୁ କହିବେ ନାହିଁ ଯେ ତୁମେ ତୁମର ପରିବାରରେ \"ବେକାର\" କାହିଁକି ଅଛ। ଏହା ମାନବ ସମାଜ ପାଇଁ ମୋର ପକ୍ଷରୁ ଏକ ବାର୍ତ୍ତା।"
+  // },
+  // {
+  //   name: "S.Chandra",
+  //   text: "\"Service for society is Service to God\". Needless to Say, Everybody should get work in their Life. As Per 3 C way of Policies Confidence, Concentration & Constant are the ways. which creates to active of minds to achieve the Goals & Success. Reduce the Unemployment & Increase the Employment is the first motto to focus our organization.",
+  //   odia: "\"ସମାଜ ସେବା ହେଉଛି ଇଶ୍ୱରଙ୍କ ସେବା\"। କହିବା ଆବଶ୍ୟକ ନୁହେଁ, ପ୍ରତ୍ୟେକ ବ୍ୟକ୍ତି ନିଜ ଜୀବନରେ କାମ ପାଇବା ଉଚିତ। 3C ନୀତି ଅନୁସାରେ ଆତ୍ମବିଶ୍ୱାସ, ଏକାଗ୍ରତା ଏବଂ ସ୍ଥିରତା ହେଉଛି ସେହି ଉପାୟ ଯାହା ଲକ୍ଷ୍ୟ ଏବଂ ସଫଳତା ହାସଲ କରିବା ପାଇଁ ମାନସ ସକ୍ରିୟ କରିଥାଏ। ବେକାରୀ ହ୍ରାସ ଏବଂ ନିଯୁକ୍ତି ବୃଦ୍ଧି ହେଉଛି ଆମ ସଂଗଠନକୁ ଫୋକସ କରିବାର ପ୍ରଥମ ମୁଦ୍ରା।"
+  // },
   {
-    name: "Soumya Ranjan",
-    text: "In my point of View's we would like to create an employment in every homes in life that nobody will tell to others that why you are in \" ବେକାର\" in your family. this is a message for my side to Human Society.",
-    odia: "ମୋ ଦୃଷ୍ଟିକୋଣରୁ ଆମେ ଜୀବନରେ ପ୍ରତ୍ୟେକ ଘରେ ଏପରି ଏକ ନିଯୁକ୍ତି ସୃଷ୍ଟି କରିବାକୁ ଚାହୁଁଛୁ ଯେଉଁଥିରେ କେହି ଅନ୍ୟମାନଙ୍କୁ କହିବେ ନାହିଁ ଯେ ତୁମେ ତୁମର ପରିବାରରେ \"ବେକାର\" କାହିଁକି ଅଛ। ଏହା ମାନବ ସମାଜ ପାଇଁ ମୋର ପକ୍ଷରୁ ଏକ ବାର୍ତ୍ତା।"
-  },
-  {
-    name: "S.Chandra",
-    text: "\"Service for society is Service to God\". Needless to Say, Everybody should get work in their Life. As Per 3 C way of Policies Confidence, Concentration & Constant are the ways. which creates to active of minds to achieve the Goals & Success. Reduce the Unemployment & Increase the Employment is the first motto to focus our organization.",
-    odia: "\"ସମାଜ ସେବା ହେଉଛି ଇଶ୍ୱରଙ୍କ ସେବା\"। କହିବା ଆବଶ୍ୟକ ନୁହେଁ, ପ୍ରତ୍ୟେକ ବ୍ୟକ୍ତି ନିଜ ଜୀବନରେ କାମ ପାଇବା ଉଚିତ। 3C ନୀତି ଅନୁସାରେ ଆତ୍ମବିଶ୍ୱାସ, ଏକାଗ୍ରତା ଏବଂ ସ୍ଥିରତା ହେଉଛି ସେହି ଉପାୟ ଯାହା ଲକ୍ଷ୍ୟ ଏବଂ ସଫଳତା ହାସଲ କରିବା ପାଇଁ ମାନସ ସକ୍ରିୟ କରିଥାଏ। ବେକାରୀ ହ୍ରାସ ଏବଂ ନିଯୁକ୍ତି ବୃଦ୍ଧି ହେଉଛି ଆମ ସଂଗଠନକୁ ଫୋକସ କରିବାର ପ୍ରଥମ ମୁଦ୍ରା।"
-  },
-  {
-    name: "G.Ranjan",
+    name: "G.Ranjan (Managing Director)",
     text: "Keep trying until you reach your Goal. therefore, to be Successful in life, hardwork & patience must be required.",
-    odia: "ଲକ୍ଷ୍ୟପୂର୍ଣ୍ଣ ପହଞ୍ଚିବା ପର୍ଯ୍ୟନ୍ତ ପ୍ରୟାସ ଜାରି ରଖନ୍ତୁ। ଜୀବନରେ ସଫଳ ହେବାକୁ ପରିଶ୍ରମ ଏବଂ ଧୈର୍ଯ୍ୟ ଥିବା ଆବଶ୍ୟକ।"
+    odia: "ନିଜ ଲକ୍ଷ୍ୟରେ ପହଞ୍ଚିବା ପର୍ଯ୍ୟନ୍ତ ପ୍ରୟାସ ଜାରି ରଖନ୍ତୁ। ଜୀବନରେ ସଫଳ ହେବାକୁ ପରିଶ୍ରମ ଏବଂ ଧୈର୍ଯ୍ୟ ଥିବା ଆବଶ୍ୟକ"
   },
   {
-    name: "Deepak Kumar",
+    name: "Deepak Kumar (CEO)",
     text: "Provide services within less time and transparent way of effort with save your time is our motto.",
-    odia: "କମ୍ ସମୟ ଏବଂ ସଫ ପ୍ରୟାସର ପାରଦର୍ଶୀ ସେବା ଯୋଗାଇଲକ ସହିତ ଆପଣଙ୍କ ସମୟ ସଞ୍ଚୟ କରିବା ଆମର ମୂଳଲକ୍ଷ୍ୟ।"
+    odia: "କମ୍ ସମୟ ଏବଂ ସଫଳ ପ୍ରୟାସ ଓ ପାରଦର୍ଶୀ ସେବା ଯୋଗାଇବା ସହିତ ଆପଣଙ୍କ ସମୟ ସଞ୍ଚୟ କରିବା ଆମର ମୂଳଲକ୍ଷ୍ୟ।"
   }
 ];
 
@@ -66,7 +66,7 @@ export function TestimonialsReviewSection() {
         </div>
 
         {/* Testimonials Grid - Equal Height Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-fr">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 auto-rows-fr">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}

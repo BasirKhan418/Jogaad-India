@@ -3,7 +3,7 @@ import { z } from "zod";
 export const AdminSchemaZod = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
-  img: z.string().url("Invalid image URL").optional(),
+  img: z.string().optional(),
   phone: z
     .string()
     .regex(/^[0-9]{10}$/, "Phone number must be 10 digits")

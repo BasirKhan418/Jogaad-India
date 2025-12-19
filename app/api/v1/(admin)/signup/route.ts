@@ -54,6 +54,7 @@ export const POST = async (request: NextRequest) => {
         
         const validateData = AdminSchemaZod.safeParse(data);
         if (!validateData.success) {
+            console.log("Validation errors:", validateData.error.format());
             return NextResponse.json({ 
                 message: "Invalid data", 
                 success: false 

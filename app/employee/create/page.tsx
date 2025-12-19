@@ -476,6 +476,46 @@ export default function EmployeeSignupPage() {
                       </div>
                     </div>
                   )}
+                  {selectedCategory && formData.categoryid && formData.categoryid !== '' && (
+  <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-[#2B9EB3]/10 to-[#0A3D62]/10 border border-[#2B9EB3]/40 space-y-3">
+
+    {/* Header */}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <h4 className="text-sm sm:text-base font-semibold text-[#0A3D62]">
+        Category Details
+      </h4>
+
+      {/* Category Type Badge */}
+      <span
+        className={`w-fit px-3 py-1 rounded-full text-xs sm:text-sm font-semibold
+          ${
+            selectedCategory.categoryType === "Service"
+              ? "bg-[#2B9EB3]/20 text-[#2B9EB3]"
+              : "bg-[#F9A825]/20 text-[#F9A825]"
+          }
+        `}
+      >
+        {selectedCategory.categoryType}
+      </span>
+    </div>
+
+    {/* Description */}
+    {selectedCategory.categoryDescription && (
+      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+        {selectedCategory.categoryDescription}
+      </p>
+    )}
+
+    {/* Optional Unit Info */}
+    {selectedCategory.categoryUnit && (
+      <div className="text-xs sm:text-sm text-gray-600">
+        <span className="font-medium text-[#0A3D62]">Unit:</span>{" "}
+        {selectedCategory.categoryUnit}
+      </div>
+    )}
+  </div>
+)}
+
 
                   {(!formData.categoryid || formData.categoryid === '') && (
                     <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-[#F9A825]/10 to-[#2B9EB3]/10 border border-[#2B9EB3]/40">

@@ -26,7 +26,7 @@ export const sendWelcomeEmail = async ({
     }
 
     const role = isAdmin ? "Admin" : "User";
-    const dashboardUrl = isAdmin ? "https://jogaadindia.in/admin/dashboard" : "https://jogaadindia.in/user/dashboard";
+    const dashboardUrl = isAdmin ? "https://jogaadindia.com/admin/dashboard" : "https://jogaadindia.com/user/dashboard";
 
     const emailContent = `
     <h2>Hello ${name}! 🎉</h2>
@@ -64,7 +64,7 @@ export const sendWelcomeEmail = async ({
     `;
 
     await emailTransporter.sendMail({
-      from: `"Jogaad India" <${process.env.EMAIL_USER}>`,
+      from: `"Jogaad India" <${process.env.EMAIL_USER_V2}>`,
       to: email,
       subject: `Welcome to Jogaad India – Your Account is Ready!`,
       html: getEmailTemplate(emailContent),

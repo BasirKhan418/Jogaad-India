@@ -74,46 +74,51 @@ export const useAdminCreate = (): UseAdminCreateReturn => {
     }
   }, [clearMessages, imagePreview]);
 
-  const handleImageUpload = useCallback(async (file: File) => {
-    if (!file) return;
+const handleImageUpload = useCallback(async (file: File) => {
+  if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    toast.error('Please select an image file');
+    return;
+  }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image size should be less than 5MB');
-      return;
-    }
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    toast.error('Image size should be less than 5MB');
+    return;
+  }
 
-    // Create preview
-    const preview = URL.createObjectURL(file);
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
-    }
-    setImagePreview(preview);
+  // Preview
+  const preview = URL.createObjectURL(file);
+  if (imagePreview) {
+    URL.revokeObjectURL(imagePreview);
+  }
+  setImagePreview(preview);
 
-    // Upload image
-    setUploadingImage(true);
-    try {
-      const result = await uploadAdminImage(file);
-      if (result.success && result.data?.fileURL) {
-        setFormData(prev => ({ ...prev, img: result.data!.fileURL }));
-        toast.success('Image uploaded successfully');
-      } else {
-        toast.error(result.message || 'Failed to upload image');
-        setImagePreview('');
-      }
-    } catch (error) {
-      toast.error('Failed to upload image');
+  setUploadingImage(true);
+
+  try {
+    const result = await uploadAdminImage(file);
+
+    if (result.success && result.data?.fileURL) {
+      setFormData(prev => ({
+        ...prev,
+        img: result.data!.fileURL,
+      }));
+      toast.success('Image uploaded successfully');
+    } else {
+      toast.error(result.message || 'Failed to upload image');
       setImagePreview('');
-    } finally {
-      setUploadingImage(false);
     }
-  }, [imagePreview]);
+  } catch {
+    toast.error('Failed to upload image');
+    setImagePreview('');
+  } finally {
+    setUploadingImage(false);
+  }
+}, [imagePreview]);
+
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
