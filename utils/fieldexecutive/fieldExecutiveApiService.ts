@@ -53,38 +53,40 @@ export const createFieldExecutiveAccount = async (
   }
 };
 
-export const uploadImage = async (file: File): Promise<ApiResponse<{ url: string }>> => {
+export const uploadImage = async (
+  file: File
+): Promise<ApiResponse<{ url: string }>> => {
   try {
-    // Step 1: Get presigned URL from server
+    // Step 1: Request presigned URL
     const uploadResponse = await fetch('/api/v1/upload', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         filename: file.name,
         contentType: file.type,
       }),
     });
 
-    if (!uploadResponse.ok) {
-      return {
-        success: false,
-        message: 'Failed to get upload URL',
-      };
-    }
-
     const uploadData = await uploadResponse.json();
 
-    if (!uploadData.uploadURL || !uploadData.fileURL) {
+    if (!uploadResponse.ok || !uploadData?.success) {
       return {
         success: false,
-        message: 'Invalid upload response',
+        message: uploadData?.message || 'Failed to get upload URL',
       };
     }
 
-    // Step 2: Upload file directly to S3 using presigned URL
-    const s3Response = await fetch(uploadData.uploadURL, {
+    const { uploadURL, fileURL } = uploadData.data || {};
+
+    if (!uploadURL || !fileURL) {
+      return {
+        success: false,
+        message: 'Invalid upload response from server',
+      };
+    }
+
+    // Step 2: Upload file to S3
+    const s3Response = await fetch(uploadURL, {
       method: 'PUT',
       headers: {
         'Content-Type': file.type,
@@ -99,13 +101,11 @@ export const uploadImage = async (file: File): Promise<ApiResponse<{ url: string
       };
     }
 
-    // Step 3: Return the file URL
+    // Step 3: Success
     return {
       success: true,
       message: 'Image uploaded successfully',
-      data: {
-        url: uploadData.fileURL,
-      },
+      data: { url: fileURL },
     };
   } catch (error) {
     console.error('Image upload error:', error);
@@ -115,3 +115,4 @@ export const uploadImage = async (file: File): Promise<ApiResponse<{ url: string
     };
   }
 };
+

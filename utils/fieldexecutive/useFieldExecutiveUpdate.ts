@@ -101,16 +101,17 @@ export const useFieldExecutiveUpdate = (initialData?: FieldExecutiveUpdateData):
     clearMessages();
   }, [clearMessages]);
 
-  const handleImageUpload = useCallback(async (file: File) => {
+const handleImageUpload = useCallback(
+  async (file: File) => {
     if (!file) return;
 
-    // Validate file type
+    // Validate type
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    // Validate file size (max 5MB)
+    // Validate size (5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Image size should be less than 5MB');
       return;
@@ -119,33 +120,40 @@ export const useFieldExecutiveUpdate = (initialData?: FieldExecutiveUpdateData):
     setUploadingImage(true);
     clearMessages();
 
+    const previewUrl = URL.createObjectURL(file);
+
     try {
-      // Create preview
-      const preview = URL.createObjectURL(file);
-      if (imagePreview && imagePreview.startsWith('blob:')) {
+      // Set preview immediately
+      if (imagePreview?.startsWith('blob:')) {
         URL.revokeObjectURL(imagePreview);
       }
-      setImagePreview(preview);
+      setImagePreview(previewUrl);
 
-      // Upload to server
       const result = await uploadImage(file);
 
       if (result.success && result.data?.url) {
-        setFormData(prev => ({ ...prev, img: result.data!.url }));
+        setFormData(prev => ({
+          ...prev,
+          img: result.data!.url,
+        }));
         toast.success('Image uploaded successfully');
       } else {
-        // Revert preview on failure
-        URL.revokeObjectURL(preview);
-        setImagePreview(initialData?.img || '');
-        toast.error(result.message || 'Failed to upload image');
+        throw new Error(result.message || 'Upload failed');
       }
     } catch (error) {
-      toast.error('Failed to upload image');
       console.error('Image upload error:', error);
+      toast.error('Failed to upload image');
+
+      // Rollback preview
+      URL.revokeObjectURL(previewUrl);
+      setImagePreview(initialData?.img || '');
     } finally {
       setUploadingImage(false);
     }
-  }, [clearMessages, imagePreview, initialData?.img]);
+  },
+  [clearMessages, imagePreview, initialData?.img]
+);
+
 
   const submitFieldExecutiveUpdate = useCallback(async (): Promise<boolean> => {
     clearMessages();
