@@ -25,8 +25,20 @@ export const getallEmployeesAnalytics = async () => {
         0
       );
 
+      const empObject = emp.toObject();
+      
+      // Debug: Log employees without categoryid
+      if (!empObject.categoryid) {
+        console.log('Employee without categoryid:', {
+          name: empObject.name,
+          email: empObject.email,
+          hasCustomDescription: !!empObject.customDescription,
+          customDescription: empObject.customDescription
+        });
+      }
+
       return {
-        ...emp.toObject(),
+        ...empObject,
         categoryName: emp.categoryid?.categoryName || null,
         totalEarnings,
         youEarn,

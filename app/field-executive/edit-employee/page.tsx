@@ -414,14 +414,14 @@ function FieldExecEditEmployeePageContent() {
 
                       {formData.categoryid === 'others' && (
                         <LabelInputContainer>
-                          <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-sm">
+                          <Label htmlFor="description" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-sm">
                             <Briefcase className="w-4 h-4" />
                             Service Description *
                           </Label>
                           <textarea
-                            id="customDescription"
+                            id="description"
                             placeholder="Describe the service employee will provide..."
-                            value={formData.customDescription || ''}
+                            value={formData.description || ''}
                             onChange={handleInputChange}
                             required
                             rows={3}

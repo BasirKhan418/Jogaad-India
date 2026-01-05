@@ -16,7 +16,7 @@ export const EmployeeZodSchema = z.object({
   categoryid: z.string().optional(), // MongoDB ObjectId as string
   payrate: z.number().optional(),
   description: z.string().optional(),
-  othersCategory: z.string().optional(),
+  othersCategory: z.union([z.boolean(), z.string()]).optional(),
 });
 export type EmployeeInput = z.infer<typeof EmployeeZodSchema>;
 export const EmployeeLoginSchema = z.object({

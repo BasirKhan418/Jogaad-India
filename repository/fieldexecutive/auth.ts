@@ -77,6 +77,14 @@ export const updateFieldExecutive = async (id:string, updateData:Partial<FieldEx
     }
     catch(error){
         console.error("Error updating field executive:", error);
+        // Handle duplicate email gracefully
+        if (typeof error === 'object' && error && (error as any).code === 11000) {
+            const keyPattern = (error as any).keyPattern || {};
+            if (keyPattern.email) {
+                return { message: "Email already in use", success: false };
+            }
+            return { message: "Duplicate key error", success: false };
+        }
         return {message:"Internal Server Error",success:false};
     }
 }
