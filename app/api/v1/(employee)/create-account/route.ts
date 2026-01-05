@@ -80,7 +80,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: "Employee account exists , Please complete the payment for account activation", success: true, order: orderResponse.order }, { status: 200 });
         }
 
-        if (checkdata.success && checkdata.data.isPaid) {
+        if (checkdata.success && checkdata.data && checkdata.data.isPaid) {
             return NextResponse.json({
                 message: "Employee account exists and is already paid",
                 success: true,
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
             }, { status: 500 });
         }
 
-        const amount = feesResult.data.employeeOneTimeFee * 100; // paise
+        const amount = feesResult.data.employeeOneTimeFee * 100; 
         const receipt = `emp_reg_${response.employee?._id}`;
         const orderResponse: any = await CreateEmployeeOrder(amount, "INR", receipt);
         if (!orderResponse.success) {

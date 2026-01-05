@@ -53,6 +53,11 @@ export interface UseEmployeeSignupReturn {
   imagePreview: string;
   priceError: string;
   step: SignupStep;
+  awaitingOtp: boolean;
+  otp: string;
+  otpLoading: boolean;
+  resendTimer: number;
+  canResend: boolean;
   
   setFormData: (data: EmployeeSignupRequest) => void;
   clearMessages: () => void;
@@ -66,6 +71,9 @@ export interface UseEmployeeSignupReturn {
   handleCategorySelect: (categoryId: string) => void;
   handleImageUpload: (file: File) => Promise<void>;
   submitSignup: () => Promise<boolean>;
+  sendOtp: () => Promise<boolean>;
+  verifyOtp: () => Promise<boolean>;
+  setOtp: (val: string) => void;
   
   isFormValid: boolean;
   isStepValid: boolean;
@@ -99,6 +107,11 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [awaitingOtp, setAwaitingOtp] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+  const [canResend, setCanResend] = useState(true);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -258,7 +271,8 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
 
   const nextStep = useCallback(() => {
     if (step === 'personal') {
-      setStep('service');
+      // Trigger OTP flow
+      setAwaitingOtp(true);
     } else if (step === 'service') {
       setStep('optional');
     }
@@ -268,8 +282,10 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
   const prevStep = useCallback(() => {
     if (step === 'optional') {
       setStep('service');
+      setAwaitingOtp(false);
     } else if (step === 'service') {
       setStep('personal');
+      setAwaitingOtp(false);
     }
     clearMessages();
   }, [step, clearMessages]);
@@ -390,6 +406,13 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
       setUploadingImage(false);
     }
   }, [imagePreview]);
+
+  // Handle resend timer countdown
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const id = setInterval(() => setResendTimer((t) => (t > 0 ? t - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [resendTimer]);
 
   const submitSignup = useCallback(async (): Promise<boolean> => {
     clearMessages();
@@ -558,6 +581,67 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     }
   }, [formData, validatePrice, clearMessages, resetForm, router]);
 
+  // Send OTP using public endpoint
+  const sendOtp = useCallback(async (): Promise<boolean> => {
+    if (!formData.email) {
+      toast.error('Please enter email to send OTP');
+      return false;
+    }
+    setOtpLoading(true);
+    try {
+      const res = await fetch(`/api/v1/otp?email=${encodeURIComponent(formData.email)}`, {
+        method: 'GET'
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('OTP sent to your email');
+        setCanResend(false);
+        setResendTimer(60);
+        setTimeout(() => setCanResend(true), 60000);
+        return true;
+      } else {
+        toast.error(data.message || 'Failed to send OTP');
+        return false;
+      }
+    } catch (e) {
+      toast.error('Network error sending OTP');
+      return false;
+    } finally {
+      setOtpLoading(false);
+    }
+  }, [formData.email]);
+
+  // Verify OTP using public endpoint
+  const verifyOtp = useCallback(async (): Promise<boolean> => {
+    if (!formData.email || !otp || otp.length !== 6) {
+      toast.error('Enter the 6-digit OTP');
+      return false;
+    }
+    setOtpLoading(true);
+    try {
+      const res = await fetch('/api/v1/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, otp })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('OTP verified');
+        setAwaitingOtp(false);
+        setStep('service');
+        return true;
+      } else {
+        toast.error(data.message || 'Invalid OTP');
+        return false;
+      }
+    } catch (e) {
+      toast.error('Network error verifying OTP');
+      return false;
+    } finally {
+      setOtpLoading(false);
+    }
+  }, [formData.email, otp]);
+
   const isStepValid = useMemo(() => {
     if (step === 'personal') {
       return !!(
@@ -606,6 +690,11 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     imagePreview,
     priceError,
     step,
+    awaitingOtp,
+    otp,
+    otpLoading,
+    resendTimer,
+    canResend,
     
     setFormData,
     clearMessages,
@@ -619,6 +708,9 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     handleCategorySelect,
     handleImageUpload,
     submitSignup,
+    sendOtp,
+    verifyOtp,
+    setOtp,
     
     isFormValid,
     isStepValid

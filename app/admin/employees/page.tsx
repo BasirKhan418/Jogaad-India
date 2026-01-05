@@ -126,7 +126,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
   const [viewEmployee, setViewEmployee] = React.useState<Employee | null>(null);
   const [editEmployee, setEditEmployee] = React.useState<Employee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
-  const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive'>('all');
+  const [filter, setFilter] = React.useState<'all' | 'active' | 'inactive' | 'others'>('all');
   const [searchQuery, setSearchQuery] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
@@ -177,6 +177,10 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
     setFilter('all');
   }, []);
 
+  const handleFilterOthers = React.useCallback(() => {
+    setFilter('others');
+  }, []);
+
   const onDelete = React.useCallback(async (email: string) => {
     const success = await handleDelete(email);
     if (success) {
@@ -193,6 +197,8 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
       result = result.filter(emp => emp.isActive);
     } else if (filter === 'inactive') {
       result = result.filter(emp => !emp.isActive);
+    } else if (filter === 'others') {
+      result = result.filter(emp => emp.othersCategory);
     }
 
     // Filter by search query
@@ -446,6 +452,17 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                 >
                   Inactive
                 </button>
+                <button
+                  onClick={handleFilterOthers}
+                  className={cn(
+                    "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                    filter === 'others'
+                      ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                  )}
+                >
+                  Others
+                </button>
               </div>
 
               <div className="flex items-center gap-2 w-full md:w-auto">
@@ -465,7 +482,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium whitespace-nowrap"
                 >
                   <IconCurrencyRupee className="h-4 w-4" />
-                  Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : 'Inactive'}
+                  Export {filter === 'all' ? 'All' : filter === 'active' ? 'Active' : filter === 'inactive' ? 'Inactive' : 'Others'}
                 </button>
               </div>
             </div>
@@ -563,10 +580,22 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
             <div className="rounded-xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-12 border border-neutral-200 dark:border-neutral-700 text-center">
               <IconUsers className="h-16 w-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 mb-2">
-                {filter === 'all' ? 'No Service Providers Found' : filter === 'active' ? 'No Active Service Providers' : 'No Pending Payments'}
+                {filter === 'all'
+                  ? 'No Service Providers Found'
+                  : filter === 'active'
+                  ? 'No Active Service Providers'
+                  : filter === 'inactive'
+                  ? 'No Inactive Service Providers'
+                  : 'No Others Service Providers'}
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-                {filter === 'all' ? 'Get started by adding your first service provider' : filter === 'active' ? 'No service providers are currently active' : 'All service providers have completed their payments'}
+                {filter === 'all'
+                  ? 'Get started by adding your first service provider'
+                  : filter === 'active'
+                  ? 'No service providers are currently active'
+                  : filter === 'inactive'
+                  ? 'No inactive service providers found'
+                  : 'No custom service providers found'}
               </p>
               <button
                 onClick={handleShowCreateModal}

@@ -61,6 +61,14 @@ export default function FieldExecAddEmployeePage() {
     nextStep,
     prevStep,
     isStepValid,
+    awaitingOtp,
+    otp,
+    otpLoading,
+    resendTimer,
+    canResend,
+    sendOtp,
+    verifyOtp,
+    setOtp,
   } = useFieldExecAddEmployee();
 
   const { fieldExecData, loading: fieldExecLoading, error: fieldExecError } = useFieldExecData();
@@ -125,7 +133,14 @@ export default function FieldExecAddEmployeePage() {
     if (step === 'optional') {
       await submitAddEmployee();
     } else {
-      nextStep();
+      if (step === 'personal') {
+        // Trigger OTP send on first continue
+        const sent = await sendOtp();
+        if (!sent) return;
+        nextStep();
+      } else {
+        nextStep();
+      }
     }
   };
 
@@ -567,38 +582,38 @@ export default function FieldExecAddEmployeePage() {
 
                       {formData.categoryid === 'others' && (
                         <LabelInputContainer>
-                          <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-xs sm:text-sm">
+                          <Label htmlFor="description" className="text-[#0A3D62] font-semibold flex items-center gap-1.5 text-xs sm:text-sm">
                             <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Service Description *
                           </Label>
                           <textarea
-                            id="customDescription"
+                            id="description"
                             placeholder="Describe the service employee will provide (minimum 10 characters)..."
-                            value={formData.customDescription || ''}
+                            value={formData.description || ''}
                             onChange={handleInputChange}
-                            onBlur={() => handleBlur('customDescription')}
+                            onBlur={() => handleBlur('description')}
                             required
                             minLength={10}
                             rows={3}
                             className={cn(
                               "w-full px-4 py-2.5 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm resize-none",
-                              getFieldError('customDescription') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                              getFieldError('description') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
                             )}
                           />
                           <div className="flex items-center justify-between mt-1">
-                            {getFieldError('customDescription') ? (
+                            {getFieldError('description') ? (
                               <p className="text-xs text-red-600 flex items-center gap-1">
                                 <span className="w-1 h-1 bg-red-600 rounded-full"></span>
-                                {getFieldError('customDescription')}
+                                {getFieldError('description')}
                               </p>
                             ) : (
                               <p className="text-xs text-gray-500">Provide detailed description for custom service</p>
                             )}
                             <p className={cn(
                               "text-xs",
-                              (formData.customDescription || '').length < 10 ? "text-red-500 font-medium" : "text-gray-400"
+                              (formData.description || '').length < 10 ? "text-red-500 font-medium" : "text-gray-400"
                             )}>
-                              {(formData.customDescription || '').length}/10 min
+                              {(formData.description || '').length}/10 min
                             </p>
                           </div>
                         </LabelInputContainer>
@@ -796,6 +811,41 @@ export default function FieldExecAddEmployeePage() {
 
               {/* Navigation Buttons */}
               <div className="flex flex-col gap-3 pt-4 sm:pt-6 border-t border-slate-200">
+                {/* OTP verification block shown after first continue */}
+                {step === 'personal' && awaitingOtp && (
+                  <div className="p-3 rounded-xl border border-[#2B9EB3]/40 bg-[#2B9EB3]/5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1">
+                        <Label htmlFor="otp" className="text-[#0A3D62] font-semibold text-sm">Enter OTP sent to {formData.email}</Label>
+                        <Input
+                          id="otp"
+                          placeholder="6-digit OTP"
+                          type="text"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          maxLength={6}
+                          className="mt-2 h-10 rounded-xl border-2 border-gray-200/60 focus:border-[#2B9EB3] focus:ring-0 bg-white/60 text-sm font-mono tracking-wider"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={verifyOtp}
+                        disabled={otpLoading || otp.length !== 6}
+                        className="h-10 px-4 rounded-xl bg-[#2B9EB3] text-white font-semibold disabled:opacity-60"
+                      >
+                        {otpLoading ? 'Verifying...' : 'Verify OTP'}
+                      </button>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-xs">
+                      <span className="text-gray-600">Didn’t receive? {canResend ? (
+                        <button type="button" className="text-[#2B9EB3] font-semibold" onClick={sendOtp}>Resend</button>
+                      ) : (
+                        <span>Resend in {resendTimer}s</span>
+                      )}</span>
+                      <span className="text-gray-500">Max 5 requests/min</span>
+                    </div>
+                  </div>
+                )}
                 {!isStepValid && (
                   <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
                     <p className="text-xs sm:text-sm text-amber-800 font-medium">
@@ -820,7 +870,7 @@ export default function FieldExecAddEmployeePage() {
                   )}
                   <EnhancedButton
                     type="submit"
-                    disabled={loading || !isStepValid || uploadingImage}
+                    disabled={loading || !isStepValid || uploadingImage || (step === 'personal' && (otpLoading || awaitingOtp))}
                     loading={loading}
                     icon={step === 'optional' ? <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" /> : <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}
                     className={step === 'personal' ? 'flex-1' : 'flex-1'}
@@ -831,6 +881,13 @@ export default function FieldExecAddEmployeePage() {
                         ? "Add Service Provider" 
                         : "Continue"}
                   </EnhancedButton>
+                              {/* OTP Sending loader before block appears */}
+                              {step === 'personal' && otpLoading && !awaitingOtp && (
+                                <div className="mt-2 p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center gap-2">
+                                  <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
+                                  <p className="text-xs sm:text-sm text-blue-700 font-medium">Sending OTP to {formData.email}...</p>
+                                </div>
+                              )}
                 </div>
               </div>
             </form>

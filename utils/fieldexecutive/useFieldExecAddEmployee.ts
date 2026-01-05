@@ -52,6 +52,11 @@ export interface UseFieldExecAddEmployeeReturn {
   imagePreview: string;
   priceError: string;
   step: SignupStep;
+  awaitingOtp: boolean;
+  otp: string;
+  otpLoading: boolean;
+  resendTimer: number;
+  canResend: boolean;
   
   setFormData: (data: EmployeeFormData) => void;
   clearMessages: () => void;
@@ -65,6 +70,9 @@ export interface UseFieldExecAddEmployeeReturn {
   handleCategorySelect: (categoryId: string) => void;
   handleImageUpload: (file: File) => Promise<void>;
   submitAddEmployee: () => Promise<boolean>;
+  sendOtp: () => Promise<boolean>;
+  verifyOtp: () => Promise<boolean>;
+  setOtp: (val: string) => void;
   
   isFormValid: boolean;
   isStepValid: boolean;
@@ -97,6 +105,11 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [awaitingOtp, setAwaitingOtp] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+  const [canResend, setCanResend] = useState(true);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -199,6 +212,13 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       }
     };
   }, [imagePreview]);
+
+  // Handle resend timer countdown
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const id = setInterval(() => setResendTimer((t) => (t > 0 ? t - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [resendTimer]);
 
   const clearMessages = useCallback(() => {
     setError('');
@@ -423,14 +443,13 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       }
 
       if (formData.categoryid === 'others') {
-        if (!formData.customDescription || formData.customDescription.trim().length < 10) {
+        if (!formData.description || formData.description.trim().length < 10) {
           setError('Please provide a detailed service description (minimum 10 characters)');
           toast.error('Service description must be at least 10 characters');
           setLoading(false);
           return false;
         }
       } else {
-        // Validate price for regular categories
         if (!formData.payrate || formData.payrate <= 0) {
           setError('Please enter a valid service rate');
           toast.error('Service rate is required');
@@ -522,7 +541,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
    */
   const nextStep = useCallback(() => {
     if (step === 'personal') {
-      setStep('service');
+      setAwaitingOtp(true);
     } else if (step === 'service') {
       setStep('optional');
     }
@@ -537,7 +556,65 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
     } else if (step === 'service') {
       setStep('personal');
     }
+    setAwaitingOtp(false);
   }, [step]);
+
+  // Send OTP using public endpoint
+  const sendOtp = useCallback(async (): Promise<boolean> => {
+    if (!formData.email) {
+      toast.error('Please enter email to send OTP');
+      return false;
+    }
+    setOtpLoading(true);
+    try {
+      const res = await fetch(`/api/v1/otp?email=${encodeURIComponent(formData.email)}`, { method: 'GET' });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('OTP sent to email');
+        setCanResend(false);
+        setResendTimer(60);
+        setTimeout(() => setCanResend(true), 60000);
+        return true;
+      }
+      toast.error(data.message || 'Failed to send OTP');
+      return false;
+    } catch (e) {
+      toast.error('Network error sending OTP');
+      return false;
+    } finally {
+      setOtpLoading(false);
+    }
+  }, [formData.email]);
+
+  // Verify OTP using public endpoint
+  const verifyOtp = useCallback(async (): Promise<boolean> => {
+    if (!formData.email || !otp || otp.length !== 6) {
+      toast.error('Enter the 6-digit OTP');
+      return false;
+    }
+    setOtpLoading(true);
+    try {
+      const res = await fetch('/api/v1/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, otp })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('OTP verified');
+        setAwaitingOtp(false);
+        setStep('service');
+        return true;
+      }
+      toast.error(data.message || 'Invalid OTP');
+      return false;
+    } catch (e) {
+      toast.error('Network error verifying OTP');
+      return false;
+    } finally {
+      setOtpLoading(false);
+    }
+  }, [formData.email, otp]);
 
   /**
    * Check if current step is valid
@@ -601,6 +678,11 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
     imagePreview,
     priceError,
     step,
+    awaitingOtp,
+    otp,
+    otpLoading,
+    resendTimer,
+    canResend,
     setFormData,
     clearMessages,
     resetForm,
@@ -612,6 +694,9 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
     handleCategorySelect,
     handleImageUpload,
     submitAddEmployee,
+    sendOtp,
+    verifyOtp,
+    setOtp,
     isFormValid,
     isStepValid
   };
