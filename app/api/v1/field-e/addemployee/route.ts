@@ -66,7 +66,7 @@ export async function POST(request: Request) {
                 return NextResponse.json({ message: "Employee account exists , Please complete the payment for account activation", success: true, order: orderResponse.order }, { status: 200 });
             }
         }
-        if (checkdata.success && checkdata.data.isPaid) {
+        if (checkdata.success && checkdata.data && checkdata.data.isPaid) {
             return NextResponse.json({
                 message: "Employee account exists and is already paid",
                 success: true,
