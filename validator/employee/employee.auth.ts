@@ -15,7 +15,8 @@ export const EmployeeZodSchema = z.object({
   img: z.string().url("Invalid image URL").optional().or(z.literal('')),
   categoryid: z.string().optional(), // MongoDB ObjectId as string
   payrate: z.number().optional(),
-  customDescription: z.string().optional(),
+  description: z.string().optional(),
+  othersCategory: z.string().optional(),
 });
 export type EmployeeInput = z.infer<typeof EmployeeZodSchema>;
 export const EmployeeLoginSchema = z.object({

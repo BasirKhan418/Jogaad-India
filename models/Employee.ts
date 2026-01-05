@@ -20,6 +20,8 @@ const EmployeeSchema = new mongoose.Schema({
     paymentid: { type: String, required: false },
     paymentStatus: { type: String, default: PaymentStatus.PENDING },
     categoryid: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
+    othersCategory: { type: String, required: false },
+    description: { type: String, required: false },
     payrate: { type: Number, required: false  },
     feid: { type: mongoose.Schema.Types.ObjectId, ref: 'FieldExecutive', required: false },
 }, { timestamps: true })
