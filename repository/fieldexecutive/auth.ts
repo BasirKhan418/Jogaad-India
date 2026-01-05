@@ -5,7 +5,7 @@ import { FieldExecutiveType } from "@/validator/fieldexecutive/field.validator";
 import { sendFieldExecutiveWelcomeEmail } from "@/email/field-executive/welcome";
 import { sendFieldExecutiveOtp } from "@/email/field-executive/sendotp";
 import jwt from "jsonwebtoken";
-
+import { createUpiQrCode } from "../razorpay/createUpiQrCode";
 // Create field executive
 export const createFieldExecutive = async (data: FieldExecutiveType) => {
 try{
@@ -14,10 +14,34 @@ try{
     if(dataExists){
         return {message:"Field Executive with this email already exists",success:false};
     }
-    const newFieldExecutive = new FieldExecutive({...data, isActive: true});
+   
+const closeBy = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours from now
+const amount = parseInt(process.env.EMP_FEES || "29") * 100; // Amount in paise
+const customer_id = Math.random().toString(36).substring(2, 15);
+console.log("Creating UPI QR Code with amount:", amount," customer_id:", customer_id," closeBy:", closeBy);
+try{
+const qr = await createUpiQrCode({
+  type: "upi_qr",
+  name: "Jogaad India",
+  usage: "single_use",
+  fixed_amount: true,
+  payment_amount: amount,
+  description: "For Employee Registration Fees - Jogaad India",
+  customer_id: customer_id,
+  close_by: closeBy,
+  notes: {
+    purpose: "For Employee Registration Fees - Jogaad India",
+  },
+});
+    const newFieldExecutive = new FieldExecutive({...data, isActive: false, isPaid: false, orderid: qr.id, qrcodeimg: qr.image_url, customerid: qr.customer_id});
     await newFieldExecutive.save();
-    await sendFieldExecutiveWelcomeEmail({name:data.name,email:data.email});
+    await sendFieldExecutiveWelcomeEmail({name:data.name,email:data.email,link:""});
     return {message:"Field Executive created successfully",data:newFieldExecutive,success:true};
+}
+catch(qrError){
+    console.error("Error creating UPI QR Code:", qrError);
+    return {message:"Error creating UPI QR Code",success:false};
+}
 }
 catch(error){
     console.error("Error creating field executive:", error);

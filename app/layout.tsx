@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import MaintenancePage from "@/components/down/down";
 import { Preloader } from "@/components/ui/preloader";
 import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
@@ -80,12 +79,10 @@ export default async function RootLayout({
       >   
         <Toaster position="top-right" richColors />
         <Preloader />
-        {/* <ConditionalLayout initialAuth={initialAuth}>
+        <ConditionalLayout initialAuth={initialAuth}>
           
           {children}
-        </ConditionalLayout> */}
-        <MaintenancePage />
-
+        </ConditionalLayout>
       </body>
     </html>
   );
