@@ -1,7 +1,7 @@
 import ConnectDb from "@/middleware/connectDb";
 import Booking from "@/models/Booking";
 import Employee from "@/models/Employee";
-import Category from "@/models/Category";
+import "@/models/Category";
 
 export const getallEmployeesAnalytics = async () => {
   try {
