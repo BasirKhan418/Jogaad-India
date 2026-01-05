@@ -36,6 +36,22 @@ const parseResult = EmployeeZodSchema.safeParse(reqBody);
 if(!parseResult.success){
     return NextResponse.json({message:"Invalid request data",success:false,errors:parseResult.error.format()}, {status:400});
 }
+
+// Handle empty categoryid (convert to undefined for MongoDB)
+if (reqBody.categoryid === '' || !reqBody.categoryid) {
+    delete reqBody.categoryid;
+}
+
+if (!reqBody.categoryid) {
+    // For "Other" category - skip category validation
+    let newdata = reqBody;
+    if(reqBody.isPaid){
+        newdata = {...reqBody, paymentStatus:"paid", isActive:true};
+    }
+    const response = await createEmployee(newdata);
+    return NextResponse.json(response);
+}
+
 const getcateory = await getCategoryById(reqBody.categoryid);
 if(!getcateory.success){
     return NextResponse.json({message:"Category not found",success:false}, {status:404});   
@@ -69,6 +85,18 @@ const parseResult = EmployeeZodSchema.partial({email:true}).safeParse(reqBody);
 if(!parseResult.success){
     return NextResponse.json({message:"Invalid request data",success:false,errors:parseResult.error.format()}, {status:400});
 }
+
+// Handle empty categoryid (convert to undefined for MongoDB)
+if (reqBody.categoryid === '' || !reqBody.categoryid) {
+    delete reqBody.categoryid;
+}
+
+if (!reqBody.categoryid) {
+    // For "Other" category - skip category validation
+    const response = await updateEmployeeByEmail(reqBody.email!, reqBody);
+    return NextResponse.json(response);
+}
+
 const categoryCheck = await getCategoryById(reqBody.categoryid);
 if(!categoryCheck.success){
     return NextResponse.json({message:"Category not found",success:false}, {status:404});   

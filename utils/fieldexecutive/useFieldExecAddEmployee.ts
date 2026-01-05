@@ -27,7 +27,8 @@ export interface EmployeeFormData {
   img?: string;
   categoryid: string;
   payrate: number;
-  customDescription?: string;
+  othersCategory?: string;
+  description?: string;
 }
 
 export interface ApiResponse<T = any> {
@@ -81,7 +82,8 @@ const initialFormData: EmployeeFormData = {
   img: '',
   categoryid: '',
   payrate: 0,
-  customDescription: ''
+  othersCategory: '',
+  description: ''
 };
 
 export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
@@ -453,9 +455,10 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         delete payload.categoryid;
       }
       
-      // Remove customDescription if categoryid is present (not a custom service)
-      if (payload.categoryid && payload.customDescription) {
-        delete payload.customDescription;
+      // Remove description if categoryid is present (not a custom service)
+      if (payload.categoryid && payload.description) {
+        delete payload.description;
+        delete payload.othersCategory;
       }
 
       // Call field executive add employee API
@@ -561,7 +564,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         
         // For custom service (others), must have description
         if (formData.categoryid === 'others') {
-          return !!(formData.customDescription && formData.customDescription.trim().length >= 10);
+          return !!(formData.description && formData.description.trim().length >= 10);
         }
         
         // For regular categories, must have valid payrate
@@ -583,7 +586,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
     formData.address &&
     formData.pincode &&
     formData.categoryid &&
-    (formData.categoryid === 'others' ? formData.customDescription : formData.payrate > 0) &&
+    (formData.categoryid === 'others' ? formData.description : formData.payrate > 0) &&
     !priceError
   );
 

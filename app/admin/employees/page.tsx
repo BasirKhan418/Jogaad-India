@@ -218,6 +218,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
       { header: "Name", key: "name", width: 20 },
       { header: "Email", key: "email", width: 30 },
       { header: "Category Name", key: "categoryName", width: 25 },
+      { header: "Custom Service Description", key: "customDescription", width: 40 },
       { header: "Employee Payment", key: "payrate", width: 20 },
       { header: "Total Earnings", key: "totalEarnings", width: 20 },
       { header: "You Earn", key: "youEarn", width: 15 },
@@ -231,7 +232,8 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
         s_no: index + 1,
         name: item.name,
         email: item.email,
-        categoryName: item.categoryid?.categoryName || 'N/A',
+        categoryName: item.categoryid?.categoryName || 'Other',
+        customDescription: item.othersCategory && item.description ? item.description : '-',
         payrate: item.payrate || 0,
         totalEarnings: item.totalEarnings || 0,
         youEarn: item.youEarn || 0,
@@ -315,7 +317,7 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
           <StatsCard 
             title="Total Service Providers" 
             value={employeeLoading ? "..." : stats.total.toString()} 
@@ -355,6 +357,14 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
             gradient="from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20"
             border="border-red-200 dark:border-red-700"
             subtitle={employeeLoading ? "Loading..." : `${stats.pending} pending payment`}
+          />
+          <StatsCard 
+            title="Others Category" 
+            value={employeeLoading ? "..." : stats.others.toString()} 
+            icon={<Tag className="h-8 w-8 text-indigo-500" />}
+            gradient="from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20"
+            border="border-indigo-200 dark:border-indigo-700"
+            subtitle={employeeLoading ? "Loading..." : `${stats.others} custom services`}
           />
         </div>
 
@@ -505,6 +515,9 @@ const EmployeesContent = ({ adminData }: { adminData: any }) => {
                             <span className="ml-2 text-green-600 dark:text-green-400">• Active</span>
                           ) : (
                             <span className="ml-2 text-red-600 dark:text-red-400">• Inactive</span>
+                          )}
+                          {employee.othersCategory && employee.description && (
+                            <span className="ml-2 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 rounded text-xs font-medium">Other</span>
                           )}
                         </p>
                         {employee.payrate && (
@@ -1049,7 +1062,7 @@ const ViewEmployeeModal = React.memo(({ employee, onClose }: { employee: Employe
           </div>
 
           {/* Status Badges */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <span className={cn(
               "px-3 py-1 rounded-full text-sm font-medium",
               employee.isPaid 
@@ -1066,7 +1079,23 @@ const ViewEmployeeModal = React.memo(({ employee, onClose }: { employee: Employe
             )}>
               {employee.isActive ? "Active" : "Inactive"}
             </span>
+            {employee.othersCategory && employee.description && (
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
+                Other Service
+              </span>
+            )}
           </div>
+
+          {/* Custom Description for Others */}
+          {employee.othersCategory && employee.description && (
+            <div className="p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
+              <h4 className="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2 flex items-center gap-2">
+                <Tag className="w-4 h-4" />
+                Custom Service Description
+              </h4>
+              <p className="text-sm text-indigo-800 dark:text-indigo-200">{employee.description}</p>
+            </div>
+          )}
 
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-4">

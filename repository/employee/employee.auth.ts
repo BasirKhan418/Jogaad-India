@@ -6,8 +6,10 @@ import { EmployeeInput } from "@/validator/employee/employee.auth";
 export const createEmployee = async (employeeData: EmployeeInput) => {
     try{
         await ConnectDb();
+        console.log('[createEmployee] payload:', employeeData);
         const newEmployee = new Employee(employeeData);
         await newEmployee.save();
+        console.log('[createEmployee] saved employee othersCategory:', (newEmployee as any).othersCategory, 'description:', (newEmployee as any).description);
         return {message:"Employee created successfully",employee:newEmployee,success:true};
     }
     catch(error){
@@ -55,7 +57,7 @@ export const updateEmployeeByEmail = async (email: string, updateData: EmployeeI
         }
 
         // Debug: observe pincode before update
-        console.log('updateEmployeeByEmail -> email:', email, 'pincode:', payload.pincode);
+        console.log('updateEmployeeByEmail -> email:', email, 'pincode:', payload.pincode, 'othersCategory:', payload.othersCategory, 'description:', payload.description);
 
         const updatedEmployee = await Employee.findOneAndUpdate(
             { email: email },
@@ -63,7 +65,7 @@ export const updateEmployeeByEmail = async (email: string, updateData: EmployeeI
             {new:true, runValidators: true}
         );
         if(updatedEmployee){
-            console.log('updateEmployeeByEmail -> updated pincode:', updatedEmployee.pincode);
+            console.log('updateEmployeeByEmail -> updated pincode:', updatedEmployee.pincode, 'othersCategory:', (updatedEmployee as any).othersCategory, 'description:', (updatedEmployee as any).description);
             return {message:"Employee updated successfully",employee:updatedEmployee,success:true};
         }
         return {message:"Employee not found",success:false};

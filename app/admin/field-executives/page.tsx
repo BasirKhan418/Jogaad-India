@@ -1150,8 +1150,10 @@ const EditFieldExecutiveModal = React.memo(({
                 placeholder="Enter email address"
                 className="w-full"
                 required
-                disabled
               />
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                Updating email uses the employee's ID to save changes.
+              </p>
             </div>
 
             <div className="space-y-2">

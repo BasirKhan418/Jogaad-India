@@ -28,7 +28,8 @@ export interface EmployeeSignupRequest {
   img?: string;
   categoryid: string;
   payrate: number;
-  customDescription?: string;
+  othersCategory?: boolean;
+  description?: string;
 }
 
 export interface ApiResponse<T = any> {
@@ -82,7 +83,8 @@ const initialFormData: EmployeeSignupRequest = {
   img: '',
   categoryid: '',
   payrate: 0,
-  customDescription: ''
+  othersCategory: false,
+  description: ''
 };
 
 export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
@@ -342,7 +344,8 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
       ...prev, 
       categoryid: categoryId, // keep 'others' in state so select shows correctly
       payrate: category?.recommendationPrice || 0,
-      customDescription: categoryId === 'others' ? prev.customDescription : ''
+      othersCategory: categoryId === 'others' ? true : false,
+      description: categoryId === 'others' ? prev.description : ''
     }));
     clearMessages();
   }, [categories, clearMessages]);
@@ -429,7 +432,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
       return false;
     }
 
-    if (formData.categoryid === 'others' && (!formData.customDescription || formData.customDescription.trim().length === 0)) {
+    if (formData.categoryid === 'others' && (!formData.description || formData.description.trim().length === 0)) {
       toast.error('Please describe your service category');
       return false;
     }
@@ -453,23 +456,43 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     abortControllerRef.current = new AbortController();
 
     try {
+      const payload: any = {
+        name: formData.name,
+        email: formData.email,
+        address: formData.address,
+        phone: formData.phone,
+        pincode: formData.pincode,
+        bankName: formData.bankName,
+        bankAccountNumber: formData.bankAccountNumber,
+        bankIfscCode: formData.bankIfscCode,
+        img: formData.img,
+      };
+
+      // Handle category selection
+      if (formData.categoryid === 'others') {
+        // For "others" category, don't send categoryid but send othersCategory and description
+        payload.categoryid = '';
+        payload.othersCategory = true;
+        payload.description = formData.description || '';
+        payload.payrate = formData.payrate;
+      } else {
+        // For regular categories, send categoryid and payrate
+        payload.categoryid = formData.categoryid;
+        payload.payrate = formData.payrate;
+      }
+
       const response = await fetch('/api/v1/create-account', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          // Map 'others' to empty string for backend compatibility if needed
-          categoryid: formData.categoryid === 'others' ? '' : formData.categoryid,
-        }),
+        body: JSON.stringify(payload),
         signal: abortControllerRef.current.signal
       });
 
       const result = await response.json();
       
       if (result.success) {
-        // Scenario 1: Account exists and is already paid - redirect to login
         if (result.redirect) {
           toast.success('Account Already Exists!', {
             description: 'Your employee account is already active. Redirecting you to the dashboard...',
@@ -482,7 +505,6 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
           return true;
         }
 
-        // Scenario 2 & 3: Account needs payment (existing unpaid or new account)
         if (result.order) {
           const isExistingAccount = result.message?.toLowerCase().includes('exists');
           
@@ -553,7 +575,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
         formData.categoryid &&
         formData.payrate > 0 &&
         !priceError &&
-        (formData.categoryid !== 'others' || (formData.customDescription && formData.customDescription.trim().length > 0))
+        (formData.categoryid !== 'others' || (formData.description && formData.description.trim().length > 0))
       );
     }
     return true; // optional step is always valid
@@ -570,7 +592,7 @@ export const useEmployeeSignup = (): UseEmployeeSignupReturn => {
     formData.categoryid &&
     formData.payrate > 0 &&
     !priceError &&
-    (formData.categoryid !== 'others' || (formData.customDescription && formData.customDescription.trim().length > 0))
+    (formData.categoryid !== 'others' || (formData.description && formData.description.trim().length > 0))
   );
 
   return {

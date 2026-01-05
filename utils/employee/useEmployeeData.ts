@@ -30,6 +30,8 @@ export interface Employee {
     img?: string;
   };
   payrate?: number;
+  othersCategory?: string;
+  description?: string;
   createdAt: string;
   updatedAt: string;
   totalEarnings?: number;
@@ -43,6 +45,7 @@ export interface EmployeeStats {
   inactive: number;
   paid: number;
   pending: number;
+  others: number;
 }
 
 interface UseEmployeeDataReturn {
@@ -157,6 +160,7 @@ export const useEmployeeData = (): UseEmployeeDataReturn => {
     inactive: employees.filter(emp => !emp.isActive).length,
     paid: employees.filter(emp => emp.isPaid).length,
     pending: employees.filter(emp => !emp.isPaid).length,
+    others: employees.filter(emp => emp.othersCategory && emp.description).length,
   }), [employees]);
 
   return {

@@ -49,6 +49,8 @@ export interface EmployeeCreateRequest {
   img?: string;
   categoryid: string;
   payrate: number;
+  othersCategory?: string;
+  description?: string;
 }
 
 export interface UploadUrlRequest {

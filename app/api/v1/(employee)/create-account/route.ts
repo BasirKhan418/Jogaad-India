@@ -21,6 +21,23 @@ export async function POST(request: Request) {
         }
         const validatedData = validate.data;
 
+        // Debug incoming payload
+        console.log('[create-account] incoming payload:', data);
+        console.log('[create-account] validated data (pre-clean):', validatedData);
+
+        // Handle empty categoryid (convert to undefined for MongoDB)
+        if (validatedData.categoryid === '' || !validatedData.categoryid) {
+            delete validatedData.categoryid;
+        }
+
+        // Normalize flags for others category if present (coerce to boolean)
+        if ((validatedData as any).othersCategory !== undefined) {
+            const raw = (validatedData as any).othersCategory;
+            (validatedData as any).othersCategory = typeof raw === 'string' ? raw.trim() === 'true' : !!raw;
+        }
+
+        console.log('[create-account] validated data (post-clean):', validatedData);
+
         const checkdata = await getEmployeeByEmailAnyStatus(validatedData.email);
 
         if (checkdata.success && !checkdata.data?.isPaid) {

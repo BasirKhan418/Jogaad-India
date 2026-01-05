@@ -82,10 +82,10 @@ export default function EmployeeSignupPage() {
       case 'categoryid':
         if (!formData.categoryid || formData.categoryid === '') return 'Please select a service category';
         return null;
-      case 'customDescription':
+      case 'description':
         if (formData.categoryid === 'others') {
-          if (!formData.customDescription) return 'Service description is required';
-          if (formData.customDescription.trim().length < 10) return 'Description must be at least 10 characters';
+          if (!formData.description) return 'Service description is required';
+          if (formData.description.trim().length < 10) return 'Description must be at least 10 characters';
         }
         return null;
       case 'payrate':
@@ -421,38 +421,38 @@ export default function EmployeeSignupPage() {
 
                   {formData.categoryid === 'others' && (
                     <LabelInputContainer>
-                      <Label htmlFor="customDescription" className="text-[#0A3D62] font-semibold flex items-center gap-2 text-sm">
+                      <Label htmlFor="description" className="text-[#0A3D62] font-semibold flex items-center gap-2 text-sm">
                         <Briefcase className="w-4 h-4" />
                         Service Description *
                       </Label>
                       <textarea
-                        id="customDescription"
+                        id="description"
                         placeholder="Please describe your service in detail (minimum 10 characters)..."
-                        value={formData.customDescription || ''}
+                        value={formData.description || ''}
                         onChange={handleInputChange}
-                        onBlur={() => handleBlur('customDescription')}
+                        onBlur={() => handleBlur('description')}
                         required
                         minLength={10}
                         rows={3}
                         className={cn(
                           "w-full px-4 py-3 rounded-xl border-2 focus:ring-0 bg-white/60 text-sm resize-none",
-                          getFieldError('customDescription') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
+                          getFieldError('description') ? "border-red-300 focus:border-red-400" : "border-gray-200/60 focus:border-[#2B9EB3]"
                         )}
                       />
                       <div className="flex items-center justify-between mt-1">
-                        {getFieldError('customDescription') ? (
+                        {getFieldError('description') ? (
                           <p className="text-xs text-red-600 flex items-center gap-1">
                             <span className="w-1 h-1 bg-red-600 rounded-full"></span>
-                            {getFieldError('customDescription')}
+                            {getFieldError('description')}
                           </p>
                         ) : (
                           <p className="text-xs text-gray-500">Describe what service you provide since it's not in our categories</p>
                         )}
                         <p className={cn(
                           "text-xs",
-                          (formData.customDescription || '').length < 10 ? "text-red-500 font-medium" : "text-gray-400"
+                          (formData.description || '').length < 10 ? "text-red-500 font-medium" : "text-gray-400"
                         )}>
-                          {(formData.customDescription || '').length}/10 min
+                          {(formData.description || '').length}/10 min
                         </p>
                       </div>
                     </LabelInputContainer>
@@ -655,7 +655,7 @@ export default function EmployeeSignupPage() {
                     <p className="text-xs sm:text-sm text-amber-800 font-medium">
                       {step === 'personal' && '⚠️ Please fill in all required personal information correctly'}
                       {step === 'service' && !formData.categoryid && '⚠️ Please select a service category'}
-                      {step === 'service' && formData.categoryid === 'others' && (!formData.customDescription || formData.customDescription.length < 10) && '⚠️ Please provide detailed service description (min 10 characters)'}
+                      {step === 'service' && formData.categoryid === 'others' && (!formData.description || formData.description.length < 10) && '⚠️ Please provide detailed service description (min 10 characters)'}
                       {step === 'service' && formData.categoryid && formData.categoryid !== 'others' && (!formData.payrate || formData.payrate <= 0 || priceError) && '⚠️ Please enter a valid service rate within the allowed range'}
                     </p>
                   </div>
