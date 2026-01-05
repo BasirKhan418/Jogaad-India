@@ -6,6 +6,8 @@ import { writeLogToS3 } from "@/utils/s3Logger";
 import Booking from "@/models/Booking";
 import { sendRefundCompletedEmail } from "@/email/user/refundcomplete";
 import { sendRefundInitiatedEmail } from "@/email/user/refundinitiated";
+import FieldExecutive from "@/models/FieldExecutive";
+
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
@@ -82,7 +84,39 @@ export async function POST(request: NextRequest) {
       addLog(`Booking record paymentid updated for orderid: ${p.order_id}`);
     }
   }
-
+  //QR CODE CREDITED EVENT
+  if (event === "qr_code.credited") {
+  const qr = data.payload.qr_code.entity;
+  const payment = data.payload.payment?.entity;
+  //adding into loga
+  addLog(`QR Code credited: ${JSON.stringify(qr)}`);
+  addLog(`Associated payment: ${JSON.stringify(payment)}`);
+  const feData = await FieldExecutive.findOneAndUpdate(
+    { orderid: qr.id },
+    {
+      isPaid: true,
+      isActive: true,
+      paymentid: payment ? payment.id : undefined,
+    }
+  );
+  if (feData) {
+    addLog(`Field Executive record updated for orderid: ${qr.id} name: ${feData.name}`);
+  }
+  const empdata = await Employee.findOneAndUpdate(
+      { orderid: qr.id },
+      {
+        isPaid: true,
+        isActive: true,
+        paymentid: payment ? payment.id : undefined,
+        paymentStatus: "paid",
+        orderid: qr.id,
+      }
+    );
+    if (empdata) {
+      addLog(`Employee record updated for orderid: ${qr.id} name: ${empdata.name}`);
+    }
+}
+//end QR CODE CREDITED EVENT
   if (event === "payment.failed") {
     const p = data.payload.payment.entity;
     addLog(`Payment failed: ${JSON.stringify(p)}`);
