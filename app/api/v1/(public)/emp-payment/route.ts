@@ -1,5 +1,6 @@
 import { NextResponse,NextRequest } from "next/server";
 import { getFieldExecutiveById } from "@/repository/fieldexecutive/auth";
+
 export const GET = async (request: NextRequest) => {
     try{
         const url = new URL(request.url);
@@ -12,7 +13,7 @@ export const GET = async (request: NextRequest) => {
             return NextResponse.json({message:"Field Executive not found",success:false,status:"error"},{status:404});
         }
         if(!fieldExecData.data?.isPaid){
-            return NextResponse.json({message:"Field Executive payment pending",success:false,status:"pending",data:fieldExecData.data},{status:200});
+            return NextResponse.json({message:"Field Executive payment pending",success:true,status:"pending",data:fieldExecData.data},{status:200});
         }
         else if(fieldExecData.data?.isPaid){
             return NextResponse.json({message:"Field Executive payment completed",success:true,status:"paid",data:fieldExecData.data},{status:200});
