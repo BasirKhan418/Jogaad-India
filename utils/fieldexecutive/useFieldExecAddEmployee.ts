@@ -27,7 +27,7 @@ export interface EmployeeFormData {
   img?: string;
   categoryid: string;
   payrate: number;
-  othersCategory?: string;
+  othersCategory?: boolean;
   description?: string;
 }
 
@@ -90,7 +90,7 @@ const initialFormData: EmployeeFormData = {
   img: '',
   categoryid: '',
   payrate: 0,
-  othersCategory: '',
+  othersCategory: false,
   description: ''
 };
 
@@ -305,6 +305,9 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         ...prev,
         [id]: type === 'number' ? parseFloat(value) || 0 : value
       };
+      if(e.target.id=="description"){
+        setFormData({...formData,othersCategory:true})
+      }
 
       // Validate price if payrate changes
       if (id === 'payrate') {

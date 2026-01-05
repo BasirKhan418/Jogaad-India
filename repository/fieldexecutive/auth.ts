@@ -13,69 +13,133 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET as string,
 });
 // Create field executive
-export const createFieldExecutive = async (data: FieldExecutiveType) => {
-    try {
-        await ConnectDb();
-        const dataExists = await FieldExecutive.findOne({ email: data.email });
-        if (dataExists) {
-            return { message: "Field Executive with this email already exists", success: false };
-        }
+async function getOrCreateRazorpayCustomer({
+  name,
+  email,
+  phone,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+}) {
+  const redisClient = setConnectionRedis();
+  const redisKey = `rzp_customer_${email}`;
 
-        const closeBy = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours from now
-        const amount = parseInt(process.env.EMP_FEES || "39") * 100; // Amount in paise
-        const customer_id = Math.random().toString(36).substring(2, 15);
-        console.log("Creating UPI QR Code with amount:", amount, " customer_id:", customer_id, " closeBy:", closeBy);
-        var customer;
-        try {
-            const customers = await razorpay.customers.all();
-            const existingCustomer = customers.items.find((cust: any) => cust.email === data.email);
-            if (existingCustomer) {
-                customer = existingCustomer;
-            } else {
-                customer = await razorpay.customers.create({
-                    name: data.name,
-                    email: data.email,
-                    contact: data.phone,
-                });
-                console.log("Razorpay customer created:", customer);
+  const cached = await redisClient.get(redisKey);
+  if (cached) return JSON.parse(cached);
 
-            }
-        }
-        catch (err) {
-            return { message: "Error creating Razorpay customer", success: false };
-        }
-        try {
-            const qr = await createUpiQrCode({
-                type: "upi_qr",
-                name: "Jogaad India",
-                usage: "single_use",
-                fixed_amount: true,
-                payment_amount: amount,
-                description: "For Employee Registration Fees - Jogaad India",
-                customer_id: customer.id,
-                close_by: closeBy,
-                notes: {
-                    purpose: "For Employee Registration Fees - Jogaad India",
-                },
-            });
-            console.log("UPI QR Code created:", qr);
-            const newFieldExecutive = new FieldExecutive({ ...data, isActive: false, isPaid: false, orderid: qr.id, qrcodeimg: qr.image_url, customerid: qr.customer_id });
-            await newFieldExecutive.save();
+  const customer = await razorpay.customers.create({
+    name,
+    email,
+    contact: phone,
+  });
 
-            await sendFieldExecutiveWelcomeEmail({ name: data.name, email: data.email, link: `${process.env.EMP_PAYMENT_URL}?id=${newFieldExecutive._id}` });
-
-            return { message: "Field Executive created successfully", data: newFieldExecutive, success: true };
-        }
-        catch (qrError) {
-            console.error("Error creating UPI QR Code:", qrError);
-            return { message: "Error creating UPI QR Code", success: false };
-        }
-    }
-    catch (error) {
-        console.error("Error creating field executive:", error);
-        return { message: "Internal Server Error", success: false };
-    }
+  await redisClient.set(redisKey, JSON.stringify(customer), "EX", 24 * 60 * 60);
+  return customer;
 }
+async function generateFieldExecutiveQR({
+  name,
+  email,
+  phone,
+  amount,
+  receipt,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+  amount: number;
+  receipt: string;
+}) {
+  const redisClient = setConnectionRedis();
+
+  const existing = await redisClient.get(`fe_${email}_order`);
+  if (existing) return JSON.parse(existing);
+
+  const customer = await getOrCreateRazorpayCustomer({ name, email, phone });
+
+  const closeBy = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
+
+  const qr = await createUpiQrCode({
+    type: "upi_qr",
+    name: "Jogaad India",
+    usage: "single_use",
+    fixed_amount: true,
+    payment_amount: amount,
+    description: "For Field Executive Registration Fees - Jogaad India",
+    customer_id: customer.id,
+    close_by: closeBy,
+    notes: { receipt },
+  });
+
+  const order = {
+    id: qr.id,
+    img: qr.image_url,
+    customerId: qr.customer_id,
+    amount: qr.payment_amount,
+    receipt,
+  };
+
+  await redisClient.set(`fe_${email}_order`, JSON.stringify(order), "EX", 24 * 60 * 60);
+
+  return order;
+}
+
+export const createFieldExecutive = async (data: FieldExecutiveType) => {
+  try {
+    await ConnectDb();
+
+    const exists = await FieldExecutive.findOne({ email: data.email });
+    if (exists) {
+      return {
+        success: false,
+        message: "Field Executive with this email already exists",
+      };
+    }
+
+    const amount = parseInt(process.env.EMP_FEES || "39") * 100;
+
+    /** GENERATE QR */
+    const order = await generateFieldExecutiveQR({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      amount,
+      receipt: `fe_reg_${data.email}`,
+    });
+
+    /** CREATE FIELD EXEC */
+    const newFieldExecutive = new FieldExecutive({
+      ...data,
+      isActive: false,
+      isPaid: false,
+      orderid: order.id,
+      qrcodeimg: order.img,
+      customerid: order.customerId,
+    });
+
+    await newFieldExecutive.save();
+
+    /** SEND PAYMENT LINK */
+    await sendFieldExecutiveWelcomeEmail({
+      name: data.name,
+      email: data.email,
+      link: `${process.env.EMP_PAYMENT_URL}?id=${newFieldExecutive._id}`,
+    });
+
+    return {
+      success: true,
+      message: "Field Executive created successfully",
+      data: newFieldExecutive,
+    };
+  } catch (error) {
+    console.error("CREATE FE ERROR:", error);
+    return {
+      success: false,
+      message: "Internal Server Error",
+    };
+  }
+};
+
 // Get all field executives
 export const getAllFieldExecutives = async () => {
     try {

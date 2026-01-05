@@ -24,6 +24,7 @@ const EmployeeSchema = new mongoose.Schema({
         description: { type: String, required: false },
     payrate: { type: Number, required: false  },
     feid: { type: mongoose.Schema.Types.ObjectId, ref: 'FieldExecutive', required: false },
+    qrimg: { type: String, required: false },
 }, { timestamps: true })
 
 // Ensure schema updates take effect in dev by removing cached model

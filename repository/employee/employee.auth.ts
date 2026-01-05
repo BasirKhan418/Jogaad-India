@@ -100,10 +100,11 @@ export const deleteEmployeeByEmail = async (email: string) => {
     }
 }
 
-export const updateOrderidByEmail = async (email: string, orderId: string) => {
+export const updateOrderidByEmail = async (email: string, orderId: string,img: string) => {
     try{
         await ConnectDb();
-        const updatedEmployee = await Employee.findOneAndUpdate({email},{orderid:orderId},{new:true});
+        console.log("Updating order ID for email:", email, "to orderId:", orderId,"img:", img);
+        const updatedEmployee = await Employee.findOneAndUpdate({email},{orderid:orderId, qrimg: img},{new:true});
         if(updatedEmployee){
             return {message:"Employee order ID updated successfully",employee:updatedEmployee,success:true};
         }
@@ -122,5 +123,19 @@ export const getEmployeeByCategoryId = async (categoryid: string) => {
     }
     catch(error){
         return {message:"Error retrieving employees",error,success:false};
+    }
+}
+
+export const getemployeeByOrderId = async (orderid: string) => {
+    try{
+        await ConnectDb();
+        const employee = await Employee.findOne({orderid});
+        if(employee){
+            return {message:"Employee retrieved successfully",data:employee,success:true};
+        }
+        return {message:"Employee not found",success:false};
+    }
+    catch(error){
+        return {message:"Error retrieving employee",error,success:false};
     }
 }
