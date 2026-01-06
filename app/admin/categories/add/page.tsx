@@ -65,7 +65,20 @@ const chargingUnits = [
   "Per sq. meter",
   "Per system per month",
   "Per ton of AC capacity",
-  "Per vehicle per month"
+  "Per vehicle per month",
+  "Per day",
+  "Per sqft.",
+  "Per Hour",
+  "Per Mtr.",
+  "Per Point",
+  "Per Weekly",
+  "Per Monthly",
+  "Per Yearly",
+  "Per Km.",
+  "Per Session",
+  "Per Kg.",
+  "Per Ltr.",
+  "Finalize On Site Review"
 ].sort();
 
 interface CategoryFormData {

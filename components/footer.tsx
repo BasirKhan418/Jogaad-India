@@ -146,7 +146,7 @@ export const Footer: React.FC = () => {
         {/* Divider */}
         <div className="mt-12 border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
           <p>
-            © {new Date().getFullYear()} Jogaad India All rights reserved.
+            © {new Date().getFullYear()} Jogaad India™ (M/S DK Corporate Service). All rights reserved.
           </p>
           <p className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-[#F9A825] animate-pulse" />
@@ -158,7 +158,7 @@ export const Footer: React.FC = () => {
       {/* Giant faded text below footer content - responsive */}
       <div className="relative pointer-events-none select-none overflow-hidden py-8 sm:py-12">
         <h2 className="text-center text-[25vw] sm:text-[12vw] md:text-[10vw] lg:text-[10vw] xl:text-[10vw] leading-none font-black tracking-tighter text-[#0A3D62]/30">
-          Jogaad India
+          Jogaad India™
         </h2>
       </div>
     </footer>
