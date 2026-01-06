@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         isActive: true,
         paymentid: p.id,
         paymentStatus: "paid",
-        orderid: p.order_id,
+        
       }
     );
     if (empdata) {
