@@ -69,7 +69,7 @@ export interface UseFieldExecAddEmployeeReturn {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   handleCategorySelect: (categoryId: string) => void;
   handleImageUpload: (file: File) => Promise<void>;
-  submitAddEmployee: () => Promise<boolean>;
+  submitAddEmployee: () => Promise<{ status: boolean; qrid?: string }>;
   sendOtp: () => Promise<boolean>;
   verifyOtp: () => Promise<boolean>;
   setOtp: (val: string) => void;
@@ -396,148 +396,122 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
    * Submit employee registration
    * Uses field executive API endpoint
    */
-  const submitAddEmployee = useCallback(async (): Promise<boolean> => {
-    try {
-      setLoading(true);
-      clearMessages();
+  type SubmitEmployeeResult = {
+  status: boolean;
+  qrid?: string;
+};
 
-      // Validate required fields
-      // Comprehensive validation before submission
-      if (!formData.name || formData.name.trim().length < 2) {
-        setError('Please provide a valid name (minimum 2 characters)');
-        toast.error('Please provide a valid name');
-        setLoading(false);
-        return false;
-      }
+const submitAddEmployee = useCallback(async (): Promise<SubmitEmployeeResult> => {
+  try {
+    setLoading(true);
+    clearMessages();
 
-      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        setError('Please provide a valid email address');
-        toast.error('Please provide a valid email address');
-        setLoading(false);
-        return false;
-      }
+    /* ---------------- VALIDATIONS ---------------- */
 
-      if (!formData.phone || formData.phone.length < 10) {
-        setError('Please provide a valid phone number (minimum 10 digits)');
-        toast.error('Please provide a valid phone number');
-        setLoading(false);
-        return false;
-      }
-
-      if (!formData.address || formData.address.trim().length < 10) {
-        setError('Please provide a complete address (minimum 10 characters)');
-        toast.error('Please provide a complete address');
-        setLoading(false);
-        return false;
-      }
-
-      if (!formData.pincode || formData.pincode.length !== 6 || !/^\d{6}$/.test(formData.pincode)) {
-        setError('Please provide a valid 6-digit pincode');
-        toast.error('Please provide a valid 6-digit pincode');
-        setLoading(false);
-        return false;
-      }
-
-      if (!formData.categoryid || formData.categoryid === '') {
-        setError('Please select a service category or choose "Others" for custom service');
-        toast.error('Service category is required');
-        setLoading(false);
-        return false;
-      }
-
-      if (formData.categoryid === 'others') {
-        if (!formData.description || formData.description.trim().length < 10) {
-          setError('Please provide a detailed service description (minimum 10 characters)');
-          toast.error('Service description must be at least 10 characters');
-          setLoading(false);
-          return false;
-        }
-      } else {
-        if (!formData.payrate || formData.payrate <= 0) {
-          setError('Please enter a valid service rate');
-          toast.error('Service rate is required');
-          setLoading(false);
-          return false;
-        }
-        
-        if (!validatePrice(formData.payrate)) {
-          toast.error(priceError || 'Invalid price range');
-          setLoading(false);
-          return false;
-        }
-      }
-
-      abortControllerRef.current = new AbortController();
-
-      // Prepare payload - remove categoryid if it's empty or 'others'
-      const payload: any = { ...formData };
-      
-      // Remove categoryid if it's empty or 'others' to avoid MongoDB cast error
-      if (!payload.categoryid || payload.categoryid === '' || payload.categoryid === 'others') {
-        delete payload.categoryid;
-      }
-      
-      // Remove description if categoryid is present (not a custom service)
-      if (payload.categoryid && payload.description) {
-        delete payload.description;
-        delete payload.othersCategory;
-      }
-
-      // Call field executive add employee API
-      const response = await fetch('/api/v1/field-e/addemployee', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        signal: abortControllerRef.current.signal,
-      });
-
-      const result: ApiResponse = await response.json();
-
-      if (!result.success) {
-        setError(result.message || 'Failed to create employee account');
-        setLoading(false);
-        return false;
-      }
-
-      // Check if redirect is needed (employee already exists and paid)
-      if (result.redirect) {
-        setError('Employee account already exists and is active');
-        setLoading(false);
-        return false;
-      }
-
-      // If order exists, initiate payment
-      if (result.order) {
-        toast.success('Employee account created! Processing payment...');
-        console.log('Initiating payment for order:', result.order);
-        return true;
-      }
-
-      // Success without payment
-      setSuccess('Employee account created successfully!');
-      toast.success('Employee added successfully!');
-      
-      // Reset form after success
-      setTimeout(() => {
-        resetForm();
-      }, 2000);
-      
-      setLoading(false);
-      return true;
-
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.log('Request was cancelled');
-      } else {
-        console.error('Employee creation error:', error);
-        setError('Failed to create employee account. Please try again.');
-      }
-      setLoading(false);
-      return false;
+    if (!formData.name || formData.name.trim().length < 2) {
+      toast.error('Please provide a valid name');
+      return { status: false };
     }
-  }, [formData, validatePrice, initiateRazorpayPayment, resetForm, clearMessages]);
+
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error('Please provide a valid email address');
+      return { status: false };
+    }
+
+    if (!formData.phone || formData.phone.length < 10) {
+      toast.error('Please provide a valid phone number');
+      return { status: false };
+    }
+
+    if (!formData.address || formData.address.trim().length < 10) {
+      toast.error('Please provide a complete address');
+      return { status: false };
+    }
+
+    if (!/^\d{6}$/.test(formData.pincode)) {
+      toast.error('Please provide a valid 6-digit pincode');
+      return { status: false };
+    }
+
+    if (!formData.categoryid) {
+      toast.error('Service category is required');
+      return { status: false };
+    }
+
+    if (formData.categoryid === 'others') {
+      if (!formData.description || formData.description.trim().length < 10) {
+        toast.error('Service description must be at least 10 characters');
+        return { status: false };
+      }
+    } else {
+      if (!formData.payrate || formData.payrate <= 0) {
+        toast.error('Service rate is required');
+        return { status: false };
+      }
+
+      if (!validatePrice(formData.payrate)) {
+        toast.error(priceError || 'Invalid price range');
+        return { status: false };
+      }
+    }
+
+    /* ---------------- PAYLOAD ---------------- */
+
+    const payload: any = { ...formData };
+
+    if (!payload.categoryid || payload.categoryid === 'others') {
+      delete payload.categoryid;
+    }
+
+    if (payload.categoryid) {
+      delete payload.description;
+      delete payload.othersCategory;
+    }
+
+    abortControllerRef.current = new AbortController();
+
+    /* ---------------- API CALL ---------------- */
+
+    const response = await fetch('/api/v1/field-e/addemployee', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: abortControllerRef.current.signal,
+    });
+
+    const result: ApiResponse = await response.json();
+
+    if (!result.success) {
+      setError(result.message || 'Failed to create employee');
+      return { status: false };
+    }
+
+    if (result.redirect) {
+      toast.error('Employee already exists and is active');
+      return { status: false };
+    }
+
+    if (result.order) {
+      toast.success('Employee created! Complete payment');
+      return { status: true, qrid: result.order.id };
+    }
+
+    toast.success('Employee added successfully!');
+    resetForm();
+
+    return { status: true };
+
+  } catch (error: any) {
+    if (error.name !== 'AbortError') {
+      console.error(error);
+      toast.error('Something went wrong');
+    }
+    return { status: false };
+  } finally {
+    setLoading(false);
+  }
+}, [formData, validatePrice, resetForm, clearMessages]);
+
 
   /**
    * Navigate to next step

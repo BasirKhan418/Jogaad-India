@@ -1,11 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useFieldExecAddEmployee } from "@/utils/fieldexecutive/useFieldExecAddEmployee";
 import Image from "next/image";
 import Link from "next/link";
+import PaymentDialog from "@/utils/PaymentDialog";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
@@ -35,13 +36,14 @@ import {
 import { IconLogout } from "@tabler/icons-react";
 import { getUserInitials } from "@/utils/auth";
 import { Toaster } from "sonner";
-
 /**
  * Employee Add Service Provider Page
  * Allows employees to add new service providers with payment processing
  */
 export default function FieldExecAddEmployeePage() {
   const pathname = usePathname();
+  const [show ,setShow] = useState(false);
+  const [qrid,setQrid] = useState<string|null>(null);
   const router = useRouter();
   const {
     loading,
@@ -129,20 +131,30 @@ export default function FieldExecAddEmployeePage() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (step === 'optional') {
-      await submitAddEmployee();
-    } else {
-      if (step === 'personal') {
-        // Trigger OTP send on first continue
-        const sent = await sendOtp();
-        if (!sent) return;
-        nextStep();
-      } else {
-        nextStep();
-      }
+  e.preventDefault();
+
+  if (step === 'optional') {
+    const result = await submitAddEmployee();
+
+    if (!result.status) return;
+    setQrid(result.qrid || null);
+    setShow(true);
+
+    // Payment flow
+    if (result.qrid) {
     }
-  };
+
+    return;
+  }
+
+  if (step === 'personal') {
+    const sent = await sendOtp();
+    if (!sent) return;
+  }
+
+  nextStep();
+};
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -221,6 +233,7 @@ export default function FieldExecAddEmployeePage() {
       <Toaster position="top-right" richColors />
       
       {/* Desktop Sidebar */}
+      {show&&<PaymentDialog paymentId={qrid|| ""} />}
       <div className="hidden md:block">
         <Sidebar open={open} setOpen={setOpen}>
           <SidebarBody className="justify-between gap-10">
