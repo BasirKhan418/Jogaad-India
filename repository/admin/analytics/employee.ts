@@ -32,14 +32,13 @@ export const getallEmployeesAnalytics = async () => {
         console.log('Employee without categoryid:', {
           name: empObject.name,
           email: empObject.email,
-          hasCustomDescription: !!empObject.customDescription,
-          customDescription: empObject.customDescription
+          description: empObject.description,
         });
       }
 
       return {
         ...empObject,
-        categoryName: emp.categoryid?.categoryName || null,
+        categoryName: (emp.categoryid as any)?.categoryName || null,
         totalEarnings,
         youEarn,
         bookingsCount: empBookings.length,
@@ -95,7 +94,7 @@ export const getallEmployeesAnalyticsByDateRange = async (
 
       return {
         ...emp.toObject(),
-        categoryName: emp.categoryid?.categoryName || null,
+        categoryName: (emp.categoryid as any)?.categoryName || null,
         totalEarnings,
         youEarn,
         bookingsCount: empBookings.length,

@@ -56,6 +56,7 @@ export const useFieldExecEditEmployee = () => {
     bankIfscCode: "",
     img: "",
     customDescription: "",
+    description: "",
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -161,6 +162,7 @@ export const useFieldExecEditEmployee = () => {
           bankIfscCode: employee.bankIfscCode || "",
           img: employee.img || "",
           customDescription: employee.customDescription || "",
+          description: employee.description || "",
         });
 
         if (employee.img) {
