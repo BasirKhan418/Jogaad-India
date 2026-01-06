@@ -511,7 +511,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
       // If order exists, initiate payment
       if (result.order) {
         toast.success('Employee account created! Processing payment...');
-        initiateRazorpayPayment(result.order, formData.email);
+        console.log('Initiating payment for order:', result.order);
         return true;
       }
 
