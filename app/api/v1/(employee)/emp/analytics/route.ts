@@ -19,17 +19,17 @@ export const GET = async (request: NextRequest) => {
         const startDate = url.searchParams.get("startDate");
         const endDate = url.searchParams.get("endDate");
         const employee = await getEmployeeByEmail(verifyResult.email);
-        if(!employee.success){
+        if(!employee.success || !employee.data){
             return NextResponse.json({
                 message: "Employee not found",
                 success: false
             }, { status: 404 });
         }
         if(!startDate||!endDate){
-            const analyticsResult = await getEmployeeAnalytics(employee.data._id);
+            const analyticsResult = await getEmployeeAnalytics(employee.data._id.toString());
             return NextResponse.json(analyticsResult);
         } 
-        const analyticsResult = await getEmployeeAnalyticsByDateRange(employee.data._id, new Date(startDate), new Date(endDate));
+        const analyticsResult = await getEmployeeAnalyticsByDateRange(employee.data._id.toString(), new Date(startDate), new Date(endDate));
         return NextResponse.json(analyticsResult);
     }
     catch(error){
