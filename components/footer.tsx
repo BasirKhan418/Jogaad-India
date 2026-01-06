@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-5 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 group">
               <div className="bg-white rounded-lg p-2 shadow-sm">
-                <Image src="/logo.png" alt="Jogaad India" width={200} height={170} className="drop-shadow-md" />
+                <Image src="/logo.png" alt="Jogaad India" width={400} height={170} className="drop-shadow-md" />
               </div>
               <span className="sr-only">Jogaad India</span>
             </Link>
