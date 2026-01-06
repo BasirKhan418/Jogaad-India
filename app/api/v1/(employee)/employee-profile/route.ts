@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
         const response = await getEmployeeByEmail(email);
         
-        if (!response.success) {
+        if (!response.success || !response.data) {
             return NextResponse.json({ 
                 message: response.message || "Employee not found", 
                 success: false 
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Transform the data to extract categoryid from populated object
-        const employeeData = response.data.toObject ? response.data.toObject() : response.data;
+        const employeeData: any = response.data.toObject ? response.data.toObject() : response.data;
         if (employeeData.categoryid && typeof employeeData.categoryid === 'object' && employeeData.categoryid._id) {
             employeeData.categoryid = employeeData.categoryid._id.toString();
         }

@@ -15,14 +15,14 @@ export const GET = async (request: NextRequest) => {
             }, { status: 401 });
         }
         const employee = await getEmployeeByEmail(verifyResult.email);
-        if(!employee.success){
+        if(!employee.success || !employee.data){
             return NextResponse.json({
                 message: "Employee not found",
                 success: false
             }, { status: 404 });
         }
 
-        const schedulesResult = await getPendingSchedules(employee.data._id);
+        const schedulesResult = await getPendingSchedules(employee.data._id.toString());
         return NextResponse.json(schedulesResult);
     }
     catch(error){

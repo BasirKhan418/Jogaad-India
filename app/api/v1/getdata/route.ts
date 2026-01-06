@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
             response = await verifyAdminByEmail(isTokenValid.email);
             if (response.success && response.data) {
                 // Convert Mongoose document to plain object and add type
-                const userData = response.data.toObject ? response.data.toObject() : {...response.data};
+                const userData: any = response.data.toObject ? response.data.toObject() : {...response.data};
                 userData.type = "admin";
                 response.data = userData;
             }
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
             response = await verifyUserByEmail(isTokenValid.email);
             if (response.success && response.data) {
                 // Convert Mongoose document to plain object and add type
-                const userData = response.data.toObject ? response.data.toObject() : {...response.data};
+                const userData: any = response.data.toObject ? response.data.toObject() : {...response.data};
                 userData.type = "user";
                 response.data = userData;
             }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
             response = await getEmployeeByEmail(isTokenValid.email);
             if (response.success && response.data) {
                 // Convert Mongoose document to plain object and add type
-                const userData = response.data.toObject ? response.data.toObject() : {...response.data};
+                const userData: any = response.data.toObject ? response.data.toObject() : {...response.data};
                 userData.type = "employee";
                 response.data = userData;
             }
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
             response = await getFieldExecutiveByEmail(isTokenValid.email);
             if (response.success && response.data) {
                 // Convert Mongoose document to plain object and add type
-                const userData = response.data.toObject ? response.data.toObject() : {...response.data};
+                const userData: any = response.data.toObject ? response.data.toObject() : {...response.data};
                 userData.type = "field-exec";
                 response.data = userData;
             }

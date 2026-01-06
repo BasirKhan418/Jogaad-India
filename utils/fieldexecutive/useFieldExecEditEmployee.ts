@@ -16,6 +16,7 @@ interface Category {
 }
 
 interface FormData {
+  description: string;
   name: string;
   email: string;
   phone: string;
