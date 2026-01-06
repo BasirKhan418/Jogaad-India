@@ -76,7 +76,7 @@ export async function POST(request: Request) {
                 }, { status: 500 });
             }
             await redisClient.set(`employee_${validatedData.email}_order`, JSON.stringify(orderResponse.order), "EX", 15 * 60);
-            await updateOrderidByEmail(validatedData.email, orderResponse.order.id || "");
+            await updateOrderidByEmail(validatedData.email, orderResponse.order.id || "","no-qr");
             return NextResponse.json({ message: "Employee account exists , Please complete the payment for account activation", success: true, order: orderResponse.order }, { status: 200 });
         }
 
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
             }, { status: 500 });
         }
         await redisClient.set(`employee_${validatedData.email}_order`, JSON.stringify(orderResponse.order), "EX", 15 * 60);
-        await updateOrderidByEmail(validatedData.email, orderResponse.order.id || "");
+        await updateOrderidByEmail(validatedData.email, orderResponse.order.id || "","no-qr");
 
         return NextResponse.json({ ...response, order: orderResponse.order }, { status: 200 });
 
