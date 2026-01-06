@@ -109,7 +109,6 @@ export async function POST(request: NextRequest) {
         isActive: true,
         paymentid: payment ? payment.id : undefined,
         paymentStatus: "paid",
-        orderid: qr.id,
       }
     );
     if (empdata) {
