@@ -306,7 +306,7 @@ export const useFieldExecAddEmployee = (): UseFieldExecAddEmployeeReturn => {
         [id]: type === 'number' ? parseFloat(value) || 0 : value
       };
       if(e.target.id=="description"){
-        setFormData({...formData,othersCategory:true})
+        setFormData({...formData,othersCategory:true,description:value});
       }
 
       // Validate price if payrate changes
