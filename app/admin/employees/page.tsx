@@ -1113,10 +1113,24 @@ const ViewEmployeeModal = React.memo(({ employee, onClose }: { employee: Employe
                 Other Service
               </span>
             )}
+            {employee.categoryName && (
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
+                Category : {employee.categoryName}
+              </span>
+            )}
           </div>
 
           {/* Custom Description for Others */}
           {employee.othersCategory && employee.description && (
+            <div className="p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
+              <h4 className="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2 flex items-center gap-2">
+                <Tag className="w-4 h-4" />
+                Custom Service Description
+              </h4>
+              <p className="text-sm text-indigo-800 dark:text-indigo-200">{employee.description}</p>
+            </div>
+          )}
+           {!employee.othersCategory && !employee.description && (
             <div className="p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
               <h4 className="text-sm font-semibold text-indigo-900 dark:text-indigo-100 mb-2 flex items-center gap-2">
                 <Tag className="w-4 h-4" />

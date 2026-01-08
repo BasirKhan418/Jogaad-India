@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
 
 export interface Employee {
+  categoryName: any;
   _id: string;
   name: string;
   email: string;
